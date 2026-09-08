@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0b1220" />
   <meta name="color-scheme" content="light" />
-  <title>Member Program — Gym Routine Builder</title>
+  <title>Binyamin Gym — Member Program Builder</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="app-shell">
     <aside class="app-sidebar no-print" aria-label="App navigation">
-      <div class="brand-mark" aria-label="Gym Routine Builder">
-        <span>SB</span>
+      <div class="brand-mark brand-logo" aria-label="Binyamin Gym">
+        <img src="assets/binyamin-gym-logo.png" alt="Binyamin Gym" />
       </div>
 
       <nav class="side-nav">
@@ -35,17 +35,21 @@
     <div class="app-main">
       <header class="app-header no-print">
         <div class="header-copy">
-          <p class="eyebrow">SHA'AR BINYAMIN · MEMBER ONBOARDING</p>
+          <p class="eyebrow">BINYAMIN GYM · MEMBER ONBOARDING</p>
           <div class="title-row">
-            <h1>Build a starter program</h1>
+            <h1>Build a member program</h1>
             <span class="app-badge">Staff tool</span>
           </div>
-          <p class="sub">Member intake, issue-aware exercise selection and a clean handout in a few minutes.</p>
+          <p class="sub">A polished onboarding tool for safe starter programming, member handouts and mobile routines.</p>
         </div>
         <div class="header-actions">
           <button class="btn secondary" id="saveProfileBtnTop" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
             Save member
+          </button>
+          <button class="btn secondary" id="shareBtn" type="button" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.83-4A3 3 0 0 0 18 8ZM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM8.59 13.51l6.83 3.98M15.41 6.51 8.59 10.49"/></svg>
+            Copy member link
           </button>
           <button class="btn primary" id="printBtn" type="button" disabled>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
@@ -209,10 +213,16 @@
         <section class="panel output" id="outputPanel" aria-live="polite">
           <div class="output-toolbar no-print">
             <div>
-              <p class="step">ROUTINE PREVIEW</p>
-              <span>What the member will receive</span>
+              <p class="step">MEMBER ROUTINE</p>
+              <span id="outputSubtext">Generate a program to preview it here</span>
             </div>
-            <div class="preview-status"><span></span> Live preview</div>
+            <div class="output-controls">
+              <div class="language-toggle" id="languageToggle" aria-label="Routine language">
+                <button type="button" class="lang-btn active" data-lang="en">EN</button>
+                <button type="button" class="lang-btn" data-lang="he">עברית</button>
+              </div>
+              <div class="preview-status"><span></span><b id="previewStatusText">Ready</b></div>
+            </div>
           </div>
 
           <div id="emptyState" class="empty-state">
@@ -230,11 +240,11 @@
             <div class="empty-copy">
               <span class="ready-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span>
               <h2>Your member's program will appear here</h2>
-              <p>Complete the intake and we'll build a structured, issue-aware starter routine ready to print.</p>
+              <p>Complete the intake and Binyamin Gym will build a clear starter program with day-by-day navigation, equipment guidance and a print-ready handout.</p>
               <div class="feature-row">
                 <span>Smart substitutions</span>
                 <span>Progression guidance</span>
-                <span>A4 print-ready</span>
+                <span>Phone link</span>
               </div>
             </div>
           </div>
@@ -260,6 +270,46 @@
       <button class="btn danger" id="clearSavedBtn" type="button">Clear all</button>
     </div>
   </dialog>
+
+  <dialog id="exerciseSwapDialog" class="swap-dialog">
+    <div class="dialog-head">
+      <div>
+        <div class="step-row"><span class="step-number">↔</span><p class="step">TRAINER EDIT</p></div>
+        <h2 id="swapDialogTitle">Replace exercise</h2>
+        <p class="dialog-sub" id="swapDialogSub">Choose a replacement and save the change.</p>
+      </div>
+      <button class="icon-btn" id="closeSwapDialogBtn" aria-label="Close">×</button>
+    </div>
+
+    <div id="swapCurrentExercise" class="swap-current"></div>
+
+    <div class="swap-safety-note">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg>
+      <span id="swapSafetyNoteText">Suggestions are filtered using the member's intake and movement considerations. Trainer judgement still comes first.</span>
+    </div>
+
+    <div class="swap-tools">
+      <div class="swap-filters" aria-label="Exercise filters">
+        <button type="button" class="swap-filter-btn active" id="swapRecommendedBtn" data-swap-filter="recommended">Recommended</button>
+        <button type="button" class="swap-filter-btn" id="swapAllBtn" data-swap-filter="all">All safe exercises</button>
+      </div>
+      <label class="swap-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="swapSearch" type="search" placeholder="Search exercise or equipment…" autocomplete="off" />
+      </label>
+    </div>
+
+    <div id="swapSuggestionList" class="swap-list"></div>
+
+    <div class="dialog-actions swap-actions">
+      <button class="btn ghost" id="resetExerciseBtn" type="button" hidden>Reset to generated</button>
+      <span class="swap-actions-spacer"></span>
+      <button class="btn secondary" id="cancelSwapBtn" type="button">Cancel</button>
+      <button class="btn primary" id="saveSwapBtn" type="button" disabled>Save change</button>
+    </div>
+  </dialog>
+
+  <div id="appToast" class="app-toast" role="status" aria-live="polite" hidden></div>
 
   <template id="routineTemplate"></template>
   <script src="app.js"></script>

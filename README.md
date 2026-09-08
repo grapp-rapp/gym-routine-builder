@@ -1,49 +1,57 @@
-# Gym Routine Builder
+# Binyamin Gym — Member Program Builder
 
-A zero-backend intake and starter-program generator for a gym front desk.
+A static, privacy-friendly gym onboarding and starter-program tool built for Binyamin Gym.
 
 ## What it does
 
-- Captures member age, height, weight, training experience, weekly availability and goal.
-- Supports toggles for low-back, shoulder, knee, hip, neck and elbow/wrist considerations.
-- Includes a simple pre-exercise safety gate. If a red-flag item is selected, automated programming stops and the screen recommends professional review.
-- Generates 2-, 3-, 4- or 5-day starter routines.
-- Adjusts exercises using issue-specific substitutions.
-- Uses RPE / reps-in-reserve rather than pretending to calculate safe starting loads from body weight.
-- Adds cardio guidance and progression rules.
-- Prints a clean A4 member handout.
-- Saves profiles locally in the browser (`localStorage`).
-- Supports JSON export/import for a local backup.
+- Member intake: age, height, weight, experience, goals and activity level
+- Movement-consideration toggles for low back, shoulder, knee, hip, neck and elbow/wrist
+- Safety-screen gate for symptoms/restrictions that should stop automatic programming
+- Generates 2–5 day starter routines
+- Goal-aware sets, reps, rest and cardio guidance
+- Conservative exercise substitutions when movement considerations are selected
+- Day-by-day routine view instead of one long tiny page
+- English / Hebrew toggle for the member-facing routine
+- Binyamin Gym branding and logo
+- Equipment illustrations and equipment labels beside each exercise
+- A4 printing with one workout day per page
+- Self-contained member share links for phone viewing
+- Trainer exercise editor: click any exercise, review intake-filtered alternatives, replace it, or reset to the generated choice
+- Manual exercise swaps carry through to printing and member share links
+- Saved member profiles can retain trainer-edited routines in this browser
+- Local browser profile storage and JSON backup/import
 
-## Run locally
+## Privacy
 
-No build step is required.
+Saved profiles stay in the browser's local storage.
 
-Option 1: simply open `index.html` in a modern browser.
+The **Copy member link** feature does not send the raw intake profile to a server. The routine is encoded in the URL hash. The shared payload intentionally excludes height, weight, specific injury/issue toggles, issue notes and red-flag answers. Anyone who receives the link can still view the routine, so treat the link as private.
 
-Option 2: run a tiny static server:
+A future server-backed version could use short links, member accounts, editable plans and centralized syncing.
 
-```bash
-python -m http.server 8080
-```
+## Equipment images
 
-Then visit `http://localhost:8080`.
+This version includes generic equipment illustrations (machine, cable, dumbbell, treadmill, bike, etc.). When the gym's final equipment list is known, the exercise data can be mapped to actual photos of the exact machines used at Binyamin Gym.
 
-## Put it on GitHub Pages
+## Deploy to Vercel
 
-1. Create a new GitHub repository.
-2. Upload `index.html`, `styles.css`, `app.js`, and `README.md` to the repository root.
-3. In GitHub: **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Choose the `main` branch and `/ (root)` folder.
-6. Save. GitHub will provide the public Pages URL.
+The project is fully static. Point Vercel at the repository root; no build command is required.
 
-## Privacy / production note
+## Deploy to GitHub Pages
 
-This version intentionally has **no server and no accounts**. Saved profiles stay in the browser on the device where they were entered. That is convenient for a prototype but it is **not a full member-management or medical-record system**.
+1. Create a GitHub repository.
+2. Upload the project files to the repository root.
+3. Open **Settings → Pages**.
+4. Choose **Deploy from a branch**.
+5. Select the `main` branch and `/ (root)`.
 
-Before using it across multiple gym devices or storing detailed health information, add authentication, encrypted server-side storage, role permissions, audit logs, backup/restore, and a privacy/data-retention policy appropriate to your jurisdiction.
+## Files
 
-## Programming philosophy
+- `index.html` — application shell and intake form
+- `styles.css` — app UI, responsive design, Hebrew/RTL and print styling
+- `app.js` — programming engine, translations, sharing and local member storage
+- `assets/binyamin-gym-logo.png` — Binyamin Gym logo
 
-This app is intended to support a qualified gym professional, not replace clinical judgment. It does not diagnose injuries or prescribe rehabilitation. Starting resistance is guided by effort and technique rather than a formula based on body weight.
+## Important
+
+This tool is for fitness-programming support. It is not medical diagnosis or treatment. Members who trigger the safety screen should be reviewed by an appropriately qualified professional before an automatic routine is prescribed.

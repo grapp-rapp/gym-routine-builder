@@ -20,34 +20,34 @@ function makeId() {
 const LOGO_SRC = './binyamin-gym-logo.png';
 const LOGO_FALLBACK_SRC = './image-removebg-preview%20(1).png';
 
-// Real equipment reference photos. The Special:Redirect URLs are stable Wikimedia
-// Commons links and avoid brittle hashed thumbnail paths. Replace these with photos
-// of Binyamin Gym's exact machines once the equipment inventory is final.
-function commonsPhoto(filename, width=500) {
+// Temporary equipment reference photography / diagrams. We use resized
+// Wikimedia Commons redirects to keep mobile payloads light. Replace these with
+// photos of Binyamin Gym's exact machines once the equipment inventory is final.
+function commonsPhoto(filename, width=720) {
   return `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(filename)}?width=${width}`;
 }
 
 const EQUIPMENT_PHOTOS = {
   legPress: commonsPhoto('Gym Leg Press Machine.jpg'),
-  hackSquat: commonsPhoto('David Jobson & Ziggy Chima; machine hack squat.jpg'),
-  legCurl: commonsPhoto('LyingLegCurlMachineExercise.JPG'),
-  chestPress: commonsPhoto('Girl doing chest press machine exercise.jpg'),
-  neutralPress: commonsPhoto('Girl doing chest press machine exercise.jpg'),
+  hackSquat: commonsPhoto('Hack squat machine 1.svg'),
+  legCurl: commonsPhoto('Lying leg curl machine 2.svg'),
+  chestPress: commonsPhoto('Chest Incline.jpg'),
+  neutralPress: commonsPhoto('Chest Incline.jpg'),
   shoulderPress: commonsPhoto('Shoulder Press.jpg'),
-  reverseFly: commonsPhoto('Pec deck Fly.jpg'),
-  pulldown: commonsPhoto('Lat Pull down Machine.jpg'),
-  pulldownWide: commonsPhoto('Lat Pull down Machine.jpg'),
-  row: commonsPhoto('Woman using a seated cable row machine at the gym.jpg'),
-  cableRow: commonsPhoto('Woman using a seated cable row machine at the gym.jpg'),
-  calf: commonsPhoto('SeatedCalfRaiseMachineExercise.JPG'),
+  reverseFly: commonsPhoto('Multifunctional cable and row machines in a gym.jpg'),
+  pulldown: commonsPhoto('Lat pulldown machine 20180112.jpg'),
+  pulldownWide: commonsPhoto('Lat pulldown machine 20180112.jpg'),
+  row: commonsPhoto('Multifunctional cable and row machines in a gym.jpg'),
+  cableRow: commonsPhoto('Multifunctional cable and row machines in a gym.jpg'),
+  calf: commonsPhoto('Seated calf machine.jpg'),
   treadmill: commonsPhoto('Treadmill-gym.jpg'),
   bike: commonsPhoto('Stationary bicycle.jpg'),
   elliptical: commonsPhoto('Elliptical machine.jpg'),
-  rower: commonsPhoto('Concept2 Indoor Rowers.JPG'),
-  cable: commonsPhoto('Székesfehérvár, Cutler Gym, Combined cable machine.jpg'),
-  dumbbell: commonsPhoto('A pair of dumbbells.jpeg'),
-  bench: commonsPhoto('A pair of dumbbells.jpeg'),
-  machine: commonsPhoto('Székesfehérvár, Cutler Gym, Combined cable machine.jpg')
+  rower: commonsPhoto('Rowing Machine.jpg'),
+  cable: commonsPhoto('Multifunctional cable and row machines in a gym.jpg'),
+  dumbbell: commonsPhoto('Dumbbells in a local health club.jpg'),
+  bench: commonsPhoto('Dumbbells in a local health club.jpg'),
+  machine: commonsPhoto('Multifunctional cable and row machines in a gym.jpg')
 };
 
 function equipmentPhoto(ex) {
@@ -59,7 +59,14 @@ function equipmentVisual(ex, className='equipment-thumb', label='') {
   const safeLabel = esc(label || ex.equipment || ex.name || 'Gym equipment');
   const fallback = `<span class="equipment-icon-fallback" ${photo ? 'hidden' : ''}>${equipmentIcon(ex.equipmentType)}</span>`;
   if (!photo) return `<div class="${className}" title="${safeLabel}">${fallback}</div>`;
-  return `<div class="${className} has-photo" title="${safeLabel}"><img src="${photo}" alt="${safeLabel}" loading="lazy" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">${fallback}</div>`;
+  const image = `<img src="${esc(photo)}" alt="${safeLabel}" loading="lazy" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">${fallback}`;
+  // Only the main routine thumbnail is interactive. Swap-dialog thumbnails sit
+  // inside buttons already, so making them buttons would create invalid nesting.
+  if (className === 'equipment-thumb') {
+    const zoomLabel = currentLanguage === 'he' ? `הגדלת תמונת ציוד: ${safeLabel}` : `Enlarge equipment image: ${safeLabel}`;
+    return `<button type="button" class="${className} has-photo equipment-photo-button no-print-border" data-equipment-image="${esc(photo)}" data-equipment-label="${safeLabel}" aria-label="${esc(zoomLabel)}" title="${safeLabel}">${image}<span class="equipment-zoom-badge" aria-hidden="true">＋</span></button>`;
+  }
+  return `<div class="${className} has-photo" title="${safeLabel}">${image}</div>`;
 }
 
 const EX = {
@@ -122,32 +129,34 @@ const ISSUE_LABEL_HE = { lowBack: 'גב תחתון', shoulder: 'כתף', knee: '
 
 const COPY = {
   en: {
-    starter: 'STARTER PROGRAM', daysWeek: 'days / week', session: 'session', experience: 'experience',
-    day: 'Day', exercise: 'Exercise', sets: 'Sets', reps: 'Reps / time', rest: 'Rest', equipment: 'Equipment', modified: 'MODIFIED',
+    starter: 'STARTER PROGRAM', daysWeek: 'days / week', session: 'session length', experience: 'experience',
+    day: 'Workout', exercise: 'Exercise', sets: 'Sets', reps: 'Reps / time', rest: 'Rest', equipment: 'Equipment', modified: 'MODIFIED',
     warmup: 'Warm-up', cardio: 'Weekly cardio', progress: 'How to progress', rules: 'First 4–6 weeks',
     rule1: 'Leave reps in reserve; do not train to failure.', rule2: 'Technique and comfortable range come before load.',
-    rule3: 'Normal muscular effort is OK; sharp, radiating or worsening pain is not.', rule4: 'Ask staff for a form check before increasing loads aggressively.',
-    trainerNote: 'Trainer note', target: 'target', startAt: 'Start at', programAdjusted: 'Program adjusted for',
-    painRule: 'Pain is not a target. Use a comfortable range and stop or modify any movement that reproduces concerning symptoms.',
-    noIssues: 'No movement issues selected. Still use pain-free ranges and controlled technique.',
+    rule3: 'Use controlled, comfortable movement and adjust any exercise that does not feel right.', rule4: 'Ask staff for a form check before increasing loads aggressively.',
+    trainerNote: 'Trainer note', target: 'planned length', startAt: 'Starting effort', programAdjusted: 'Program adjusted for',
+    painRule: 'Use a comfortable range and adjust any movement that does not suit the member.',
+    noIssues: 'No movement considerations selected. Use controlled technique and a comfortable range.',
     memberNote: 'Member note', minor: 'Minor member', minorText: 'Follow the gym’s youth-supervision policy and applicable instructor requirements.',
-    equipmentGuide: 'Equipment guide', prev: 'Previous day', next: 'Next day', routineFor: 'Routine for',
+    equipmentGuide: 'Equipment', prev: 'Previous workout', next: 'Next workout', routineFor: 'Routine for',
     replace: 'Replace', edited: 'TRAINER EDIT', swapTitle: 'Replace exercise', saveChange: 'Save change',
-    resetExercise: 'Reset to generated', recommended: 'Recommended', allSafe: 'All safe exercises'
+    resetExercise: 'Reset to generated', recommended: 'Recommended', allSafe: 'All suitable exercises',
+    referenceImage: 'Reference image — your exact Binyamin Gym machine may differ.'
   },
   he: {
-    starter: 'תוכנית התחלה', daysWeek: 'ימים בשבוע', session: 'משך אימון', experience: 'רמה',
+    starter: 'תוכנית התחלה', daysWeek: 'אימונים בשבוע', session: 'משך אימון', experience: 'רמת ניסיון',
     day: 'אימון', exercise: 'תרגיל', sets: 'סטים', reps: 'חזרות / זמן', rest: 'מנוחה', equipment: 'ציוד', modified: 'מותאם',
     warmup: 'חימום', cardio: 'אירובי שבועי', progress: 'איך מתקדמים', rules: 'כללים ל־4–6 השבועות הראשונים',
     rule1: 'השאירו חזרות ברזרבה ואל תתאמנו עד כשל.', rule2: 'טכניקה וטווח תנועה נוח קודמים להוספת משקל.',
-    rule3: 'מאמץ שרירי רגיל הוא תקין; כאב חד, מקרין או מחמיר אינו תקין.', rule4: 'בקשו מאיש צוות לבדוק טכניקה לפני העלאה משמעותית של המשקל.',
-    trainerNote: 'הערת מאמן', target: 'יעד', startAt: 'עצימות התחלתית', programAdjusted: 'התוכנית הותאמה עבור',
-    painRule: 'כאב אינו מטרה. עבדו בטווח נוח ועצרו או שנו כל תנועה שמעוררת תסמינים מדאיגים.',
-    noIssues: 'לא סומנו מגבלות תנועה. עדיין יש לעבוד בטווח ללא כאב ובטכניקה מבוקרת.',
+    rule3: 'עבדו בתנועה מבוקרת ונוחה והתאימו כל תרגיל שאינו מרגיש מתאים.', rule4: 'בקשו מאיש צוות לבדוק טכניקה לפני העלאה משמעותית של המשקל.',
+    trainerNote: 'הערת מאמן', target: 'משך מתוכנן', startAt: 'עצימות התחלתית', programAdjusted: 'התוכנית הותאמה עבור',
+    painRule: 'עבדו בטווח נוח והתאימו כל תנועה שאינה מתאימה למתאמן.',
+    noIssues: 'לא סומנו מגבלות תנועה. יש לעבוד בטכניקה מבוקרת ובטווח נוח.',
     memberNote: 'הערת מתאמן', minor: 'מתאמן קטין', minorText: 'יש לפעול לפי מדיניות הפיקוח לנוער ודרישות ההדרכה הרלוונטיות.',
     equipmentGuide: 'ציוד', prev: 'האימון הקודם', next: 'האימון הבא', routineFor: 'תוכנית עבור',
     replace: 'החלפה', edited: 'נערך ע״י מאמן', swapTitle: 'החלפת תרגיל', saveChange: 'שמירת שינוי',
-    resetExercise: 'חזרה לתרגיל המקורי', recommended: 'מומלץ', allSafe: 'כל התרגילים המתאימים'
+    resetExercise: 'חזרה לתרגיל המקורי', recommended: 'מומלץ', allSafe: 'כל התרגילים המתאימים',
+    referenceImage: 'תמונת המחשה — המכשיר בפועל בבנימין ג׳ים עשוי להיראות אחרת.'
   }
 };
 
@@ -157,12 +166,13 @@ function esc(s) {
 
 function getFormData() {
   const issues = $$('#issueToggles input:checked').map(x => x.value);
-  const redFlags = $$('#redFlags input:checked').map(x => x.value);
+  const genderInput = $('input[name="gender"]:checked');
   return {
     id: editingProfileId || makeId(),
     name: $('#name').value.trim(), age: Number($('#age').value), height: Number($('#height').value), weight: Number($('#weight').value),
+    gender: genderInput?.value || '',
     goal: $('input[name="goal"]:checked').value, experience: $('#experience').value, days: Number($('#days').value), duration: Number($('#duration').value),
-    activity: $('#activity').value, cardioPreference: $('#cardioPreference').value, issues, issueNotes: $('#issueNotes').value.trim(), redFlags,
+    activity: $('#activity').value, cardioPreference: $('#cardioPreference').value, issues, issueNotes: $('#issueNotes').value.trim(),
     trainerNotes: $('#trainerNotes').value.trim(), updatedAt: new Date().toISOString()
   };
 }
@@ -170,23 +180,25 @@ function getFormData() {
 function setFormData(p) {
   editingProfileId = p.id || null;
   $('#name').value = p.name || ''; $('#age').value = p.age ?? 35; $('#height').value = p.height ?? 175; $('#weight').value = p.weight ?? 80;
+  $$('input[name="gender"]').forEach(x => x.checked = !!p.gender && x.value === p.gender);
   const goal = $(`input[name="goal"][value="${p.goal || 'general'}"]`); if (goal) goal.checked = true;
   $('#experience').value = p.experience || 'new'; $('#days').value = String(p.days || 3); $('#duration').value = String(p.duration || 60);
   $('#activity').value = p.activity || 'moderate'; $('#cardioPreference').value = p.cardioPreference || 'any';
   $$('#issueToggles input').forEach(x => x.checked = (p.issues || []).includes(x.value)); $('#issueNotes').value = p.issueNotes || '';
-  $$('#redFlags input').forEach(x => x.checked = (p.redFlags || []).includes(x.value)); $('#trainerNotes').value = p.trainerNotes || '';
+  $('#trainerNotes').value = p.trainerNotes || '';
 }
 
 function calcBmi(height, weight) { return height && weight ? weight / Math.pow(height / 100, 2) : null; }
 function effortPrescription(p) {
-  if (p.experience === 'new') return { rpe: 'RPE 6–7', rir: 'about 3–4 reps in reserve', rirHe: 'כ־3–4 חזרות ברזרבה', sets: 2 };
-  if (p.experience === 'some') return { rpe: 'RPE 7–8', rir: 'about 2–3 reps in reserve', rirHe: 'כ־2–3 חזרות ברזרבה', sets: 3 };
-  return { rpe: 'RPE 7–8', rir: 'about 2 reps in reserve', rirHe: 'כ־2 חזרות ברזרבה', sets: 3 };
+  if (p.experience === 'new') return { rpe: 'RPE 6–7', rpeHe: 'מאמץ 6–7 מתוך 10', rir: 'about 3–4 reps in reserve', rirHe: 'כ־3–4 חזרות ברזרבה', sets: 2 };
+  if (p.experience === 'some') return { rpe: 'RPE 7–8', rpeHe: 'מאמץ 7–8 מתוך 10', rir: 'about 2–3 reps in reserve', rirHe: 'כ־2–3 חזרות ברזרבה', sets: 3 };
+  return { rpe: 'RPE 7–8', rpeHe: 'מאמץ 7–8 מתוך 10', rir: 'about 2 reps in reserve', rirHe: 'כ־2 חזרות ברזרבה', sets: 3 };
 }
 function volumeFor(p, role='main') { let sets = effortPrescription(p).sets; if (p.duration === 30 && role !== 'main') sets = Math.max(1, sets - 1); if (p.goal === 'strength' && role === 'main' && p.experience !== 'new') sets += 1; return sets; }
 function repRange(p, role='main') { if (p.goal === 'strength') return role === 'main' ? '5–8' : '8–12'; if (p.goal === 'muscle') return role === 'main' ? '6–10' : '10–15'; return role === 'main' ? '8–12' : '10–15'; }
 function restRange(p, role='main') { return p.goal === 'strength' && role === 'main' ? '2–3 min' : role === 'main' ? '90–120 sec' : '60–90 sec'; }
-function restHe(rest) { return String(rest).replace('min', 'דק׳').replace('sec', 'שנ׳'); }
+function formatHebrewMeasure(value) { return String(value ?? '').replace(/\bmin\b/g, 'דק׳').replace(/\bsec\b/g, 'שנ׳').replace(/\/side\b/g, ' לכל צד'); }
+function restHe(rest) { return formatHebrewMeasure(rest); }
 
 function chooseCardio(p) {
   const map = { walk: EX.treadmill, bike: EX.bike, elliptical: EX.elliptical, row: EX.rower };
@@ -279,7 +291,6 @@ function makeWorkouts(p) {
 }
 
 function buildPlan(p) {
-  if (p.redFlags.length) return { blocked: true, profile: p, reason: 'Safety-screen item selected. Do not auto-prescribe a routine until the member has been reviewed by an appropriately qualified professional.' };
   const effort = effortPrescription(p); const workouts = makeWorkouts(p);
   let warmup = '5–8 min easy cardio, then 1 light practice set before the first 2 strength exercises.';
   let warmupHe = '5–8 דקות אירובי קל, ואז סט חימום קל לפני שני תרגילי הכוח הראשונים.';
@@ -297,7 +308,6 @@ function buildPlan(p) {
   return { blocked: false, profile: p, bmi: calcBmi(p.height,p.weight), workouts, effort, warmup, warmupHe, weeklyCardio, weeklyCardioHe, progression, progressionHe };
 }
 
-function flagLabel(v) { return ({ chestPain: 'Chest pain/pressure', fainting: 'Fainting/severe dizziness', breath: 'Unusual shortness of breath', doctorRestriction: 'Doctor restriction / clearance requested', acuteInjury: 'Acute injury / severe worsening pain' })[v] || v; }
 
 function equipmentIcon(type='machine') {
   const common = 'viewBox="0 0 64 64" aria-hidden="true"';
@@ -339,13 +349,9 @@ function experienceLabel(value, lang) {
   return (lang === 'he' ? he : en)[value] || value;
 }
 
-function renderBlocked(plan) {
-  const p = plan.profile;
-  $('#routineView').innerHTML = `<article class="routine safety-routine"><div class="routine-brand-row"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>Member programming</span></div></div><div class="routine-header"><div class="routine-title"><p class="step">SAFETY REVIEW</p><h2>${esc(p.name || 'New member')}</h2><p>Automated routine paused</p></div></div><div class="notice danger"><b>Do not generate a routine yet.</b><br>${esc(plan.reason)}</div><div class="bottom-card"><h3>Selected screen items</h3><p>${p.redFlags.map(flagLabel).join(' • ')}</p></div><p class="print-footer">This tool supports gym onboarding and is not medical diagnosis or treatment.</p></article>`;
-}
-
 function renderExercise(ex, lang, dayIndex, exerciseIndex) {
   const c = COPY[lang]; const l = localizedExercise(ex, lang);
+  const displayReps = lang === 'he' ? formatHebrewMeasure(ex.reps) : ex.reps;
   const editable = !memberShareMode;
   const editMarkup = editable
     ? `<button type="button" class="exercise-edit-btn no-print" data-edit-exercise="${dayIndex}:${exerciseIndex}" aria-label="${esc(c.replace)} ${esc(l.name)}" title="${esc(c.replace)}">
@@ -361,26 +367,25 @@ function renderExercise(ex, lang, dayIndex, exerciseIndex) {
       <p>${esc(l.cue || '')}${ex.substituted && l.reason ? ` · ${esc(l.reason)}` : ''}</p>
       <span class="equipment-pill">${esc(l.equipment || c.equipmentGuide)}</span>
     </div>
-    <div class="exercise-stat"><b>${esc(ex.sets)}</b><span>${c.sets}</span></div>
-    <div class="exercise-stat"><b>${esc(ex.reps)}</b><span>${c.reps}</span></div>
-    <div class="exercise-stat"><b>${esc(l.rest)}</b><span>${c.rest}</span></div>
+    <div class="exercise-stat sets-stat"><b>${esc(ex.sets)}</b><span>${c.sets}</span></div>
+    <div class="exercise-stat reps-stat"><b>${esc(displayReps)}</b><span>${c.reps}</span></div>
+    <div class="exercise-stat rest-stat"><b>${esc(l.rest)}</b><span>${c.rest}</span></div>
     ${editMarkup}
   </div>`;
 }
 
 function renderPlan(plan) {
-  if (plan.blocked) { renderBlocked(plan); return; }
   const lang = currentLanguage; const c = COPY[lang]; const p = plan.profile; const rtl = lang === 'he';
   const goal = lang === 'he' ? GOAL_LABEL_HE[p.goal] : GOAL_LABEL[p.goal];
   const issueText = issueNotice(plan, lang);
   const tabs = plan.workouts.map((w,i) => `<button type="button" class="day-tab ${i===activeDayIndex?'active':''}" data-day-index="${i}"><span>${c.day} ${i+1}</span><b>${esc(lang==='he'?w.nameHe:w.name)}</b></button>`).join('');
   const pages = plan.workouts.map((w,i) => `<section class="day-page ${i===activeDayIndex?'active':''}" data-day="${i}">
       <div class="print-day-brand"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>${esc(p.name || (rtl ? 'מתאמן' : 'Member'))}</span></div></div>
-      <div class="day-head"><div><span>${c.day} ${i+1}</span><h3>${esc(rtl?w.nameHe:w.name)}</h3></div><div class="day-duration"><b>${p.duration}</b><span>${rtl?'דק׳': 'min'} ${c.target}</span></div></div>
+      <div class="day-head"><div><span>${c.day} ${i+1}</span><h3>${esc(rtl?w.nameHe:w.name)}</h3></div><div class="day-duration"><b>${p.duration} ${rtl?'דק׳':'min'}</b><span>${c.target}</span></div></div>
       <div class="exercise-list">${w.exercises.map((ex, exerciseIndex) => renderExercise(ex, lang, i, exerciseIndex)).join('')}</div>
       <div class="day-guidance">
         <div><span>${c.warmup}</span><p>${esc(rtl?plan.warmupHe:plan.warmup)}</p></div>
-        <div><span>${c.startAt}</span><p><b>${esc(plan.effort.rpe)}</b> · ${esc(rtl?plan.effort.rirHe:plan.effort.rir)}</p></div>
+        <div><span>${c.startAt}</span><p><b>${esc(rtl ? plan.effort.rpeHe : plan.effort.rpe)}</b> · ${esc(rtl?plan.effort.rirHe:plan.effort.rir)}</p></div>
       </div>
     </section>`).join('');
 
@@ -405,7 +410,7 @@ function renderPlan(plan) {
       ${p.trainerNotes ? `<div class="bottom-card"><h3>${c.trainerNote}</h3><p>${esc(p.trainerNotes)}</p></div>` : ''}
     </div>
     <div class="routine-nav no-print"><button type="button" class="btn secondary" id="prevDayBtn" ${activeDayIndex===0?'disabled':''}>${c.prev}</button><span>${activeDayIndex+1} / ${plan.workouts.length}</span><button type="button" class="btn secondary" id="nextDayBtn" ${activeDayIndex===plan.workouts.length-1?'disabled':''}>${c.next}</button></div>
-    <p class="print-footer">${rtl?'תוכנית התחלה המבוססת על שאלון הקבלה. אינה מהווה אבחון או טיפול רפואי. מומלץ לבצע הערכה מחדש לאחר כ־4–6 שבועות או מוקדם יותר אם חל שינוי בתסמינים או במטרות.':'Starter routine generated from member intake. This is fitness programming support, not medical diagnosis or treatment. Reassess after ~4–6 weeks or sooner if symptoms/goals change.'}</p>
+    <p class="print-footer">${rtl?'תוכנית התחלה המבוססת על שאלון הקבלה. מומלץ לבצע הערכה מחדש לאחר כ־4–6 שבועות או כאשר המטרות, ההעדפות או היכולת משתנות.':'Starter routine based on member intake. Reassess after ~4–6 weeks or when goals, preferences or ability change.'}</p>
   </article>`;
   bindRoutineNavigation();
 }
@@ -471,7 +476,7 @@ function getSwapCandidates(current, profile, mode='recommended', search='') {
 
 function swapMatchLabel(score, lang='en') {
   if (lang === 'he') return score === 0 ? 'התאמה קרובה' : score === 1 ? 'אפשרות דומה' : 'אפשרות נוספת';
-  return score === 0 ? 'Closest match' : score === 1 ? 'Similar option' : 'Other safe option';
+  return score === 0 ? 'Closest match' : score === 1 ? 'Similar option' : 'Other option';
 }
 
 function renderSwapDialog() {
@@ -505,7 +510,7 @@ function renderSwapDialog() {
       </span>
       <span class="swap-check" aria-hidden="true">${selected ? '✓' : ''}</span>
     </button>`;
-  }).join('') : `<div class="swap-empty">${lang === 'he' ? 'לא נמצאו חלופות מתאימות. נסו לעבור ל״כל התרגילים המתאימים״ או לשנות את החיפוש.' : 'No matching alternatives found. Try “All safe exercises” or change the search.'}</div>`;
+  }).join('') : `<div class="swap-empty">${lang === 'he' ? 'לא נמצאו חלופות מתאימות. נסו לעבור ל״כל התרגילים המתאימים״ או לשנות את החיפוש.' : 'No matching alternatives found. Try “All suitable exercises” or change the search.'}</div>`;
 
   $$('.swap-option').forEach(btn => btn.addEventListener('click', () => {
     swapSelectionKey = btn.dataset.swapKey;
@@ -518,7 +523,7 @@ function renderSwapDialog() {
 }
 
 function openExerciseSwap(dayIndex, exerciseIndex) {
-  if (memberShareMode || !currentPlan || currentPlan.blocked) return;
+  if (memberShareMode || !currentPlan) return;
   swapContext = { dayIndex, exerciseIndex };
   swapSelectionKey = null;
   swapFilter = 'recommended';
@@ -536,9 +541,9 @@ function openExerciseSwap(dayIndex, exerciseIndex) {
   $('#cancelSwapBtn').textContent = currentLanguage === 'he' ? 'ביטול' : 'Cancel';
   $('#swapRecommendedBtn').textContent = currentLanguage === 'he' ? COPY.he.recommended : COPY.en.recommended;
   $('#swapAllBtn').textContent = currentLanguage === 'he' ? COPY.he.allSafe : COPY.en.allSafe;
-  $('#swapSafetyNoteText').textContent = currentLanguage === 'he'
-    ? 'החלופות מסוננות לפי שאלון הקבלה ומגבלות התנועה שסומנו. שיקול הדעת של המאמן קודם לכל.'
-    : "Suggestions are filtered using the member's intake and movement considerations. Trainer judgement still comes first.";
+  $('#swapGuidanceNoteText').textContent = currentLanguage === 'he'
+    ? 'החלופות מסוננות לפי מגבלות התנועה שסומנו. שיקול הדעת של המאמן קודם לכל.'
+    : "Suggestions are filtered using the member's movement considerations. Trainer judgement still comes first.";
   dialog.dir = currentLanguage === 'he' ? 'rtl' : 'ltr';
   renderSwapDialog();
   dialog.showModal();
@@ -581,7 +586,7 @@ function resetExerciseToGenerated(dayIndex, exerciseIndex) {
 }
 
 function serializeRoutineState(plan) {
-  if (!plan || plan.blocked) return null;
+  if (!plan) return null;
   return plan.workouts.map(w => ({
     name: w.name,
     nameHe: w.nameHe,
@@ -603,7 +608,7 @@ function serializeRoutineState(plan) {
 
 function restoreRoutineState(profile) {
   const plan = buildPlan(profile);
-  if (!profile.routineOverride || plan.blocked) return plan;
+  if (!profile.routineOverride) return plan;
   plan.workouts = profile.routineOverride.map((w, dayIndex) => ({
     name: w.name || plan.workouts[dayIndex]?.name || `Day ${dayIndex + 1}`,
     nameHe: w.nameHe || plan.workouts[dayIndex]?.nameHe || `אימון ${dayIndex + 1}`,
@@ -646,8 +651,8 @@ function flashToast(message) {
 function getProfiles() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; } }
 function setProfiles(arr) { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
 function saveCurrentProfile() {
-  const p = getFormData(); if (!p.name) { alert('Add a member name before saving the profile.'); return; }
-  if (currentPlan && !currentPlan.blocked && currentPlan.profile?.id === p.id) p.routineOverride = serializeRoutineState(currentPlan);
+  const p = getFormData(); if (!p.name) { alert('Add a member name before saving the profile.'); return; } if (!p.gender) { alert('Select Male or Female before saving the profile.'); return; }
+  if (currentPlan && currentPlan.profile?.id === p.id) p.routineOverride = serializeRoutineState(currentPlan);
   const profiles = getProfiles(); const idx = profiles.findIndex(x => x.id === p.id); if (idx >= 0) profiles[idx] = p; else profiles.unshift(p);
   setProfiles(profiles); editingProfileId = p.id;
   const lower = $('#saveProfileBtn'); if (lower) { const old = lower.textContent; lower.textContent = 'Saved ✓'; setTimeout(() => lower.textContent = old, 1000); }
@@ -656,14 +661,14 @@ function saveCurrentProfile() {
 
 function renderSaved() {
   const profiles = getProfiles();
-  $('#savedList').innerHTML = profiles.length ? profiles.map(p => `<div class="saved-row"><div><strong>${esc(p.name || 'Unnamed')}</strong><small>${p.age} yrs • ${GOAL_LABEL[p.goal] || p.goal} • ${p.days} days/week</small></div><div class="row-actions"><button class="btn ghost" data-load="${p.id}">Load</button><button class="btn danger" data-delete="${p.id}">Delete</button></div></div>`).join('') : '<p class="muted">No profiles saved yet.</p>';
+  $('#savedList').innerHTML = profiles.length ? profiles.map(p => `<div class="saved-row"><div><strong>${esc(p.name || 'Unnamed')}</strong><small>${p.age} yrs • ${p.gender === 'female' ? 'Female' : p.gender === 'male' ? 'Male' : 'Gender not set'} • ${GOAL_LABEL[p.goal] || p.goal} • ${p.days} days/week</small></div><div class="row-actions"><button class="btn ghost" data-load="${p.id}">Load</button><button class="btn danger" data-delete="${p.id}">Delete</button></div></div>`).join('') : '<p class="muted">No profiles saved yet.</p>';
   $$('[data-load]').forEach(b => b.addEventListener('click', () => {
     const p = profiles.find(x => x.id === b.dataset.load);
     if (p) {
       setFormData(p);
       currentPlan = p.routineOverride ? restoreRoutineState(p) : null;
       activeDayIndex = 0;
-      if (currentPlan) { renderPlan(currentPlan); setOutputState(true, currentPlan.blocked); } else { $('#routineView').innerHTML = ''; setOutputState(false); }
+      if (currentPlan) { renderPlan(currentPlan); setOutputState(true); } else { $('#routineView').innerHTML = ''; setOutputState(false); }
       $('#savedDialog').close();
       window.scrollTo({top:0, behavior:'smooth'});
     }
@@ -671,11 +676,14 @@ function renderSaved() {
   $$('[data-delete]').forEach(b => b.addEventListener('click', () => { setProfiles(profiles.filter(x => x.id !== b.dataset.delete)); renderSaved(); }));
 }
 
-function setOutputState(hasPlan=false, blocked=false) {
+function setOutputState(hasPlan=false) {
   $('#emptyState').hidden = hasPlan; $('#routineView').hidden = !hasPlan;
-  $('#outputPanel').classList.toggle('has-routine', hasPlan); $('#outputSubtext').textContent = hasPlan ? (blocked ? 'Safety review required' : 'Day-by-day member program') : 'Generate a program to preview it here';
-  $('#previewStatusText').textContent = hasPlan ? (blocked ? 'Review' : 'Generated') : 'Ready';
-  $('#printBtn').disabled = !hasPlan; $('#shareBtn').disabled = !hasPlan || blocked;
+  $('#outputPanel').classList.toggle('has-routine', hasPlan);
+  const he = currentLanguage === 'he';
+  $('#outputStepLabel').textContent = hasPlan && he ? 'תוכנית מתאמן' : 'MEMBER ROUTINE';
+  $('#outputSubtext').textContent = hasPlan ? (he ? 'תוכנית אישית לפי אימונים' : 'Workout-by-workout member program') : 'Generate a program to preview it here';
+  $('#previewStatusText').textContent = hasPlan ? (he ? 'נוצרה' : 'Generated') : 'Ready';
+  $('#printBtn').disabled = !hasPlan; $('#shareBtn').disabled = !hasPlan;
 }
 
 function resetForm() {
@@ -685,7 +693,7 @@ function resetForm() {
 
 function publicSharePlan(plan) {
   // Compact v3 payload keeps no-backend member links comfortably short.
-  // Deliberately excludes height, weight, medical toggles and safety-screen answers.
+  // Deliberately excludes height, weight, gender and movement-consideration details.
   const p = plan.profile;
   return {
     v: 3,
@@ -725,7 +733,7 @@ function inflateSharedPlan(raw) {
   const profile = {
     name: sp.name || '', goal: sp.goal || 'general', experience: sp.experience || 'new', days: Number(sp.days || 3), duration: Number(sp.duration || 60),
     activity: sp.activity || 'moderate', cardioPreference: 'any', trainerNotes: sp.trainerNotes || '',
-    age: sp.isMinor ? 17 : 18, height: 175, weight: 75, issues: [], issueNotes: '', redFlags: []
+    age: sp.isMinor ? 17 : 18, height: 175, weight: 75, gender: '', issues: [], issueNotes: ''
   };
   const plan = buildPlan(profile);
   plan.workouts = (shared.workouts || []).map(w => ({
@@ -749,7 +757,7 @@ function decodeShare(encoded) {
 }
 
 function buildMemberUrl() {
-  if (!currentPlan || currentPlan.blocked) return '';
+  if (!currentPlan) return '';
   const encoded = encodeShare(publicSharePlan(currentPlan));
   const url = new URL(window.location.href);
   url.search = '';
@@ -791,7 +799,7 @@ function initSharedRoutine() {
     document.documentElement.classList.remove('shared-routine-loading');
     document.title = `${currentPlan.profile.name ? currentPlan.profile.name + ' — ' : ''}Binyamin Gym Routine`;
     setLanguage(currentLanguage);
-    setOutputState(true, false);
+    setOutputState(true);
     renderPlan(currentPlan);
     $('#shareBtn').hidden = true;
     $('#saveProfileBtnTop').hidden = true;
@@ -807,11 +815,36 @@ function initSharedRoutine() {
 function setLanguage(lang) {
   currentLanguage = lang === 'he' ? 'he' : 'en';
   $$('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === currentLanguage));
-  if (currentPlan) renderPlan(currentPlan);
+  if (currentPlan) { renderPlan(currentPlan); setOutputState(true); }
 }
 
+function openEquipmentImage(src, label='Equipment') {
+  const dialog = $('#equipmentImageDialog');
+  const img = $('#equipmentImageLarge');
+  if (!dialog || !img || !src) return;
+  img.src = src;
+  img.alt = label;
+  $('#equipmentImageTitle').textContent = label;
+  $('#equipmentImageHint').textContent = COPY[currentLanguage].referenceImage;
+  dialog.dir = currentLanguage === 'he' ? 'rtl' : 'ltr';
+  dialog.showModal();
+}
+
+document.addEventListener('click', (e) => {
+  const trigger = e.target.closest('[data-equipment-image]');
+  if (!trigger) return;
+  e.preventDefault();
+  e.stopPropagation();
+  openEquipmentImage(trigger.dataset.equipmentImage, trigger.dataset.equipmentLabel || 'Equipment');
+});
+
+$('#closeEquipmentImageBtn')?.addEventListener('click', () => $('#equipmentImageDialog')?.close());
+$('#equipmentImageDialog')?.addEventListener('click', (e) => {
+  if (e.target === $('#equipmentImageDialog')) $('#equipmentImageDialog').close();
+});
+
 $('#intakeForm').addEventListener('submit', (e) => {
-  e.preventDefault(); const p=getFormData(); editingProfileId = p.id; currentPlan=buildPlan(p); activeDayIndex=0; renderPlan(currentPlan); setOutputState(true, currentPlan.blocked);
+  e.preventDefault(); const p=getFormData(); editingProfileId = p.id; currentPlan=buildPlan(p); activeDayIndex=0; renderPlan(currentPlan); setOutputState(true);
   if (window.innerWidth < 1180) $('#outputPanel').scrollIntoView({behavior:'smooth', block:'start'});
 });
 $('#printBtn').addEventListener('click', () => window.print());

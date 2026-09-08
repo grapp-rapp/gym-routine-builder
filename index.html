@@ -6,13 +6,19 @@
   <meta name="theme-color" content="#0b1220" />
   <meta name="color-scheme" content="light" />
   <title>Binyamin Gym — Member Program Builder</title>
+  <script>
+    // Prevent the staff intake from flashing before a shared routine is parsed.
+    if (new URLSearchParams(location.search).has('routine') || /^#(?:share|routine)=/.test(location.hash)) {
+      document.documentElement.classList.add('shared-routine-loading');
+    }
+  </script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="app-shell">
     <aside class="app-sidebar no-print" aria-label="App navigation">
       <div class="brand-mark brand-logo" aria-label="Binyamin Gym">
-        <img src="assets/binyamin-gym-logo.png" alt="Binyamin Gym" />
+        <img src="./binyamin-gym-logo.png" alt="Binyamin Gym" onerror="this.onerror=null;this.src='./image-removebg-preview%20(1).png';" />
       </div>
 
       <nav class="side-nav">

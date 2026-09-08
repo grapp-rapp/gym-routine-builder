@@ -17,6 +17,51 @@ function makeId() {
     : `member-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+const LOGO_SRC = './binyamin-gym-logo.png';
+const LOGO_FALLBACK_SRC = './image-removebg-preview%20(1).png';
+
+// Real equipment reference photos. The Special:Redirect URLs are stable Wikimedia
+// Commons links and avoid brittle hashed thumbnail paths. Replace these with photos
+// of Binyamin Gym's exact machines once the equipment inventory is final.
+function commonsPhoto(filename, width=500) {
+  return `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(filename)}?width=${width}`;
+}
+
+const EQUIPMENT_PHOTOS = {
+  legPress: commonsPhoto('Gym Leg Press Machine.jpg'),
+  hackSquat: commonsPhoto('David Jobson & Ziggy Chima; machine hack squat.jpg'),
+  legCurl: commonsPhoto('LyingLegCurlMachineExercise.JPG'),
+  chestPress: commonsPhoto('Girl doing chest press machine exercise.jpg'),
+  neutralPress: commonsPhoto('Girl doing chest press machine exercise.jpg'),
+  shoulderPress: commonsPhoto('Shoulder Press.jpg'),
+  reverseFly: commonsPhoto('Pec deck Fly.jpg'),
+  pulldown: commonsPhoto('Lat Pull down Machine.jpg'),
+  pulldownWide: commonsPhoto('Lat Pull down Machine.jpg'),
+  row: commonsPhoto('Woman using a seated cable row machine at the gym.jpg'),
+  cableRow: commonsPhoto('Woman using a seated cable row machine at the gym.jpg'),
+  calf: commonsPhoto('SeatedCalfRaiseMachineExercise.JPG'),
+  treadmill: commonsPhoto('Treadmill-gym.jpg'),
+  bike: commonsPhoto('Stationary bicycle.jpg'),
+  elliptical: commonsPhoto('Elliptical machine.jpg'),
+  rower: commonsPhoto('Concept2 Indoor Rowers.JPG'),
+  cable: commonsPhoto('Székesfehérvár, Cutler Gym, Combined cable machine.jpg'),
+  dumbbell: commonsPhoto('A pair of dumbbells.jpeg'),
+  bench: commonsPhoto('A pair of dumbbells.jpeg'),
+  machine: commonsPhoto('Székesfehérvár, Cutler Gym, Combined cable machine.jpg')
+};
+
+function equipmentPhoto(ex) {
+  return EQUIPMENT_PHOTOS[ex.key] || EQUIPMENT_PHOTOS[ex.equipmentType] || '';
+}
+
+function equipmentVisual(ex, className='equipment-thumb', label='') {
+  const photo = equipmentPhoto(ex);
+  const safeLabel = esc(label || ex.equipment || ex.name || 'Gym equipment');
+  const fallback = `<span class="equipment-icon-fallback" ${photo ? 'hidden' : ''}>${equipmentIcon(ex.equipmentType)}</span>`;
+  if (!photo) return `<div class="${className}" title="${safeLabel}">${fallback}</div>`;
+  return `<div class="${className} has-photo" title="${safeLabel}"><img src="${photo}" alt="${safeLabel}" loading="lazy" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">${fallback}</div>`;
+}
+
 const EX = {
   legPress: { name: 'Leg Press', he: 'לחיצת רגליים', pattern: 'squat', cue: 'Controlled depth; keep back supported.', cueHe: 'טווח נוח ומבוקר, עם גב נתמך.', equipment: 'Leg press machine', equipmentHe: 'מכונת לחיצת רגליים', equipmentType: 'machine' },
   gobletSquat: { name: 'Goblet Squat to Box', he: 'סקוואט גביע לספסל', pattern: 'squat', cue: 'Sit to a comfortable box height; smooth tempo.', cueHe: 'שב לגובה נוח ושמור על קצב מבוקר.', equipment: 'Dumbbell + box', equipmentHe: 'משקולת יד + ספסל', equipmentType: 'dumbbell' },
@@ -296,7 +341,7 @@ function experienceLabel(value, lang) {
 
 function renderBlocked(plan) {
   const p = plan.profile;
-  $('#routineView').innerHTML = `<article class="routine safety-routine"><div class="routine-brand-row"><img src="assets/binyamin-gym-logo.png" alt="Binyamin Gym"><div><b>Binyamin Gym</b><span>Member programming</span></div></div><div class="routine-header"><div class="routine-title"><p class="step">SAFETY REVIEW</p><h2>${esc(p.name || 'New member')}</h2><p>Automated routine paused</p></div></div><div class="notice danger"><b>Do not generate a routine yet.</b><br>${esc(plan.reason)}</div><div class="bottom-card"><h3>Selected screen items</h3><p>${p.redFlags.map(flagLabel).join(' • ')}</p></div><p class="print-footer">This tool supports gym onboarding and is not medical diagnosis or treatment.</p></article>`;
+  $('#routineView').innerHTML = `<article class="routine safety-routine"><div class="routine-brand-row"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>Member programming</span></div></div><div class="routine-header"><div class="routine-title"><p class="step">SAFETY REVIEW</p><h2>${esc(p.name || 'New member')}</h2><p>Automated routine paused</p></div></div><div class="notice danger"><b>Do not generate a routine yet.</b><br>${esc(plan.reason)}</div><div class="bottom-card"><h3>Selected screen items</h3><p>${p.redFlags.map(flagLabel).join(' • ')}</p></div><p class="print-footer">This tool supports gym onboarding and is not medical diagnosis or treatment.</p></article>`;
 }
 
 function renderExercise(ex, lang, dayIndex, exerciseIndex) {
@@ -310,7 +355,7 @@ function renderExercise(ex, lang, dayIndex, exerciseIndex) {
     : '';
   const trainerTag = ex.manualSwap && editable ? `<span class="trainer-edit-tag no-print">${c.edited}</span>` : '';
   return `<div class="exercise-item ${editable ? 'editable-exercise' : ''}" data-exercise-row="${dayIndex}:${exerciseIndex}">
-    <div class="equipment-thumb" title="${esc(l.equipment)}">${equipmentIcon(ex.equipmentType)}</div>
+    ${equipmentVisual(ex, 'equipment-thumb', l.equipment)}
     <div class="exercise-main">
       <div class="exercise-name-line"><strong>${esc(l.name)}</strong>${ex.substituted ? `<span class="sub-tag">${c.modified}</span>` : ''}${trainerTag}</div>
       <p>${esc(l.cue || '')}${ex.substituted && l.reason ? ` · ${esc(l.reason)}` : ''}</p>
@@ -330,7 +375,7 @@ function renderPlan(plan) {
   const issueText = issueNotice(plan, lang);
   const tabs = plan.workouts.map((w,i) => `<button type="button" class="day-tab ${i===activeDayIndex?'active':''}" data-day-index="${i}"><span>${c.day} ${i+1}</span><b>${esc(lang==='he'?w.nameHe:w.name)}</b></button>`).join('');
   const pages = plan.workouts.map((w,i) => `<section class="day-page ${i===activeDayIndex?'active':''}" data-day="${i}">
-      <div class="print-day-brand"><img src="assets/binyamin-gym-logo.png" alt="Binyamin Gym"><div><b>Binyamin Gym</b><span>${esc(p.name || (rtl ? 'מתאמן' : 'Member'))}</span></div></div>
+      <div class="print-day-brand"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>${esc(p.name || (rtl ? 'מתאמן' : 'Member'))}</span></div></div>
       <div class="day-head"><div><span>${c.day} ${i+1}</span><h3>${esc(rtl?w.nameHe:w.name)}</h3></div><div class="day-duration"><b>${p.duration}</b><span>${rtl?'דק׳': 'min'} ${c.target}</span></div></div>
       <div class="exercise-list">${w.exercises.map((ex, exerciseIndex) => renderExercise(ex, lang, i, exerciseIndex)).join('')}</div>
       <div class="day-guidance">
@@ -340,7 +385,7 @@ function renderPlan(plan) {
     </section>`).join('');
 
   $('#routineView').innerHTML = `<article class="routine ${rtl?'routine-rtl':''}" dir="${rtl?'rtl':'ltr'}">
-    <div class="routine-brand-row"><img src="assets/binyamin-gym-logo.png" alt="Binyamin Gym"><div><b>Binyamin Gym</b><span>${rtl?'תוכנית אימונים אישית':'Personal training plan'}</span></div></div>
+    <div class="routine-brand-row"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>${rtl?'תוכנית אימונים אישית':'Personal training plan'}</span></div></div>
     <div class="routine-hero">
       <div class="routine-title"><p class="step">${c.starter}</p><h2>${esc(p.name || (rtl?'תוכנית מתאמן':'Member routine'))}</h2><p>${esc(goal)}</p></div>
       <div class="routine-meta-grid">
@@ -440,7 +485,7 @@ function renderSwapDialog() {
   const candidates = getSwapCandidates(current, currentPlan.profile, swapFilter, search);
 
   $('#swapCurrentExercise').innerHTML = `
-    <div class="swap-current-icon">${equipmentIcon(current.equipmentType)}</div>
+    ${equipmentVisual(current, 'swap-current-icon')}
     <div>
       <span>${lang === 'he' ? 'תרגיל נוכחי' : 'Current exercise'}</span>
       <strong>${esc(currentL.name)}</strong>
@@ -452,7 +497,7 @@ function renderSwapDialog() {
     const l = localizedExercise({ ...ex, note: ex.cue, noteHe: ex.cueHe, rest: '' }, lang);
     const selected = swapSelectionKey === key;
     return `<button type="button" class="swap-option ${selected ? 'selected' : ''}" data-swap-key="${key}">
-      <span class="swap-option-icon">${equipmentIcon(ex.equipmentType)}</span>
+      ${equipmentVisual(ex, 'swap-option-icon')}
       <span class="swap-option-copy">
         <span class="swap-match">${esc(swapMatchLabel(score, lang))}</span>
         <strong>${esc(l.name)}</strong>
@@ -639,37 +684,43 @@ function resetForm() {
 }
 
 function publicSharePlan(plan) {
+  // Compact v3 payload keeps no-backend member links comfortably short.
+  // Deliberately excludes height, weight, medical toggles and safety-screen answers.
   const p = plan.profile;
   return {
-    v: 2,
-    lang: currentLanguage,
-    profile: {
-      name: p.name,
-      goal: p.goal,
-      experience: p.experience,
-      days: p.days,
-      duration: p.duration,
-      activity: p.activity,
-      trainerNotes: p.trainerNotes || '',
-      isMinor: p.age < 18
-    },
-    workouts: plan.workouts.map(w => ({
-      name: w.name,
-      nameHe: w.nameHe,
-      exercises: w.exercises.map(ex => ({
-        key: ex.key,
-        sets: ex.sets,
-        reps: ex.reps,
-        rest: ex.rest,
-        role: ex.role,
-        substituted: !!ex.substituted,
-        manualSwap: !!ex.manualSwap
-      }))
+    v: 3,
+    l: currentLanguage,
+    p: { n: p.name || '', g: p.goal, e: p.experience, d: p.days, t: p.duration, a: p.activity, q: p.trainerNotes || '', m: p.age < 18 ? 1 : 0 },
+    w: plan.workouts.map(w => ({
+      n: w.name,
+      h: w.nameHe,
+      x: w.exercises.map(ex => [ex.key, ex.sets, ex.reps, ex.rest, ex.role || '', ex.substituted ? 1 : 0, ex.manualSwap ? 1 : 0])
     }))
   };
 }
 
-function inflateSharedPlan(shared) {
+function normalizeSharedPlan(raw) {
+  // v3 compact payload
+  if (raw?.v === 3 && raw?.p && Array.isArray(raw?.w)) {
+    return {
+      lang: raw.l === 'he' ? 'he' : 'en',
+      profile: {
+        name: raw.p.n || '', goal: raw.p.g || 'general', experience: raw.p.e || 'new',
+        days: Number(raw.p.d || 3), duration: Number(raw.p.t || 60), activity: raw.p.a || 'moderate',
+        trainerNotes: raw.p.q || '', isMinor: !!raw.p.m
+      },
+      workouts: raw.w.map(w => ({
+        name: w.n || 'Workout', nameHe: w.h || 'אימון',
+        exercises: (w.x || []).map(x => ({ key:x[0], sets:x[1], reps:x[2], rest:x[3], role:x[4], substituted:!!x[5], manualSwap:!!x[6] }))
+      }))
+    };
+  }
+  // Backward compatibility with v2 links already sent to members.
+  return raw;
+}
+
+function inflateSharedPlan(raw) {
+  const shared = normalizeSharedPlan(raw);
   const sp = shared.profile || {};
   const profile = {
     name: sp.name || '', goal: sp.goal || 'general', experience: sp.experience || 'new', days: Number(sp.days || 3), duration: Number(sp.duration || 60),
@@ -685,7 +736,7 @@ function inflateSharedPlan(shared) {
       return { ...base, key: base.key, sets: item.sets, reps: item.reps, rest: item.rest, role: item.role, note: base.cue, noteHe: base.cueHe, substituted: !!item.substituted, reason: '', reasonHe: '', generatedKey: base.key, manualSwap: !!item.manualSwap };
     })
   }));
-  return plan;
+  return { ...plan, sharedLanguage: shared.lang || 'en' };
 }
 
 function encodeShare(payload) {
@@ -697,28 +748,66 @@ function decodeShare(encoded) {
   const binary = atob(padded); const bytes = Uint8Array.from(binary, c => c.charCodeAt(0)); return JSON.parse(new TextDecoder().decode(bytes));
 }
 
+function buildMemberUrl() {
+  if (!currentPlan || currentPlan.blocked) return '';
+  const encoded = encodeShare(publicSharePlan(currentPlan));
+  const url = new URL(window.location.href);
+  url.search = '';
+  url.hash = '';
+  url.searchParams.set('routine', encoded);
+  return url.toString();
+}
+
 async function copyMemberLink() {
-  if (!currentPlan || currentPlan.blocked) return;
-  const encoded = encodeShare(publicSharePlan(currentPlan)); const base = location.origin && location.origin !== 'null' ? `${location.origin}${location.pathname}` : location.href.split('#')[0]; const url = `${base}#share=${encoded}`;
-  try { await navigator.clipboard.writeText(url); } catch { const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+  const url = buildMemberUrl();
+  if (!url) return;
+  try { await navigator.clipboard.writeText(url); }
+  catch {
+    const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+  }
+  flashToast(currentLanguage === 'he' ? 'קישור אישי לתוכנית הועתק ✓' : 'Member routine link copied ✓');
   const btn=$('#shareBtn'); const old=btn.innerHTML; btn.textContent='Link copied ✓'; setTimeout(()=>btn.innerHTML=old,1400);
+}
+
+function readSharedPayloadFromUrl() {
+  const queryPayload = new URLSearchParams(location.search).get('routine');
+  if (queryPayload) return queryPayload;
+  const hashMatch = location.hash.match(/^#(?:share|routine)=(.+)$/);
+  return hashMatch ? hashMatch[1] : '';
+}
+
+function initSharedRoutine() {
+  const encoded = readSharedPayloadFromUrl();
+  if (!encoded) return false;
+  try {
+    const raw = decodeShare(encoded);
+    const shared = normalizeSharedPlan(raw);
+    if (!shared?.workouts?.length || !shared?.profile) throw new Error('Invalid shared routine');
+    memberShareMode = true;
+    currentLanguage = shared.lang === 'he' ? 'he' : 'en';
+    currentPlan = inflateSharedPlan(raw);
+    activeDayIndex = 0;
+    document.body.classList.add('member-share-mode');
+    document.documentElement.classList.remove('shared-routine-loading');
+    document.title = `${currentPlan.profile.name ? currentPlan.profile.name + ' — ' : ''}Binyamin Gym Routine`;
+    setLanguage(currentLanguage);
+    setOutputState(true, false);
+    renderPlan(currentPlan);
+    $('#shareBtn').hidden = true;
+    $('#saveProfileBtnTop').hidden = true;
+    return true;
+  } catch (err) {
+    document.documentElement.classList.remove('shared-routine-loading');
+    console.warn('Could not open shared routine', err);
+    flashToast('This routine link could not be opened. Please ask Binyamin Gym for a new link.');
+    return false;
+  }
 }
 
 function setLanguage(lang) {
   currentLanguage = lang === 'he' ? 'he' : 'en';
   $$('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === currentLanguage));
   if (currentPlan) renderPlan(currentPlan);
-}
-
-function initSharedRoutine() {
-  const match = location.hash.match(/^#share=(.+)$/); if (!match) return false;
-  try {
-    const shared = decodeShare(match[1]); if (!shared?.workouts?.length || !shared?.profile) throw new Error('Invalid shared routine');
-    memberShareMode = true; currentLanguage = shared.lang === 'he' ? 'he' : 'en'; currentPlan = inflateSharedPlan(shared); activeDayIndex = 0;
-    document.body.classList.add('member-share-mode'); setLanguage(currentLanguage); setOutputState(true, false); renderPlan(currentPlan);
-    $('#shareBtn').hidden = true; $('#saveProfileBtnTop').hidden = true;
-    return true;
-  } catch (err) { console.warn('Could not open shared routine', err); return false; }
 }
 
 $('#intakeForm').addEventListener('submit', (e) => {
@@ -758,4 +847,4 @@ $('#resetExerciseBtn')?.addEventListener('click', () => {
 });
 
 setOutputState(false);
-initSharedRoutine();
+if (!initSharedRoutine()) document.documentElement.classList.remove('shared-routine-loading');

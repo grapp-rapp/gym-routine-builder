@@ -940,3 +940,36 @@ dialog.swap-dialog[open] { display: flex; flex-direction: column; }
   .exercise-edit-btn, .trainer-edit-tag, .app-toast { display: none !important; }
 }
 .swap-actions .btn[hidden] { display: none !important; }
+
+
+/* v5 — real equipment photography + robust shared-routine view */
+.shared-routine-loading body { visibility: hidden; }
+.member-share-mode { visibility: visible !important; }
+.member-share-mode .app-shell { min-height: 100vh; }
+.member-share-mode .output-toolbar { border-radius: 18px 18px 0 0; }
+
+.equipment-thumb.has-photo,
+.swap-current-icon.has-photo,
+.swap-option-icon.has-photo { overflow: hidden; padding: 0; background: #e9eef1; }
+.equipment-thumb img,
+.swap-current-icon img,
+.swap-option-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.equipment-icon-fallback { width: 100%; height: 100%; display: grid; place-items: center; }
+.equipment-icon-fallback[hidden] { display: none !important; }
+.equipment-icon-fallback svg { width: 70%; height: 70%; }
+
+/* Photos should be large enough to identify a machine without overwhelming the routine. */
+@media (min-width: 1181px) {
+  .exercise-item, .routine-rtl .exercise-item { grid-template-columns: 82px minmax(230px,1fr) 74px 92px 84px; }
+  .equipment-thumb { width: 74px; height: 62px; border-radius: 14px; }
+}
+
+@media (max-width: 680px) {
+  .member-share-mode .output-toolbar { padding: 14px 14px 12px; }
+  .member-share-mode .routine-hero { margin-top: 2px; }
+  .equipment-thumb { width: 58px; height: 52px; }
+}
+
+@media print {
+  .equipment-thumb img { object-fit: cover; }
+}

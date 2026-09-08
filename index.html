@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
+  <meta name="color-scheme" content="light" />
+  <title>Member Program — Gym Routine Builder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="app-sidebar no-print" aria-label="App navigation">
+      <div class="brand-mark" aria-label="Gym Routine Builder">
+        <span>SB</span>
+      </div>
+
+      <nav class="side-nav">
+        <button class="nav-btn active" id="newMemberBtn" type="button" title="New member" aria-label="New member">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          <span>New</span>
+        </button>
+        <button class="nav-btn" id="savedBtn" type="button" title="Saved profiles" aria-label="Saved profiles">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Members</span>
+        </button>
+      </nav>
+
+      <div class="side-status" title="Member data stays in this browser">
+        <span class="status-dot"></span>
+        <span>Local</span>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-header no-print">
+        <div class="header-copy">
+          <p class="eyebrow">SHA'AR BINYAMIN · MEMBER ONBOARDING</p>
+          <div class="title-row">
+            <h1>Build a starter program</h1>
+            <span class="app-badge">Staff tool</span>
+          </div>
+          <p class="sub">Member intake, issue-aware exercise selection and a clean handout in a few minutes.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn secondary" id="saveProfileBtnTop" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+            Save member
+          </button>
+          <button class="btn primary" id="printBtn" type="button" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+            Print routine
+          </button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel intake no-print" aria-labelledby="intakeTitle">
+          <div class="section-head intake-head">
+            <div>
+              <div class="step-row"><span class="step-number">01</span><p class="step">MEMBER INTAKE</p></div>
+              <h2 id="intakeTitle">Tell us who we're programming for</h2>
+              <p class="section-copy">The basics first. Nothing here is sent to a server.</p>
+            </div>
+            <span class="privacy-pill"><span></span> Local-only</span>
+          </div>
+
+          <form id="intakeForm">
+            <div class="form-section profile-section">
+              <div class="mini-heading">
+                <span class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg></span>
+                <div><h3>Profile</h3><p>Basic member information</p></div>
+              </div>
+              <div class="grid two profile-grid">
+                <label class="field wide-field"><span>Member name</span>
+                  <input id="name" autocomplete="name" placeholder="e.g. David Cohen" />
+                </label>
+                <label class="field"><span>Age</span>
+                  <div class="input-with-unit"><input id="age" type="number" min="14" max="100" value="35" required /><em>yrs</em></div>
+                </label>
+                <label class="field"><span>Height</span>
+                  <div class="input-with-unit"><input id="height" type="number" min="120" max="230" value="175" required /><em>cm</em></div>
+                </label>
+                <label class="field"><span>Weight</span>
+                  <div class="input-with-unit"><input id="weight" type="number" min="35" max="250" step="0.1" value="80" required /><em>kg</em></div>
+                </label>
+              </div>
+            </div>
+
+            <fieldset class="form-section">
+              <legend class="sr-only">Primary goal</legend>
+              <div class="mini-heading legend-heading">
+                <span class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                <div><h3>Primary goal</h3><p>We'll tune exercise selection, sets and reps around this.</p></div>
+              </div>
+              <div class="choice-grid goal-grid" id="goalChoices">
+                <label class="choice"><input type="radio" name="goal" value="general" checked><span><i>01</i><b>General fitness</b><small>Strength, health & consistency</small></span></label>
+                <label class="choice"><input type="radio" name="goal" value="fatloss"><span><i>02</i><b>Fat loss</b><small>Keep/build muscle + conditioning</small></span></label>
+                <label class="choice"><input type="radio" name="goal" value="muscle"><span><i>03</i><b>Build muscle</b><small>Hypertrophy-focused</small></span></label>
+                <label class="choice"><input type="radio" name="goal" value="strength"><span><i>04</i><b>Get stronger</b><small>Progressive strength emphasis</small></span></label>
+              </div>
+            </fieldset>
+
+            <div class="form-section">
+              <div class="mini-heading">
+                <span class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg></span>
+                <div><h3>Training setup</h3><p>Match the plan to what the member can realistically sustain.</p></div>
+              </div>
+              <div class="grid three">
+                <label class="field"><span>Experience</span>
+                  <select id="experience">
+                    <option value="new">New / returning</option>
+                    <option value="some">6–24 months</option>
+                    <option value="experienced">2+ years</option>
+                  </select>
+                </label>
+                <label class="field"><span>Days / week</span>
+                  <select id="days">
+                    <option value="2">2 days</option>
+                    <option value="3" selected>3 days</option>
+                    <option value="4">4 days</option>
+                    <option value="5">5 days</option>
+                  </select>
+                </label>
+                <label class="field"><span>Session length</span>
+                  <select id="duration">
+                    <option value="30">30 min</option>
+                    <option value="45">45 min</option>
+                    <option value="60" selected>60 min</option>
+                    <option value="75">75 min</option>
+                  </select>
+                </label>
+              </div>
+              <div class="grid two compact-grid second-row">
+                <label class="field"><span>Current weekly activity</span>
+                  <select id="activity">
+                    <option value="low">Little / none</option>
+                    <option value="moderate" selected>1–3 active days</option>
+                    <option value="high">4+ active days</option>
+                  </select>
+                </label>
+                <label class="field"><span>Cardio preference</span>
+                  <select id="cardioPreference">
+                    <option value="walk">Treadmill / walking</option>
+                    <option value="bike">Bike</option>
+                    <option value="elliptical">Elliptical</option>
+                    <option value="row">Rower</option>
+                    <option value="any" selected>No preference</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <fieldset class="form-section issue-section">
+              <legend class="sr-only">Movement considerations</legend>
+              <div class="mini-heading legend-heading">
+                <span class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5.6 6.5c2.7 1 4.3 3 4.3 5.5s-1.6 4.5-4.3 5.5M18.4 6.5c-2.7 1-4.3 3-4.3 5.5s1.6 4.5 4.3 5.5"/></svg></span>
+                <div><h3>Movement considerations</h3><p>Select anything that should influence exercise choices.</p></div>
+              </div>
+              <div class="toggle-grid" id="issueToggles">
+                <label class="toggle"><input type="checkbox" value="lowBack"><span><b>Low back</b><small>Spine / hinge</small></span></label>
+                <label class="toggle"><input type="checkbox" value="shoulder"><span><b>Shoulder</b><small>Press / overhead</small></span></label>
+                <label class="toggle"><input type="checkbox" value="knee"><span><b>Knee</b><small>Squat / impact</small></span></label>
+                <label class="toggle"><input type="checkbox" value="hip"><span><b>Hip</b><small>Range / loading</small></span></label>
+                <label class="toggle"><input type="checkbox" value="neck"><span><b>Neck</b><small>Position / loading</small></span></label>
+                <label class="toggle"><input type="checkbox" value="elbowWrist"><span><b>Elbow / wrist</b><small>Grip / pressing</small></span></label>
+              </div>
+              <label class="field full-width"><span>Anything else we should know?</span>
+                <textarea id="issueNotes" rows="2" placeholder="Example: overhead pressing feels uncomfortable; physio advised avoiding loaded spinal flexion"></textarea>
+              </label>
+            </fieldset>
+
+            <fieldset class="form-section safety-box">
+              <legend class="sr-only">Safety screen</legend>
+              <div class="mini-heading legend-heading">
+                <span class="mini-icon safety-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="M12 8v4M12 16h.01"/></svg></span>
+                <div><h3>Safety screen</h3><p>A “yes” pauses automatic programming for professional review.</p></div>
+              </div>
+              <div class="safety-list" id="redFlags">
+                <label><input type="checkbox" value="chestPain"><span>Chest pain or pressure with activity or at rest</span></label>
+                <label><input type="checkbox" value="fainting"><span>Unexplained fainting, near-fainting or severe dizziness</span></label>
+                <label><input type="checkbox" value="breath"><span>Unusual shortness of breath beyond normal exertion</span></label>
+                <label><input type="checkbox" value="doctorRestriction"><span>Doctor has restricted exercise or requested medical clearance</span></label>
+                <label><input type="checkbox" value="acuteInjury"><span>New/acute injury, severe pain or rapidly worsening symptoms</span></label>
+              </div>
+            </fieldset>
+
+            <div class="form-section notes-section">
+              <div class="mini-heading">
+                <span class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/></svg></span>
+                <div><h3>Trainer notes</h3><p>Optional context to carry onto the handout.</p></div>
+              </div>
+              <label class="field"><textarea id="trainerNotes" rows="3" placeholder="Preferences, cues, scheduling notes or anything to remember"></textarea></label>
+            </div>
+
+            <div class="form-actions sticky-actions">
+              <div class="action-note"><span class="status-dot"></span><span>Ready when intake is complete</span></div>
+              <div class="action-buttons">
+                <button class="btn secondary" id="saveProfileBtn" type="button">Save profile</button>
+                <button class="btn primary big" type="submit">
+                  Generate routine
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel output" id="outputPanel" aria-live="polite">
+          <div class="output-toolbar no-print">
+            <div>
+              <p class="step">ROUTINE PREVIEW</p>
+              <span>What the member will receive</span>
+            </div>
+            <div class="preview-status"><span></span> Live preview</div>
+          </div>
+
+          <div id="emptyState" class="empty-state">
+            <div class="preview-sheet" aria-hidden="true">
+              <div class="sheet-top">
+                <div class="sheet-brand"></div>
+                <div class="sheet-chip"></div>
+              </div>
+              <div class="sheet-title"></div>
+              <div class="sheet-subtitle"></div>
+              <div class="sheet-metrics"><i></i><i></i><i></i><i></i></div>
+              <div class="sheet-card"><b></b><span></span><span></span><span></span></div>
+              <div class="sheet-card second"><b></b><span></span><span></span><span></span></div>
+            </div>
+            <div class="empty-copy">
+              <span class="ready-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span>
+              <h2>Your member's program will appear here</h2>
+              <p>Complete the intake and we'll build a structured, issue-aware starter routine ready to print.</p>
+              <div class="feature-row">
+                <span>Smart substitutions</span>
+                <span>Progression guidance</span>
+                <span>A4 print-ready</span>
+              </div>
+            </div>
+          </div>
+          <div id="routineView" hidden></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="savedDialog">
+    <div class="dialog-head">
+      <div>
+        <div class="step-row"><span class="step-number">⌁</span><p class="step">MEMBER LIBRARY</p></div>
+        <h2>Saved profiles</h2>
+        <p class="dialog-sub">Profiles are stored only in this browser.</p>
+      </div>
+      <button class="icon-btn" id="closeDialogBtn" aria-label="Close">×</button>
+    </div>
+    <div id="savedList" class="saved-list"></div>
+    <div class="dialog-actions">
+      <button class="btn secondary" id="exportBtn" type="button">Export backup</button>
+      <label class="btn secondary file-label">Import backup<input id="importInput" type="file" accept="application/json"></label>
+      <button class="btn danger" id="clearSavedBtn" type="button">Clear all</button>
+    </div>
+  </dialog>
+
+  <template id="routineTemplate"></template>
+  <script src="app.js"></script>
+  <script>
+    // Mirror the top save action to the existing save-profile logic without changing the app engine.
+    document.getElementById('saveProfileBtnTop')?.addEventListener('click', () => document.getElementById('saveProfileBtn')?.click());
+  </script>
+</body>
+</html>

@@ -20,43 +20,19 @@ function makeId() {
 const LOGO_SRC = './binyamin-gym-logo.png';
 const LOGO_FALLBACK_SRC = './image-removebg-preview%20(1).png';
 
-// Temporary equipment reference photography / diagrams. We use resized
-// Wikimedia Commons redirects to keep mobile payloads light. Replace these with
-// photos of Binyamin Gym's exact machines once the equipment inventory is final.
-function commonsPhoto(filename, width=720) {
-  return `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(filename)}?width=${width}`;
+// Resolve exact product photos first, then local reference drawings.
+function equipmentAsset(ex) {
+  return EQUIPMENT_ASSETS[ex.key] || EQUIPMENT_ASSETS[ex.equipmentType] || EQUIPMENT_ASSETS.machine;
 }
 
-const EQUIPMENT_PHOTOS = {
-  legPress: commonsPhoto('Gym Leg Press Machine.jpg'),
-  hackSquat: commonsPhoto('Hack squat machine 1.svg'),
-  legCurl: commonsPhoto('Lying leg curl machine 2.svg'),
-  chestPress: commonsPhoto('Chest Incline.jpg'),
-  neutralPress: commonsPhoto('Chest Incline.jpg'),
-  shoulderPress: commonsPhoto('Shoulder Press.jpg'),
-  reverseFly: commonsPhoto('Multifunctional cable and row machines in a gym.jpg'),
-  pulldown: commonsPhoto('Lat pulldown machine 20180112.jpg'),
-  pulldownWide: commonsPhoto('Lat pulldown machine 20180112.jpg'),
-  row: commonsPhoto('Multifunctional cable and row machines in a gym.jpg'),
-  cableRow: commonsPhoto('Multifunctional cable and row machines in a gym.jpg'),
-  calf: commonsPhoto('Seated calf machine.jpg'),
-  treadmill: commonsPhoto('Treadmill-gym.jpg'),
-  bike: commonsPhoto('Stationary bicycle.jpg'),
-  elliptical: commonsPhoto('Elliptical machine.jpg'),
-  rower: commonsPhoto('Rowing Machine.jpg'),
-  cable: commonsPhoto('Multifunctional cable and row machines in a gym.jpg'),
-  dumbbell: commonsPhoto('Dumbbells in a local health club.jpg'),
-  bench: commonsPhoto('Dumbbells in a local health club.jpg'),
-  machine: commonsPhoto('Multifunctional cable and row machines in a gym.jpg')
-};
-
 function equipmentPhoto(ex) {
-  return EQUIPMENT_PHOTOS[ex.key] || EQUIPMENT_PHOTOS[ex.equipmentType] || '';
+  return equipmentAsset(ex).src;
 }
 
 function equipmentVisual(ex, className='equipment-thumb', label='') {
   const photo = equipmentPhoto(ex);
-  const safeLabel = esc(label || ex.equipment || ex.name || 'Gym equipment');
+  const asset = equipmentAsset(ex);
+  const safeLabel = esc([label || ex.equipment || ex.name || 'Gym equipment', asset.model].filter(Boolean).join(' · '));
   const fallback = `<span class="equipment-icon-fallback" ${photo ? 'hidden' : ''}>${equipmentIcon(ex.equipmentType)}</span>`;
   if (!photo) return `<div class="${className}" title="${safeLabel}">${fallback}</div>`;
   const image = `<img src="${esc(photo)}" alt="${safeLabel}" loading="lazy" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false">${fallback}`;
@@ -68,97 +44,6 @@ function equipmentVisual(ex, className='equipment-thumb', label='') {
   }
   return `<div class="${className} has-photo" title="${safeLabel}">${image}</div>`;
 }
-
-const EX = {
-  legPress: { name: 'Leg Press', he: 'לחיצת רגליים', pattern: 'squat', cue: 'Controlled depth; keep back supported.', cueHe: 'טווח נוח ומבוקר, עם גב נתמך.', equipment: 'Leg press machine', equipmentHe: 'מכונת לחיצת רגליים', equipmentType: 'machine' },
-  gobletSquat: { name: 'Goblet Squat to Box', he: 'סקוואט גביע לספסל', pattern: 'squat', cue: 'Sit to a comfortable box height; smooth tempo.', cueHe: 'שב לגובה נוח ושמור על קצב מבוקר.', equipment: 'Dumbbell + box', equipmentHe: 'משקולת יד + ספסל', equipmentType: 'dumbbell' },
-  hackSquat: { name: 'Hack Squat / Supported Squat', he: 'האק סקוואט / סקוואט נתמך', pattern: 'squat', cue: 'Use a pain-free range and stable foot position.', cueHe: 'עבוד בטווח ללא כאב ובמנח רגליים יציב.', equipment: 'Hack squat machine', equipmentHe: 'מכונת האק סקוואט', equipmentType: 'machine' },
-  splitSquat: { name: 'Supported Split Squat', he: 'מכרע מפוצל עם תמיכה', pattern: 'singleLeg', cue: 'Hold support if needed; keep range comfortable.', cueHe: 'היעזר בתמיכה לפי הצורך ושמור על טווח נוח.', equipment: 'Bench / support', equipmentHe: 'ספסל / תמיכה', equipmentType: 'bench' },
-  stepUp: { name: 'Low Step-Up', he: 'עלייה למדרגה נמוכה', pattern: 'singleLeg', cue: 'Drive through whole foot; choose a low box.', cueHe: 'דחוף דרך כל כף הרגל ובחר מדרגה נמוכה.', equipment: 'Low step / box', equipmentHe: 'מדרגה / קופסה נמוכה', equipmentType: 'box' },
-  legCurl: { name: 'Seated / Lying Leg Curl', he: 'כפיפת ברך במכונה', pattern: 'hinge', cue: 'Slow lowering; avoid arching the back.', cueHe: 'הורדה איטית ומבוקרת, בלי לקשת את הגב.', equipment: 'Leg curl machine', equipmentHe: 'מכונת כפיפת ברך', equipmentType: 'machine' },
-  hipThrust: { name: 'Hip Thrust / Glute Bridge', he: 'היפ תראסט / גשר ישבן', pattern: 'hinge', cue: 'Finish with glutes, not low-back extension.', cueHe: 'סיים בכיווץ ישבן, בלי להאריך את הגב התחתון.', equipment: 'Bench + pad', equipmentHe: 'ספסל + כרית', equipmentType: 'bench' },
-  cablePullThrough: { name: 'Cable Pull-Through', he: 'פול-ת׳רו בכבל', pattern: 'hinge', cue: 'Hip hinge with neutral spine.', cueHe: 'תנועת ציר מהירך עם עמוד שדרה ניטרלי.', equipment: 'Cable station', equipmentHe: 'תחנת כבלים', equipmentType: 'cable' },
-  rdl: { name: 'Dumbbell Romanian Deadlift', he: 'דדליפט רומני עם משקולות יד', pattern: 'hinge', cue: 'Hinge at hips; stop before spinal position changes.', cueHe: 'ציר מהירך; עצור לפני שמנח הגב משתנה.', equipment: 'Dumbbells', equipmentHe: 'משקולות יד', equipmentType: 'dumbbell' },
-  chestPress: { name: 'Machine Chest Press', he: 'לחיצת חזה במכונה', pattern: 'push', cue: 'Shoulder blades supported; neutral, comfortable grip.', cueHe: 'שכמות נתמכות ואחיזה נוחה וניטרלית.', equipment: 'Chest press machine', equipmentHe: 'מכונת לחיצת חזה', equipmentType: 'machine' },
-  dbBench: { name: 'Dumbbell Bench Press', he: 'לחיצת חזה עם משקולות יד', pattern: 'push', cue: 'Keep elbows in a comfortable path.', cueHe: 'שמור את המרפקים במסלול נוח.', equipment: 'Bench + dumbbells', equipmentHe: 'ספסל + משקולות יד', equipmentType: 'dumbbell' },
-  inclinePushup: { name: 'Incline Push-Up', he: 'שכיבות סמיכה בשיפוע', pattern: 'push', cue: 'Choose bench height that feels smooth and stable.', cueHe: 'בחר גובה ספסל שמרגיש יציב ונוח.', equipment: 'Bench', equipmentHe: 'ספסל', equipmentType: 'bench' },
-  cablePress: { name: 'Standing Cable Press', he: 'לחיצת חזה בעמידה בכבל', pattern: 'push', cue: 'Light load; ribs stacked; smooth press.', cueHe: 'משקל קל, גוף יציב ולחיצה חלקה.', equipment: 'Cable station', equipmentHe: 'תחנת כבלים', equipmentType: 'cable' },
-  neutralPress: { name: 'Neutral-Grip Machine Press', he: 'לחיצה במכונה באחיזה ניטרלית', pattern: 'push', cue: 'Use neutral grip and pain-free range.', cueHe: 'אחיזה ניטרלית וטווח ללא כאב.', equipment: 'Press machine', equipmentHe: 'מכונת לחיצה', equipmentType: 'machine' },
-  row: { name: 'Chest-Supported Row', he: 'חתירה עם תמיכת חזה', pattern: 'pull', cue: 'Keep chest supported; pull elbows toward ribs.', cueHe: 'השאר את החזה נתמך ומשוך מרפקים לכיוון הצלעות.', equipment: 'Supported row machine', equipmentHe: 'מכונת חתירה עם תמיכת חזה', equipmentType: 'machine' },
-  cableRow: { name: 'Seated Cable Row', he: 'חתירה בישיבה בכבל', pattern: 'pull', cue: 'Stay tall; do not rock through the low back.', cueHe: 'שב זקוף ואל תתנדנד דרך הגב התחתון.', equipment: 'Cable row', equipmentHe: 'חתירה בכבל', equipmentType: 'cable' },
-  pulldown: { name: 'Neutral-Grip Lat Pulldown', he: 'משיכת פולי עליון באחיזה ניטרלית', pattern: 'verticalPull', cue: 'Pull to upper chest without leaning back.', cueHe: 'משוך לכיוון החזה העליון בלי להישען לאחור.', equipment: 'Lat pulldown', equipmentHe: 'מכונת פולי עליון', equipmentType: 'cable' },
-  pulldownWide: { name: 'Lat Pulldown', he: 'משיכת פולי עליון', pattern: 'verticalPull', cue: 'Comfortable grip; avoid forcing shoulder range.', cueHe: 'אחיזה נוחה; אל תכריח טווח כתף.', equipment: 'Lat pulldown', equipmentHe: 'מכונת פולי עליון', equipmentType: 'cable' },
-  facePull: { name: 'Cable Face Pull', he: 'פייס פול בכבל', pattern: 'rearDelt', cue: 'Light load; move through a comfortable shoulder range.', cueHe: 'משקל קל ותנועה בטווח כתף נוח.', equipment: 'Cable station + rope', equipmentHe: 'כבל + חבל', equipmentType: 'cable' },
-  reverseFly: { name: 'Reverse Pec Deck', he: 'פרפר הפוך במכונה', pattern: 'rearDelt', cue: 'Keep shoulders down; control both directions.', cueHe: 'שמור כתפיים נמוכות ושלוט בשני הכיוונים.', equipment: 'Reverse pec deck', equipmentHe: 'מכונת פרפר הפוך', equipmentType: 'machine' },
-  lateralRaise: { name: 'Cable / Machine Lateral Raise', he: 'הרחקת כתפיים בכבל / מכונה', pattern: 'shoulder', cue: 'Light load; stop before discomfort.', cueHe: 'משקל קל; עצור לפני אי-נוחות.', equipment: 'Cable / shoulder machine', equipmentHe: 'כבל / מכונת כתפיים', equipmentType: 'cable' },
-  shoulderPress: { name: 'Machine Shoulder Press', he: 'לחיצת כתפיים במכונה', pattern: 'shoulder', cue: 'Do not force overhead range; stop if pinching.', cueHe: 'אל תכריח טווח מעל הראש; עצור אם יש צביטה.', equipment: 'Shoulder press machine', equipmentHe: 'מכונת לחיצת כתפיים', equipmentType: 'machine' },
-  cableCurl: { name: 'Cable Curl', he: 'כפיפת מרפק בכבל', pattern: 'arms', cue: 'Keep wrist neutral and elbows quiet.', cueHe: 'שורש כף יד ניטרלי ומרפקים יציבים.', equipment: 'Cable station', equipmentHe: 'תחנת כבלים', equipmentType: 'cable' },
-  hammerCurl: { name: 'Hammer Curl', he: 'כפיפת פטיש', pattern: 'arms', cue: 'Neutral wrist; controlled reps.', cueHe: 'שורש כף יד ניטרלי וחזרות מבוקרות.', equipment: 'Dumbbells', equipmentHe: 'משקולות יד', equipmentType: 'dumbbell' },
-  pressdown: { name: 'Rope Triceps Pressdown', he: 'פשיטת מרפק בכבל עם חבל', pattern: 'arms', cue: 'Keep elbows at sides and wrists comfortable.', cueHe: 'מרפקים צמודים לגוף ושורשי כף יד נוחים.', equipment: 'Cable station + rope', equipmentHe: 'כבל + חבל', equipmentType: 'cable' },
-  calf: { name: 'Standing / Seated Calf Raise', he: 'הרמות תאומים בעמידה / ישיבה', pattern: 'calves', cue: 'Pause at top and bottom; controlled range.', cueHe: 'עצירה קצרה למעלה ולמטה, בטווח מבוקר.', equipment: 'Calf machine', equipmentHe: 'מכונת תאומים', equipmentType: 'machine' },
-  pallof: { name: 'Pallof Press', he: 'פאלוף פרס', pattern: 'core', cue: 'Brace; resist rotation. No breath holding.', cueHe: 'ייצב את הגו והתנגד לסיבוב. אל תעצור נשימה.', equipment: 'Cable station', equipmentHe: 'תחנת כבלים', equipmentType: 'cable' },
-  deadBug: { name: 'Dead Bug', he: 'דד באג', pattern: 'core', cue: 'Keep ribs down; only extend as far as you can control.', cueHe: 'שמור צלעות למטה והארך רק עד הטווח שבשליטה.', equipment: 'Mat', equipmentHe: 'מזרן', equipmentType: 'bodyweight' },
-  birdDog: { name: 'Bird Dog', he: 'בירד דוג', pattern: 'core', cue: 'Reach long; avoid twisting or arching.', cueHe: 'הארך את הגפיים בלי להסתובב או לקשת את הגב.', equipment: 'Mat', equipmentHe: 'מזרן', equipmentType: 'bodyweight' },
-  plank: { name: 'Incline Plank', he: 'פלאנק בשיפוע', pattern: 'core', cue: 'Brace gently; stop before back or shoulder discomfort.', cueHe: 'ייצב בעדינות; עצור לפני אי-נוחות בגב או בכתף.', equipment: 'Bench', equipmentHe: 'ספסל', equipmentType: 'bench' },
-  suitcase: { name: 'Suitcase Carry', he: 'נשיאת מזוודה', pattern: 'carry', cue: 'Walk tall; do not lean toward or away from the weight.', cueHe: 'לך זקוף בלי לנטות אל המשקל או ממנו.', equipment: 'Dumbbell / kettlebell', equipmentHe: 'משקולת יד / קטלבל', equipmentType: 'dumbbell' },
-  bike: { name: 'Stationary Bike', he: 'אופני כושר', pattern: 'cardio', cue: 'Conversational pace unless otherwise noted.', cueHe: 'קצב שבו עדיין אפשר לדבר, אלא אם צוין אחרת.', equipment: 'Exercise bike', equipmentHe: 'אופני כושר', equipmentType: 'bike' },
-  treadmill: { name: 'Treadmill Walk', he: 'הליכה על הליכון', pattern: 'cardio', cue: 'Comfortable pace; incline optional.', cueHe: 'קצב נוח; שיפוע לפי הצורך.', equipment: 'Treadmill', equipmentHe: 'הליכון', equipmentType: 'treadmill' },
-  elliptical: { name: 'Elliptical', he: 'אליפטיקל', pattern: 'cardio', cue: 'Smooth, moderate effort.', cueHe: 'מאמץ מתון ותנועה חלקה.', equipment: 'Elliptical', equipmentHe: 'אליפטיקל', equipmentType: 'elliptical' },
-  rower: { name: 'Rower', he: 'מכשיר חתירה', pattern: 'cardio', cue: 'Easy technique-focused pace.', cueHe: 'קצב קל עם דגש על טכניקה.', equipment: 'Rowing machine', equipmentHe: 'מכשיר חתירה', equipmentType: 'rower' },
-  balanceStand: { name: 'Balance: supported single-leg stand', he: 'שיווי משקל: עמידה על רגל אחת עם תמיכה', pattern: 'balance', cue: 'Use a stable support. Stop if dizzy or unsteady.', cueHe: 'היעזר בתמיכה יציבה. עצור במקרה של סחרחורת או חוסר יציבות.', equipment: 'Stable support', equipmentHe: 'משטח / תמיכה יציבה', equipmentType: 'bodyweight' }
-};
-Object.entries(EX).forEach(([key, value]) => { value.key = key; });
-
-const SWAP_FAMILIES = [
-  ['legPress', 'gobletSquat', 'hackSquat', 'splitSquat', 'stepUp'],
-  ['legCurl', 'hipThrust', 'cablePullThrough', 'rdl'],
-  ['chestPress', 'dbBench', 'inclinePushup', 'cablePress', 'neutralPress'],
-  ['row', 'cableRow', 'pulldown', 'pulldownWide', 'facePull', 'reverseFly'],
-  ['facePull', 'reverseFly', 'lateralRaise', 'shoulderPress'],
-  ['cableCurl', 'hammerCurl', 'pressdown'],
-  ['pallof', 'deadBug', 'birdDog', 'plank', 'suitcase'],
-  ['bike', 'treadmill', 'elliptical', 'rower'],
-  ['calf'],
-  ['balanceStand']
-];
-
-const GOAL_LABEL = { general: 'General fitness', fatloss: 'Fat loss', muscle: 'Build muscle', strength: 'Get stronger' };
-const GOAL_LABEL_HE = { general: 'כושר כללי', fatloss: 'ירידה באחוזי שומן', muscle: 'בניית שריר', strength: 'התחזקות' };
-const ISSUE_LABEL = { lowBack: 'low-back considerations', shoulder: 'shoulder considerations', knee: 'knee considerations', hip: 'hip considerations', neck: 'neck considerations', elbowWrist: 'elbow/wrist considerations' };
-const ISSUE_LABEL_HE = { lowBack: 'גב תחתון', shoulder: 'כתף', knee: 'ברך', hip: 'ירך', neck: 'צוואר', elbowWrist: 'מרפק / שורש כף יד' };
-
-const COPY = {
-  en: {
-    starter: 'STARTER PROGRAM', daysWeek: 'days / week', session: 'session length', experience: 'experience',
-    day: 'Workout', exercise: 'Exercise', sets: 'Sets', reps: 'Reps / time', rest: 'Rest', equipment: 'Equipment', modified: 'MODIFIED',
-    warmup: 'Warm-up', cardio: 'Weekly cardio', progress: 'How to progress', rules: 'First 4–6 weeks',
-    rule1: 'Leave reps in reserve; do not train to failure.', rule2: 'Technique and comfortable range come before load.',
-    rule3: 'Use controlled, comfortable movement and adjust any exercise that does not feel right.', rule4: 'Ask staff for a form check before increasing loads aggressively.',
-    trainerNote: 'Trainer note', target: 'planned length', startAt: 'Starting effort', programAdjusted: 'Program adjusted for',
-    painRule: 'Use a comfortable range and adjust any movement that does not suit the member.',
-    noIssues: 'No movement considerations selected. Use controlled technique and a comfortable range.',
-    memberNote: 'Member note', minor: 'Minor member', minorText: 'Follow the gym’s youth-supervision policy and applicable instructor requirements.',
-    equipmentGuide: 'Equipment', prev: 'Previous workout', next: 'Next workout', routineFor: 'Routine for',
-    replace: 'Replace', edited: 'TRAINER EDIT', swapTitle: 'Replace exercise', saveChange: 'Save change',
-    resetExercise: 'Reset to generated', recommended: 'Recommended', allSafe: 'All suitable exercises',
-    referenceImage: 'Reference image — your exact Binyamin Gym machine may differ.'
-  },
-  he: {
-    starter: 'תוכנית התחלה', daysWeek: 'אימונים בשבוע', session: 'משך אימון', experience: 'רמת ניסיון',
-    day: 'אימון', exercise: 'תרגיל', sets: 'סטים', reps: 'חזרות / זמן', rest: 'מנוחה', equipment: 'ציוד', modified: 'מותאם',
-    warmup: 'חימום', cardio: 'אירובי שבועי', progress: 'איך מתקדמים', rules: 'כללים ל־4–6 השבועות הראשונים',
-    rule1: 'השאירו חזרות ברזרבה ואל תתאמנו עד כשל.', rule2: 'טכניקה וטווח תנועה נוח קודמים להוספת משקל.',
-    rule3: 'עבדו בתנועה מבוקרת ונוחה והתאימו כל תרגיל שאינו מרגיש מתאים.', rule4: 'בקשו מאיש צוות לבדוק טכניקה לפני העלאה משמעותית של המשקל.',
-    trainerNote: 'הערת מאמן', target: 'משך מתוכנן', startAt: 'עצימות התחלתית', programAdjusted: 'התוכנית הותאמה עבור',
-    painRule: 'עבדו בטווח נוח והתאימו כל תנועה שאינה מתאימה למתאמן.',
-    noIssues: 'לא סומנו מגבלות תנועה. יש לעבוד בטכניקה מבוקרת ובטווח נוח.',
-    memberNote: 'הערת מתאמן', minor: 'מתאמן קטין', minorText: 'יש לפעול לפי מדיניות הפיקוח לנוער ודרישות ההדרכה הרלוונטיות.',
-    equipmentGuide: 'ציוד', prev: 'האימון הקודם', next: 'האימון הבא', routineFor: 'תוכנית עבור',
-    replace: 'החלפה', edited: 'נערך ע״י מאמן', swapTitle: 'החלפת תרגיל', saveChange: 'שמירת שינוי',
-    resetExercise: 'חזרה לתרגיל המקורי', recommended: 'מומלץ', allSafe: 'כל התרגילים המתאימים',
-    referenceImage: 'תמונת המחשה — המכשיר בפועל בבנימין ג׳ים עשוי להיראות אחרת.'
-  }
-};
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -173,6 +58,7 @@ function getFormData() {
     gender: genderInput?.value || '',
     goal: $('input[name="goal"]:checked').value, experience: $('#experience').value, days: Number($('#days').value), duration: Number($('#duration').value),
     activity: $('#activity').value, cardioPreference: $('#cardioPreference').value, issues, issueNotes: $('#issueNotes').value.trim(),
+    memberNotes: $('#memberNotes').value.trim(), memberNotesHe: $('#memberNotesHe').value.trim(),
     trainerNotes: $('#trainerNotes').value.trim(), updatedAt: new Date().toISOString()
   };
 }
@@ -186,128 +72,8 @@ function setFormData(p) {
   $('#activity').value = p.activity || 'moderate'; $('#cardioPreference').value = p.cardioPreference || 'any';
   $$('#issueToggles input').forEach(x => x.checked = (p.issues || []).includes(x.value)); $('#issueNotes').value = p.issueNotes || '';
   $('#trainerNotes').value = p.trainerNotes || '';
+  $('#memberNotes').value = p.memberNotes || ''; $('#memberNotesHe').value = p.memberNotesHe || '';
 }
-
-function calcBmi(height, weight) { return height && weight ? weight / Math.pow(height / 100, 2) : null; }
-function effortPrescription(p) {
-  if (p.experience === 'new') return { rpe: 'RPE 6–7', rpeHe: 'מאמץ 6–7 מתוך 10', rir: 'about 3–4 reps in reserve', rirHe: 'כ־3–4 חזרות ברזרבה', sets: 2 };
-  if (p.experience === 'some') return { rpe: 'RPE 7–8', rpeHe: 'מאמץ 7–8 מתוך 10', rir: 'about 2–3 reps in reserve', rirHe: 'כ־2–3 חזרות ברזרבה', sets: 3 };
-  return { rpe: 'RPE 7–8', rpeHe: 'מאמץ 7–8 מתוך 10', rir: 'about 2 reps in reserve', rirHe: 'כ־2 חזרות ברזרבה', sets: 3 };
-}
-function volumeFor(p, role='main') { let sets = effortPrescription(p).sets; if (p.duration === 30 && role !== 'main') sets = Math.max(1, sets - 1); if (p.goal === 'strength' && role === 'main' && p.experience !== 'new') sets += 1; return sets; }
-function repRange(p, role='main') { if (p.goal === 'strength') return role === 'main' ? '5–8' : '8–12'; if (p.goal === 'muscle') return role === 'main' ? '6–10' : '10–15'; return role === 'main' ? '8–12' : '10–15'; }
-function restRange(p, role='main') { return p.goal === 'strength' && role === 'main' ? '2–3 min' : role === 'main' ? '90–120 sec' : '60–90 sec'; }
-function formatHebrewMeasure(value) { return String(value ?? '').replace(/\bmin\b/g, 'דק׳').replace(/\bsec\b/g, 'שנ׳').replace(/\/side\b/g, ' לכל צד'); }
-function restHe(rest) { return formatHebrewMeasure(rest); }
-
-function chooseCardio(p) {
-  const map = { walk: EX.treadmill, bike: EX.bike, elliptical: EX.elliptical, row: EX.rower };
-  let c = map[p.cardioPreference] || EX.treadmill;
-  if (p.issues.includes('knee') && c === EX.treadmill) c = EX.bike;
-  if ((p.issues.includes('lowBack') || p.issues.includes('hip')) && c === EX.rower) c = EX.bike;
-  return c;
-}
-
-function safeExercise(key, p) {
-  const issues = new Set(p.issues); const original = EX[key]; let replacement = original; let reason = ''; let reasonHe = '';
-  const swap = (newKey, why, whyHe) => { replacement = EX[newKey]; reason = why; reasonHe = whyHe; };
-  if (issues.has('lowBack')) {
-    if (key === 'rdl') swap('legCurl', 'swapped to reduce loaded spinal/hip-hinge demand', 'הוחלף כדי להפחית עומס בציר הירך והגב');
-    if (key === 'gobletSquat') swap('legPress', 'swapped for more trunk support', 'הוחלף לתרגיל עם יותר תמיכה לגו');
-    if (key === 'cableRow') swap('row', 'swapped for chest support', 'הוחלף לחתירה עם תמיכת חזה');
-    if (key === 'plank') swap('birdDog', 'swapped for lower-load trunk control', 'הוחלף לתרגיל ליבה בעומס נמוך יותר');
-    if (key === 'rower') swap('bike', 'swapped to reduce repetitive trunk flexion', 'הוחלף כדי להפחית כיפוף חוזר של הגו');
-  }
-  if (issues.has('shoulder')) {
-    if (key === 'shoulderPress') swap('lateralRaise', 'overhead press replaced with a pain-free shoulder option', 'לחיצה מעל הראש הוחלפה באפשרות נוחה יותר לכתף');
-    if (key === 'dbBench') swap('neutralPress', 'swapped to a supported neutral-grip press', 'הוחלף ללחיצה נתמכת באחיזה ניטרלית');
-    if (key === 'pulldownWide') swap('pulldown', 'swapped to a shoulder-friendlier neutral grip', 'הוחלף לאחיזה ניטרלית ונוחה יותר לכתף');
-    if (key === 'plank') swap('pallof', 'swapped to reduce weight-bearing through the shoulder', 'הוחלף כדי להפחית נשיאת משקל דרך הכתף');
-  }
-  if (issues.has('knee')) {
-    if (key === 'gobletSquat') swap('legPress', 'use a comfortable range and foot position', 'יש לעבוד בטווח ובמנח רגליים נוחים');
-    if (key === 'splitSquat') swap('legCurl', 'single-leg knee-dominant work reduced initially', 'עבודה חד־רגלית דומיננטית לברך הופחתה בשלב הראשון');
-    if (key === 'stepUp') swap('hipThrust', 'step work replaced initially', 'תרגיל המדרגה הוחלף בשלב הראשון');
-  }
-  if (issues.has('hip')) {
-    if (key === 'splitSquat') swap('legPress', 'use a controlled, comfortable hip range', 'יש לעבוד בטווח ירך נוח ומבוקר');
-    if (key === 'rdl') swap('legCurl', 'loaded hip hinge reduced initially', 'עומס בציר הירך הופחת בשלב הראשון');
-  }
-  if (issues.has('neck')) {
-    if (key === 'shoulderPress') swap('lateralRaise', 'overhead loading reduced initially', 'עומס מעל הראש הופחת בשלב הראשון');
-    if (key === 'suitcase') swap('pallof', 'carry replaced to reduce neck/upper-trap loading', 'הנשיאה הוחלפה כדי להפחית עומס על הצוואר והטרפז העליון');
-  }
-  if (issues.has('elbowWrist')) {
-    if (key === 'cableCurl') swap('hammerCurl', 'neutral wrist/grip selected', 'נבחרה אחיזה ניטרלית לשורש כף היד');
-    if (key === 'dbBench') swap('neutralPress', 'supported neutral grip selected', 'נבחרה לחיצה נתמכת באחיזה ניטרלית');
-    if (key === 'inclinePushup') swap('chestPress', 'machine handle allows more neutral wrist position', 'ידית המכונה מאפשרת מנח ניטרלי יותר לשורש כף היד');
-  }
-  return { ...replacement, key: replacement.key, substituted: replacement.name !== original.name, reason, reasonHe, originalName: original.name };
-}
-
-function exerciseRow(key, p, role='main', override={}) {
-  const ex = safeExercise(key, p);
-  return {
-    ...ex,
-    key: ex.key,
-    sets: override.sets || volumeFor(p, role),
-    reps: override.reps || repRange(p, role),
-    rest: override.rest || restRange(p, role),
-    role,
-    note: override.note || ex.cue,
-    noteHe: override.noteHe || ex.cueHe,
-    generatedKey: ex.key,
-    manualSwap: false
-  };
-}
-
-function makeWorkouts(p) {
-  const fullA = [['legPress','main'], ['chestPress','main'], ['row','main'], ['legCurl','accessory'], ['lateralRaise','accessory'], ['pallof','accessory']];
-  const fullB = [['gobletSquat','main'], ['pulldown','main'], ['dbBench','main'], ['hipThrust','accessory'], ['facePull','accessory'], ['deadBug','accessory']];
-  const fullC = [['legPress','main'], ['row','main'], ['neutralPress','main'], ['splitSquat','accessory'], ['pulldown','accessory'], ['suitcase','accessory']];
-  const upperA = [['chestPress','main'], ['row','main'], ['pulldown','main'], ['lateralRaise','accessory'], ['cableCurl','accessory'], ['pressdown','accessory'], ['pallof','accessory']];
-  const lowerA = [['legPress','main'], ['rdl','main'], ['splitSquat','accessory'], ['legCurl','accessory'], ['calf','accessory'], ['deadBug','accessory']];
-  const upperB = [['neutralPress','main'], ['pulldown','main'], ['row','main'], ['facePull','accessory'], ['hammerCurl','accessory'], ['pressdown','accessory'], ['pallof','accessory']];
-  const lowerB = [['gobletSquat','main'], ['hipThrust','main'], ['stepUp','accessory'], ['legCurl','accessory'], ['calf','accessory'], ['birdDog','accessory']];
-  let schemas;
-  if (p.days === 2) schemas = [['Full Body A','גוף מלא א',fullA], ['Full Body B','גוף מלא ב',fullB]];
-  else if (p.days === 3) schemas = [['Full Body A','גוף מלא א',fullA], ['Full Body B','גוף מלא ב',fullB], ['Full Body C','גוף מלא ג',fullC]];
-  else if (p.days === 4) schemas = [['Upper A','פלג גוף עליון א',upperA], ['Lower A','פלג גוף תחתון א',lowerA], ['Upper B','פלג גוף עליון ב',upperB], ['Lower B','פלג גוף תחתון ב',lowerB]];
-  else schemas = [['Upper A','פלג גוף עליון א',upperA], ['Lower A','פלג גוף תחתון א',lowerA], ['Full Body','גוף מלא',fullC], ['Upper B','פלג גוף עליון ב',upperB], ['Lower B','פלג גוף תחתון ב',lowerB]];
-
-  let maxExercises = p.duration <= 30 ? 4 : p.duration <= 45 ? 5 : p.duration <= 60 ? 6 : 7;
-  if (p.age >= 70 && p.experience === 'new') maxExercises = Math.min(maxExercises, 5);
-
-  return schemas.map(([name, nameHe, rows], i) => {
-    let exercises = rows.slice(0, maxExercises).map(([k, role]) => exerciseRow(k, p, role));
-    if (p.goal === 'muscle' && p.duration >= 60 && exercises.length < 7) exercises.push(exerciseRow(i % 2 ? 'cableCurl' : 'pressdown', p, 'accessory'));
-    if (p.goal === 'fatloss' && p.duration >= 45) {
-      const c = chooseCardio(p);
-      exercises.push({ ...c, key: c.key, sets: '1', reps: p.duration >= 60 ? '10–15 min' : '6–10 min', rest: '—', role: 'cardio', note: 'Steady moderate pace; you should still be able to speak in short sentences.', noteHe: 'קצב מתון ויציב; עדיין אמור להיות אפשרי לדבר במשפטים קצרים.', substituted: false, generatedKey: c.key, manualSwap: false });
-    }
-    if (p.age >= 65 && p.duration >= 45) exercises.push({ ...EX.balanceStand, key: EX.balanceStand.key, sets: '2', reps: '20–30 sec/side', rest: '30 sec', role: 'balance', note: EX.balanceStand.cue, noteHe: EX.balanceStand.cueHe, substituted: false, generatedKey: EX.balanceStand.key, manualSwap: false });
-    return { name, nameHe, exercises };
-  });
-}
-
-function buildPlan(p) {
-  const effort = effortPrescription(p); const workouts = makeWorkouts(p);
-  let warmup = '5–8 min easy cardio, then 1 light practice set before the first 2 strength exercises.';
-  let warmupHe = '5–8 דקות אירובי קל, ואז סט חימום קל לפני שני תרגילי הכוח הראשונים.';
-  if (p.activity === 'low' || p.experience === 'new') { warmup = '6–10 min easy cardio, then 1–2 light practice sets before the first 2 strength exercises.'; warmupHe = '6–10 דקות אירובי קל, ואז 1–2 סטים קלים לפני שני תרגילי הכוח הראשונים.'; }
-  let weeklyCardio = 'Optional: 2 × 15–25 min easy-to-moderate cardio on non-lifting days.';
-  let weeklyCardioHe = 'אופציונלי: פעמיים בשבוע 15–25 דקות אירובי קל־מתון בימים ללא כוח.';
-  if (p.goal === 'fatloss') { weeklyCardio = 'Aim for 2–3 × 20–30 min easy-to-moderate cardio weekly, building gradually from current activity.'; weeklyCardioHe = 'שאפו ל־2–3 אימוני אירובי של 20–30 דקות בשבוע, ולהעלות בהדרגה לפי רמת הפעילות הנוכחית.'; }
-  if (p.goal === 'strength') { weeklyCardio = 'Keep 1–2 easy cardio sessions weekly for general conditioning and recovery.'; weeklyCardioHe = 'שמרו על 1–2 אימוני אירובי קלים בשבוע לטובת כושר כללי והתאוששות.'; }
-  const progression = p.experience === 'new'
-    ? 'Start deliberately light. When every set reaches the top of the rep range with clean form and ~3 reps still available, add the smallest weight increase next time.'
-    : 'Use double progression: build reps within the range first. Once all sets reach the top of the range at the target effort, increase load by the smallest practical amount.';
-  const progressionHe = p.experience === 'new'
-    ? 'התחילו בכוונה במשקל קל. כאשר בכל הסטים מגיעים לקצה העליון של טווח החזרות בטכניקה טובה ונשארות כ־3 חזרות ברזרבה, העלו בפעם הבאה את המשקל במדרגה הקטנה ביותר.'
-    : 'התקדמו קודם בחזרות בתוך הטווח. כאשר כל הסטים מגיעים לקצה העליון בעצימות היעד, העלו את המשקל במדרגה הקטנה ביותר האפשרית.';
-  return { blocked: false, profile: p, bmi: calcBmi(p.height,p.weight), workouts, effort, warmup, warmupHe, weeklyCardio, weeklyCardioHe, progression, progressionHe };
-}
-
 
 function equipmentIcon(type='machine') {
   const common = 'viewBox="0 0 64 64" aria-hidden="true"';
@@ -340,7 +106,7 @@ function issueNotice(plan, lang) {
   const c = COPY[lang]; const p = plan.profile;
   if (!p.issues?.length) return c.noIssues;
   const labels = p.issues.map(i => lang === 'he' ? ISSUE_LABEL_HE[i] : ISSUE_LABEL[i]);
-  return `${c.programAdjusted}: ${labels.join(lang === 'he' ? '، ' : ', ')}. ${c.painRule}`;
+  return `${c.programAdjusted}: ${labels.join(', ')}. ${c.painRule}`;
 }
 
 function experienceLabel(value, lang) {
@@ -363,13 +129,13 @@ function renderExercise(ex, lang, dayIndex, exerciseIndex) {
   return `<div class="exercise-item ${editable ? 'editable-exercise' : ''}" data-exercise-row="${dayIndex}:${exerciseIndex}">
     ${equipmentVisual(ex, 'equipment-thumb', l.equipment)}
     <div class="exercise-main">
-      <div class="exercise-name-line"><strong>${esc(l.name)}</strong>${ex.substituted ? `<span class="sub-tag">${c.modified}</span>` : ''}${trainerTag}</div>
-      <p>${esc(l.cue || '')}${ex.substituted && l.reason ? ` · ${esc(l.reason)}` : ''}</p>
+      <div class="exercise-name-line"><strong>${esc(l.name)}</strong>${ex.substituted && editable ? `<span class="sub-tag no-print">${c.modified}</span>` : ''}${trainerTag}</div>
+      <p>${esc(l.cue || '')}${ex.substituted && !memberShareMode && l.reason ? ` · ${esc(l.reason)}` : ''}</p>
       <span class="equipment-pill">${esc(l.equipment || c.equipmentGuide)}</span>
     </div>
     <div class="exercise-stat sets-stat"><b>${esc(ex.sets)}</b><span>${c.sets}</span></div>
-    <div class="exercise-stat reps-stat"><b>${esc(displayReps)}</b><span>${c.reps}</span></div>
-    <div class="exercise-stat rest-stat"><b>${esc(l.rest)}</b><span>${c.rest}</span></div>
+    <div class="exercise-stat reps-stat"><b>${routineText(displayReps)}</b><span>${c.reps}</span></div>
+    <div class="exercise-stat rest-stat"><b>${routineText(l.rest)}</b><span>${c.rest}</span></div>
     ${editMarkup}
   </div>`;
 }
@@ -378,36 +144,36 @@ function renderPlan(plan) {
   const lang = currentLanguage; const c = COPY[lang]; const p = plan.profile; const rtl = lang === 'he';
   const goal = lang === 'he' ? GOAL_LABEL_HE[p.goal] : GOAL_LABEL[p.goal];
   const issueText = issueNotice(plan, lang);
-  const tabs = plan.workouts.map((w,i) => `<button type="button" class="day-tab ${i===activeDayIndex?'active':''}" data-day-index="${i}"><span>${c.day} ${i+1}</span><b>${esc(lang==='he'?w.nameHe:w.name)}</b></button>`).join('');
+  const tabs = plan.workouts.map((w,i) => `<button type="button" class="day-tab ${i===activeDayIndex?'active':''}" data-day-index="${i}"><span>${c.day} ${i+1}</span><b>${routineText(lang==='he'?w.nameHe:w.name)}</b></button>`).join('');
   const pages = plan.workouts.map((w,i) => `<section class="day-page ${i===activeDayIndex?'active':''}" data-day="${i}">
-      <div class="print-day-brand"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>${esc(p.name || (rtl ? 'מתאמן' : 'Member'))}</span></div></div>
-      <div class="day-head"><div><span>${c.day} ${i+1}</span><h3>${esc(rtl?w.nameHe:w.name)}</h3></div><div class="day-duration"><b>${p.duration} ${rtl?'דק׳':'min'}</b><span>${c.target}</span></div></div>
+      <div class="print-day-brand"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>${routineText(p.name || (rtl ? 'מתאמן' : 'Member'))}</span></div></div>
+      <div class="day-head"><div><span>${c.day} ${i+1}</span><h3>${routineText(rtl?w.nameHe:w.name)}</h3></div><div class="day-duration"><b>${p.duration} ${rtl?'דק׳':'min'}</b><span>${c.target}</span></div></div>
       <div class="exercise-list">${w.exercises.map((ex, exerciseIndex) => renderExercise(ex, lang, i, exerciseIndex)).join('')}</div>
       <div class="day-guidance">
-        <div><span>${c.warmup}</span><p>${esc(rtl?plan.warmupHe:plan.warmup)}</p></div>
-        <div><span>${c.startAt}</span><p><b>${esc(rtl ? plan.effort.rpeHe : plan.effort.rpe)}</b> · ${esc(rtl?plan.effort.rirHe:plan.effort.rir)}</p></div>
+        <div><span>${c.warmup}</span><p>${routineText(rtl?plan.warmupHe:plan.warmup)}</p></div>
+        <div class="print-progression"><span>${c.progress}</span><p>${routineText(rtl ? plan.progressionHe : plan.progression)}</p></div><div><span>${c.startAt}</span><p><b>${routineText(rtl ? plan.effort.rpeHe : plan.effort.rpe)}</b> · ${routineText(rtl?plan.effort.rirHe:plan.effort.rir)}</p></div>
       </div>
     </section>`).join('');
 
   $('#routineView').innerHTML = `<article class="routine ${rtl?'routine-rtl':''}" dir="${rtl?'rtl':'ltr'}">
     <div class="routine-brand-row"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>${rtl?'תוכנית אימונים אישית':'Personal training plan'}</span></div></div>
     <div class="routine-hero">
-      <div class="routine-title"><p class="step">${c.starter}</p><h2>${esc(p.name || (rtl?'תוכנית מתאמן':'Member routine'))}</h2><p>${esc(goal)}</p></div>
+      <div class="routine-title"><p class="step">${c.starter}</p><h2>${routineText(p.name || (rtl?'תוכנית מתאמן':'Member routine'))}</h2><p>${routineText(goal)}</p></div>
       <div class="routine-meta-grid">
         <div><b>${p.days}</b><span>${c.daysWeek}</span></div>
         <div><b>${p.duration} ${rtl?'דק׳':'min'}</b><span>${c.session}</span></div>
-        <div><b>${esc(experienceLabel(p.experience, lang))}</b><span>${c.experience}</span></div>
+        <div><b>${routineText(experienceLabel(p.experience, lang))}</b><span>${c.experience}</span></div>
       </div>
     </div>
-    <div class="notice ${p.issues?.length?'warn':'success'}">${esc(issueText)}${p.issueNotes ? `<br><b>${c.memberNote}:</b> ${esc(p.issueNotes)}` : ''}</div>
+    <div class="notice no-print staff-notice ${p.issues?.length?'warn':'success'}">${routineText(issueText)}${p.issueNotes ? `<br><b>${c.memberNote}:</b> ${routineText(p.issueNotes)}` : ''}</div>
     ${p.age < 18 ? `<div class="notice warn"><b>${c.minor}:</b> ${c.minorText}</div>` : ''}
     <div class="day-tabs no-print">${tabs}</div>
     <div class="day-pages">${pages}</div>
-    <div class="routine-bottom">
-      <div class="bottom-card"><h3>${c.cardio}</h3><p>${esc(rtl?plan.weeklyCardioHe:plan.weeklyCardio)}</p></div>
-      <div class="bottom-card"><h3>${c.progress}</h3><p>${esc(rtl?plan.progressionHe:plan.progression)}</p></div>
+    <div class="routine-bottom"><div class="print-day-brand"><img src="${LOGO_SRC}" alt="Binyamin Gym"><div><b>Binyamin Gym</b><span>${routineText(p.name)}</span></div></div>
+      <div class="bottom-card"><h3>${c.cardio}</h3><p>${routineText(rtl?plan.weeklyCardioHe:plan.weeklyCardio)}</p></div>
+      <div class="bottom-card"><h3>${c.progress}</h3><p>${routineText(rtl?plan.progressionHe:plan.progression)}</p></div>
       <div class="bottom-card rules-card"><h3>${c.rules}</h3><ul><li>${c.rule1}</li><li>${c.rule2}</li><li>${c.rule3}</li><li>${c.rule4}</li></ul></div>
-      ${p.trainerNotes ? `<div class="bottom-card"><h3>${c.trainerNote}</h3><p>${esc(p.trainerNotes)}</p></div>` : ''}
+      ${(rtl ? p.memberNotesHe : p.memberNotes) ? `<div class="bottom-card"><h3>${c.trainerNote}</h3><p>${routineText(rtl ? p.memberNotesHe : p.memberNotes)}</p></div>` : ''}
     </div>
     <div class="routine-nav no-print"><button type="button" class="btn secondary" id="prevDayBtn" ${activeDayIndex===0?'disabled':''}>${c.prev}</button><span>${activeDayIndex+1} / ${plan.workouts.length}</span><button type="button" class="btn secondary" id="nextDayBtn" ${activeDayIndex===plan.workouts.length-1?'disabled':''}>${c.next}</button></div>
     <p class="print-footer">${rtl?'תוכנית התחלה המבוססת על שאלון הקבלה. מומלץ לבצע הערכה מחדש לאחר כ־4–6 שבועות או כאשר המטרות, ההעדפות או היכולת משתנות.':'Starter routine based on member intake. Reassess after ~4–6 weeks or when goals, preferences or ability change.'}</p>
@@ -494,7 +260,7 @@ function renderSwapDialog() {
     <div>
       <span>${lang === 'he' ? 'תרגיל נוכחי' : 'Current exercise'}</span>
       <strong>${esc(currentL.name)}</strong>
-      <small>${esc(currentL.equipment || '')} · ${esc(current.sets)} × ${esc(current.reps)}</small>
+      <small>${esc(currentL.equipment || '')} · ${esc(current.sets)} × ${esc(lang === 'he' ? formatHebrewMeasure(current.reps) : current.reps)}</small>
     </div>`;
 
   $('#swapSuggestionList').innerHTML = candidates.length ? candidates.map(({key, score}) => {
@@ -517,7 +283,7 @@ function renderSwapDialog() {
     renderSwapDialog();
   }));
   $$('.swap-filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.swapFilter === swapFilter));
-  $('#saveSwapBtn').disabled = !swapSelectionKey;
+  $('#saveSwapBtn').disabled = false;
   const resetBtn = $('#resetExerciseBtn');
   if (resetBtn) resetBtn.hidden = !current.manualSwap;
 }
@@ -532,8 +298,8 @@ function openExerciseSwap(dayIndex, exerciseIndex) {
   const day = currentPlan.workouts[dayIndex];
   $('#swapDialogTitle').textContent = currentLanguage === 'he' ? COPY.he.swapTitle : COPY.en.swapTitle;
   $('#swapDialogSub').textContent = currentLanguage === 'he'
-    ? `${day.nameHe || day.name} · בחרו חלופה ושמרו את השינוי. הסטים, החזרות והמנוחה יישארו כפי שהם.`
-    : `${day.name} · Choose a replacement and save. Sets, reps and rest stay unchanged.`;
+    ? `${day.nameHe || day.name} · בחרו חלופה ושמרו את השינוי. ניתן לערוך את פרטי התרגיל או לבחור תרגיל אחר.`
+    : `${day.name} · Choose a replacement and save. Edit the prescription below, or choose another exercise.`;
   $('#swapSearch').value = '';
   $('#swapSearch').placeholder = currentLanguage === 'he' ? 'חיפוש לפי תרגיל או ציוד…' : 'Search exercise or equipment…';
   $('#saveSwapBtn').textContent = currentLanguage === 'he' ? COPY.he.saveChange : COPY.en.saveChange;
@@ -545,6 +311,7 @@ function openExerciseSwap(dayIndex, exerciseIndex) {
     ? 'החלופות מסוננות לפי מגבלות התנועה שסומנו. שיקול הדעת של המאמן קודם לכל.'
     : "Suggestions are filtered using the member's movement considerations. Trainer judgement still comes first.";
   dialog.dir = currentLanguage === 'he' ? 'rtl' : 'ltr';
+  fillPrescriptionEditor(currentPlan.workouts[dayIndex].exercises[exerciseIndex]);
   renderSwapDialog();
   dialog.showModal();
 }
@@ -567,6 +334,7 @@ function applyExerciseSwap(dayIndex, exerciseIndex, newKey) {
     reason: '',
     reasonHe: '',
     originalName: '',
+    generated: current.generated || { ...current },
     generatedKey: current.generatedKey || current.key,
     manualSwap: true
   };
@@ -576,8 +344,9 @@ function applyExerciseSwap(dayIndex, exerciseIndex, newKey) {
 }
 
 function resetExerciseToGenerated(dayIndex, exerciseIndex) {
+  const savedOriginal = currentPlan.workouts[dayIndex].exercises[exerciseIndex].generated;
   const regenerated = buildPlan(currentPlan.profile);
-  const original = regenerated?.workouts?.[dayIndex]?.exercises?.[exerciseIndex];
+  const original = savedOriginal || regenerated?.workouts?.[dayIndex]?.exercises?.[exerciseIndex];
   if (!original) return;
   currentPlan.workouts[dayIndex].exercises[exerciseIndex] = original;
   activeDayIndex = dayIndex;
@@ -596,6 +365,7 @@ function serializeRoutineState(plan) {
       reps: ex.reps,
       rest: ex.rest,
       role: ex.role,
+      note: ex.note, noteHe: ex.noteHe, generated: ex.generated,
       substituted: !!ex.substituted,
       reason: ex.reason || '',
       reasonHe: ex.reasonHe || '',
@@ -607,7 +377,8 @@ function serializeRoutineState(plan) {
 }
 
 function restoreRoutineState(profile) {
-  const plan = buildPlan(profile);
+  const plan = buildPlan(profile.planProfile || profile);
+  plan.profile = { ...plan.profile, id: profile.id, name: profile.name, memberNotes: profile.memberNotes, memberNotesHe: profile.memberNotesHe };
   if (!profile.routineOverride) return plan;
   plan.workouts = profile.routineOverride.map((w, dayIndex) => ({
     name: w.name || plan.workouts[dayIndex]?.name || `Day ${dayIndex + 1}`,
@@ -621,8 +392,9 @@ function restoreRoutineState(profile) {
         reps: item.reps,
         rest: item.rest,
         role: item.role,
-        note: base.cue,
-        noteHe: base.cueHe,
+        note: item.note ?? base.cue,
+        noteHe: item.noteHe ?? base.cueHe,
+        generated: item.generated,
         substituted: !!item.substituted,
         reason: item.reason || '',
         reasonHe: item.reasonHe || '',
@@ -648,26 +420,40 @@ function flashToast(message) {
   }, 1600);
 }
 
-function getProfiles() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; } }
-function setProfiles(arr) { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+function getProfiles() {
+  const raw=localStorage.getItem(STORAGE_KEY);
+  if (!raw) return [];
+  try { return validateProfiles(JSON.parse(raw)); }
+  catch { throw Error('Saved data could not be read. Export or recover your backup before saving new members.'); }
+}
+function setProfiles(arr) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); return true; }
+  catch { alert('Could not save. Browser storage may be full or unavailable. Export a backup before closing.'); return false; }
+}
+
 function saveCurrentProfile() {
-  const p = getFormData(); if (!p.name) { alert('Add a member name before saving the profile.'); return; } if (!p.gender) { alert('Select Male or Female before saving the profile.'); return; }
-  if (currentPlan && currentPlan.profile?.id === p.id) p.routineOverride = serializeRoutineState(currentPlan);
+  if (!$('#intakeForm').reportValidity()) return;
+  const p = getFormData(); p.language = currentLanguage; p.activeDayIndex = activeDayIndex; if (!p.name) { alert('Add a member name before saving the profile.'); return; } if (!p.gender) { alert('Select Male or Female before saving the profile.'); return; }
+  if (currentPlan && currentPlan.profile?.id === p.id) {
+    p.routineOverride = serializeRoutineState(currentPlan);
+    p.planProfile = { ...currentPlan.profile }; delete p.planProfile.routineOverride; delete p.planProfile.planProfile;
+  }
   const profiles = getProfiles(); const idx = profiles.findIndex(x => x.id === p.id); if (idx >= 0) profiles[idx] = p; else profiles.unshift(p);
-  setProfiles(profiles); editingProfileId = p.id;
-  const lower = $('#saveProfileBtn'); if (lower) { const old = lower.textContent; lower.textContent = 'Saved ✓'; setTimeout(() => lower.textContent = old, 1000); }
-  const top = $('#saveProfileBtnTop'); if (top) { const old = top.innerHTML; top.textContent = 'Saved ✓'; setTimeout(() => top.innerHTML = old, 1000); }
+  if (!setProfiles(profiles)) return; editingProfileId = p.id;
+  if(currentPlan) {Object.assign(currentPlan.profile,{name:p.name,memberNotes:p.memberNotes,memberNotesHe:p.memberNotesHe});renderPlan(currentPlan);}
+  flashToast('Member saved in this browser');
 }
 
 function renderSaved() {
   const profiles = getProfiles();
-  $('#savedList').innerHTML = profiles.length ? profiles.map(p => `<div class="saved-row"><div><strong>${esc(p.name || 'Unnamed')}</strong><small>${p.age} yrs • ${p.gender === 'female' ? 'Female' : p.gender === 'male' ? 'Male' : 'Gender not set'} • ${GOAL_LABEL[p.goal] || p.goal} • ${p.days} days/week</small></div><div class="row-actions"><button class="btn ghost" data-load="${p.id}">Load</button><button class="btn danger" data-delete="${p.id}">Delete</button></div></div>`).join('') : '<p class="muted">No profiles saved yet.</p>';
+  $('#savedList').innerHTML = profiles.length ? profiles.map(p => `<div class="saved-row"><div><strong>${esc(p.name || 'Unnamed')}</strong><small>${esc(p.age)} yrs • ${p.gender === 'female' ? 'Female' : p.gender === 'male' ? 'Male' : 'Gender not set'} • ${esc(GOAL_LABEL[p.goal] || p.goal)} • ${esc(p.days)} days/week</small></div><div class="row-actions"><button class="btn ghost" data-load="${esc(p.id)}">Load</button><button class="btn danger" data-delete="${esc(p.id)}">Delete</button></div></div>`).join('') : '<p class="muted">No profiles saved yet.</p>';
   $$('[data-load]').forEach(b => b.addEventListener('click', () => {
     const p = profiles.find(x => x.id === b.dataset.load);
     if (p) {
       setFormData(p);
       currentPlan = p.routineOverride ? restoreRoutineState(p) : null;
-      activeDayIndex = 0;
+      activeDayIndex = Math.min(p.activeDayIndex || 0, (currentPlan?.workouts.length || 1) - 1);
+      setLanguage(p.language || 'en');
       if (currentPlan) { renderPlan(currentPlan); setOutputState(true); } else { $('#routineView').innerHTML = ''; setOutputState(false); }
       $('#savedDialog').close();
       window.scrollTo({top:0, behavior:'smooth'});
@@ -691,90 +477,15 @@ function resetForm() {
   currentPlan=null; activeDayIndex=0; setOutputState(false); $('#routineView').innerHTML='';
 }
 
-function publicSharePlan(plan) {
-  // Compact v3 payload keeps no-backend member links comfortably short.
-  // Deliberately excludes height, weight, gender and movement-consideration details.
-  const p = plan.profile;
-  return {
-    v: 3,
-    l: currentLanguage,
-    p: { n: p.name || '', g: p.goal, e: p.experience, d: p.days, t: p.duration, a: p.activity, q: p.trainerNotes || '', m: p.age < 18 ? 1 : 0 },
-    w: plan.workouts.map(w => ({
-      n: w.name,
-      h: w.nameHe,
-      x: w.exercises.map(ex => [ex.key, ex.sets, ex.reps, ex.rest, ex.role || '', ex.substituted ? 1 : 0, ex.manualSwap ? 1 : 0])
-    }))
-  };
-}
-
-function normalizeSharedPlan(raw) {
-  // v3 compact payload
-  if (raw?.v === 3 && raw?.p && Array.isArray(raw?.w)) {
-    return {
-      lang: raw.l === 'he' ? 'he' : 'en',
-      profile: {
-        name: raw.p.n || '', goal: raw.p.g || 'general', experience: raw.p.e || 'new',
-        days: Number(raw.p.d || 3), duration: Number(raw.p.t || 60), activity: raw.p.a || 'moderate',
-        trainerNotes: raw.p.q || '', isMinor: !!raw.p.m
-      },
-      workouts: raw.w.map(w => ({
-        name: w.n || 'Workout', nameHe: w.h || 'אימון',
-        exercises: (w.x || []).map(x => ({ key:x[0], sets:x[1], reps:x[2], rest:x[3], role:x[4], substituted:!!x[5], manualSwap:!!x[6] }))
-      }))
-    };
-  }
-  // Backward compatibility with v2 links already sent to members.
-  return raw;
-}
-
-function inflateSharedPlan(raw) {
-  const shared = normalizeSharedPlan(raw);
-  const sp = shared.profile || {};
-  const profile = {
-    name: sp.name || '', goal: sp.goal || 'general', experience: sp.experience || 'new', days: Number(sp.days || 3), duration: Number(sp.duration || 60),
-    activity: sp.activity || 'moderate', cardioPreference: 'any', trainerNotes: sp.trainerNotes || '',
-    age: sp.isMinor ? 17 : 18, height: 175, weight: 75, gender: '', issues: [], issueNotes: ''
-  };
-  const plan = buildPlan(profile);
-  plan.workouts = (shared.workouts || []).map(w => ({
-    name: w.name,
-    nameHe: w.nameHe,
-    exercises: (w.exercises || []).map(item => {
-      const base = EX[item.key] || EX.chestPress;
-      return { ...base, key: base.key, sets: item.sets, reps: item.reps, rest: item.rest, role: item.role, note: base.cue, noteHe: base.cueHe, substituted: !!item.substituted, reason: '', reasonHe: '', generatedKey: base.key, manualSwap: !!item.manualSwap };
-    })
-  }));
-  return { ...plan, sharedLanguage: shared.lang || 'en' };
-}
-
-function encodeShare(payload) {
-  const bytes = new TextEncoder().encode(JSON.stringify(payload)); let binary = ''; for (const b of bytes) binary += String.fromCharCode(b);
-  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
-function decodeShare(encoded) {
-  const padded = encoded.replace(/-/g,'+').replace(/_/g,'/') + '='.repeat((4 - encoded.length % 4) % 4);
-  const binary = atob(padded); const bytes = Uint8Array.from(binary, c => c.charCodeAt(0)); return JSON.parse(new TextDecoder().decode(bytes));
-}
-
-function buildMemberUrl() {
-  if (!currentPlan) return '';
-  const encoded = encodeShare(publicSharePlan(currentPlan));
-  const url = new URL(window.location.href);
-  url.search = '';
-  url.hash = '';
-  url.searchParams.set('routine', encoded);
-  return url.toString();
-}
-
 async function copyMemberLink() {
   const url = buildMemberUrl();
   if (!url) return;
   try { await navigator.clipboard.writeText(url); }
   catch {
-    const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+    const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); const copied = document.execCommand('copy'); t.remove(); if (!copied) { window.prompt(currentLanguage === 'he' ? 'העתיקו את הקישור:' : 'Copy this member link:', url); return; }
   }
   flashToast(currentLanguage === 'he' ? 'קישור אישי לתוכנית הועתק ✓' : 'Member routine link copied ✓');
-  const btn=$('#shareBtn'); const old=btn.innerHTML; btn.textContent='Link copied ✓'; setTimeout(()=>btn.innerHTML=old,1400);
+  const btn=$('#shareBtn'); const old=btn.innerHTML; btn.textContent=currentLanguage === 'he' ? 'הקישור הועתק ✓' : 'Link copied ✓'; setTimeout(()=>btn.innerHTML=old,1400);
 }
 
 function readSharedPayloadFromUrl() {
@@ -786,7 +497,8 @@ function readSharedPayloadFromUrl() {
 
 function initSharedRoutine() {
   const encoded = readSharedPayloadFromUrl();
-  if (!encoded) return false;
+  if (!encoded && !new URLSearchParams(location.search).has('routine') && !/^#(?:share|routine)=/.test(location.hash)) return false;
+  memberShareMode = true; document.body.classList.add('member-share-mode');
   try {
     const raw = decodeShare(encoded);
     const shared = normalizeSharedPlan(raw);
@@ -807,13 +519,19 @@ function initSharedRoutine() {
   } catch (err) {
     document.documentElement.classList.remove('shared-routine-loading');
     console.warn('Could not open shared routine', err);
-    flashToast('This routine link could not be opened. Please ask Binyamin Gym for a new link.');
-    return false;
+    $('#emptyState').hidden = true; $('#routineView').hidden = false;
+    $('#routineView').innerHTML = '<div class="link-error"><img src="'+LOGO_SRC+'" alt="Binyamin Gym"><h1>This routine link could not be opened</h1><p>Ask Binyamin Gym staff for a new link.</p><div dir="rtl" lang="he"><h2>לא ניתן לפתוח את התוכנית</h2><p>בקשו מצוות כושר בנימין קישור חדש.</p></div></div>';
+    $('#outputSubtext').textContent = ''; $('#previewStatusText').textContent = ''; $('#languageToggle').hidden = true;
+    return true;
   }
 }
 
 function setLanguage(lang) {
   currentLanguage = lang === 'he' ? 'he' : 'en';
+  $('#routineView').lang = currentLanguage;
+  $('#languageToggle').setAttribute('aria-label',currentLanguage==='he'?'שפת התוכנית':'Routine language');
+  if (memberShareMode) { document.title=(currentPlan?.profile.name || 'Binyamin Gym')+' — '+(currentLanguage==='he'?'תוכנית אימונים':'Training routine'); document.documentElement.lang = currentLanguage; $('#outputPanel').dir = currentLanguage === 'he' ? 'rtl' : 'ltr'; }
+  $('#closeEquipmentImageBtn').setAttribute('aria-label', currentLanguage === 'he' ? 'סגירת תמונת הציוד' : 'Close equipment photo');
   $$('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === currentLanguage));
   if (currentPlan) { renderPlan(currentPlan); setOutputState(true); }
 }
@@ -825,7 +543,12 @@ function openEquipmentImage(src, label='Equipment') {
   img.src = src;
   img.alt = label;
   $('#equipmentImageTitle').textContent = label;
-  $('#equipmentImageHint').textContent = COPY[currentLanguage].referenceImage;
+  const asset = Object.values(EQUIPMENT_ASSETS).find(item => item.src === src);
+  $('#equipmentImageHint').textContent = asset?.kind === 'photo'
+    ? (currentLanguage === 'he'
+      ? 'תמונת מוצר מרשימת הציוד שסופקה. לזיהוי הציוד; אינה הדגמת תרגיל. משקל שמופיע בתמונה אינו המלצת אימון.'
+      : 'Product photo from the supplied equipment list. Equipment identification, not an exercise demonstration. Any weight shown is not a training recommendation.')
+    : COPY[currentLanguage].referenceImage;
   dialog.dir = currentLanguage === 'he' ? 'rtl' : 'ltr';
   dialog.showModal();
 }
@@ -845,17 +568,33 @@ $('#equipmentImageDialog')?.addEventListener('click', (e) => {
 
 $('#intakeForm').addEventListener('submit', (e) => {
   e.preventDefault(); const p=getFormData(); editingProfileId = p.id; currentPlan=buildPlan(p); activeDayIndex=0; renderPlan(currentPlan); setOutputState(true);
-  if (window.innerWidth < 1180) $('#outputPanel').scrollIntoView({behavior:'smooth', block:'start'});
+  if (window.innerWidth < 1650) $('#outputPanel').scrollIntoView({behavior:'smooth', block:'start'});
 });
-$('#printBtn').addEventListener('click', () => window.print());
+$('#printBtn').addEventListener('click', () => {
+  document.body.classList.add('print-preview'); $('#printStyles').media='all';
+  $('.print-preview-toolbar').hidden=false;
+  $('#closePrintPreview').textContent=currentLanguage==='he'?'חזרה לתוכנית':'Back to routine';
+  $('#confirmPrint').textContent=currentLanguage==='he'?'הדפסה / שמירה כקובץ':'Print / Save PDF'; window.scrollTo(0,0);
+});
+$('#closePrintPreview').addEventListener('click',()=>{document.body.classList.remove('print-preview');$('#printStyles').media='print';$('.print-preview-toolbar').hidden=true;$('#outputPanel').scrollIntoView();});
+$('#confirmPrint').addEventListener('click',()=>window.print());
 $('#shareBtn').addEventListener('click', copyMemberLink);
 $('#newMemberBtn').addEventListener('click', resetForm);
-$('#saveProfileBtn').addEventListener('click', saveCurrentProfile);
-$('#savedBtn').addEventListener('click', () => { renderSaved(); $('#savedDialog').showModal(); });
+$('#saveProfileBtn').addEventListener('click', () => {try {saveCurrentProfile();} catch(err){alert(err.message);}});
+$('#savedBtn').addEventListener('click', () => { try {renderSaved(); $('#backupStatus').textContent='';} catch(err){$('#savedList').textContent=''; $('#backupStatus').textContent=err.message;} $('#savedDialog').showModal(); });
 $('#closeDialogBtn').addEventListener('click', () => $('#savedDialog').close());
 $('#clearSavedBtn').addEventListener('click', () => { if (confirm('Delete all locally saved member profiles?')) { setProfiles([]); renderSaved(); } });
-$('#exportBtn').addEventListener('click', () => { const blob=new Blob([JSON.stringify(getProfiles(),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`binyamin-gym-members-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(a.href); });
-$('#importInput').addEventListener('change', async (e) => { const file=e.target.files?.[0]; if(!file)return; try { const data=JSON.parse(await file.text()); if(!Array.isArray(data)) throw new Error('Backup must contain a profile array.'); setProfiles(data); renderSaved(); } catch(err){ alert(`Could not import backup: ${err.message}`); } e.target.value=''; });
+$('#exportBtn').addEventListener('click', () => {
+  try {
+    const raw=localStorage.getItem(STORAGE_KEY) || '[]';
+    const link=$('#backupDownload'); if(link.href.startsWith('blob:')) URL.revokeObjectURL(link.href);
+    link.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+    link.download='binyamin-gym-members-'+new Date().toISOString().slice(0,10)+'.json'; link.hidden=false;
+    $('#backupStatus').textContent='Backup ready. Use Download prepared backup if the download does not start.';
+    link.click();
+  } catch(err) {$('#backupStatus').textContent='Could not export backup: '+err.message;}
+});
+$('#importInput').addEventListener('change', async (e) => { const file=e.target.files?.[0]; if(!file)return; try { if(file.size>10000000) throw Error('Backup exceeds 10 MB.'); const data=JSON.parse(await file.text()); validateProfiles(data); const existing = getProfiles(); const merged = new Map(existing.map(p=>[p.id,p])); for (const p of data) { if (!merged.has(p.id)) merged.set(p.id,p); else merged.set(makeId(),{...p,id:makeId(),name:p.name}); } if (setProfiles([...merged.values()])) {renderSaved(); $('#backupStatus').textContent='Backup imported. Existing members were kept.';} } catch(err){ $('#backupStatus').textContent='Could not import backup: '+err.message; } e.target.value=''; });
 $$('.lang-btn').forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
 
 $('#closeSwapDialogBtn')?.addEventListener('click', () => $('#exerciseSwapDialog')?.close());
@@ -867,9 +606,9 @@ $$('.swap-filter-btn').forEach(btn => btn.addEventListener('click', () => {
   renderSwapDialog();
 }));
 $('#saveSwapBtn')?.addEventListener('click', () => {
-  if (!swapContext || !swapSelectionKey) return;
+  if (!swapContext || !$('#prescriptionForm').reportValidity()) return;
   const { dayIndex, exerciseIndex } = swapContext;
-  applyExerciseSwap(dayIndex, exerciseIndex, swapSelectionKey);
+  savePrescription(dayIndex, exerciseIndex);
   $('#exerciseSwapDialog')?.close();
 });
 $('#resetExerciseBtn')?.addEventListener('click', () => {
@@ -881,3 +620,50 @@ $('#resetExerciseBtn')?.addEventListener('click', () => {
 
 setOutputState(false);
 if (!initSharedRoutine()) document.documentElement.classList.remove('shared-routine-loading');
+
+function fillPrescriptionEditor(ex) {
+  const he = currentLanguage === 'he';
+  for (const [id, value] of Object.entries({editSets:ex.sets,editReps:ex.reps,editRest:ex.rest,editNote:ex.note || ex.cue,editNoteHe:ex.noteHe || ex.cueHe})) $('#'+id).value = value || '';
+  $('#editSetsLabel').textContent = he ? 'סטים' : 'Sets';
+  $('#editRepsLabel').textContent = he ? 'חזרות / זמן' : 'Reps / time';
+  $('#editRestLabel').textContent = he ? 'מנוחה' : 'Rest';
+  $('#prescriptionHint').textContent = he ? 'זמן: sec לשניות או min לדקות; התוכנית מתרגמת את היחידות. הערות אלו מוצגות למתאמן.' : 'Use sec or min for time; the routine translates units. These coaching notes are visible to the member.';
+}
+function savePrescription(dayIndex, exerciseIndex) {
+  const current = currentPlan.workouts[dayIndex].exercises[exerciseIndex];
+  const fields = {sets:Number($('#editSets').value),reps:$('#editReps').value.trim(),rest:$('#editRest').value.trim(),note:$('#editNote').value.trim(),noteHe:$('#editNoteHe').value.trim()};
+  if (swapSelectionKey && swapSelectionKey !== current.key) {
+    // Preserve a customized cue, but update unchanged catalog cues to the replacement.
+    if (fields.note === current.note) fields.note = EX[swapSelectionKey].cue;
+    if (fields.noteHe === current.noteHe) fields.noteHe = EX[swapSelectionKey].cueHe;
+    applyExerciseSwap(dayIndex, exerciseIndex, swapSelectionKey);
+  }
+  const target = currentPlan.workouts[dayIndex].exercises[exerciseIndex];
+  target.generated ||= { ...current }; Object.assign(target, fields, {manualSwap:true});
+  renderPlan(currentPlan); flashToast(currentLanguage === 'he' ? 'השינוי נשמר בתוכנית' : 'Routine updated — save member to keep it');
+}
+
+function validateSharedPlan(shared) {
+  const text = (x,max=1000) => typeof x === 'string' && x.length <= max;
+  if (!shared || !shared.profile || !Array.isArray(shared.workouts) || shared.workouts.length < 1 || shared.workouts.length > 5) throw Error('Invalid routine');
+  const p=shared.profile;
+  if (!text(p.name,120) || !Object.hasOwn(GOAL_LABEL,p.goal) || !['new','some','experienced'].includes(p.experience) || ![30,45,60,75].includes(Number(p.duration)) || Number(p.days)!==shared.workouts.length) throw Error('Invalid routine profile');
+  for(const w of shared.workouts) {
+    if (!text(w.name,100) || !text(w.nameHe,100) || !Array.isArray(w.exercises) || w.exercises.length < 1 || w.exercises.length > 12) throw Error('Invalid workout');
+    for(const ex of w.exercises) if (!Object.hasOwn(EX,ex.key) || !Number.isInteger(Number(ex.sets)) || Number(ex.sets)<1 || Number(ex.sets)>10 || !text(ex.reps,40) || !text(ex.rest,40) || (ex.note !== undefined && !text(ex.note,500)) || (ex.noteHe !== undefined && !text(ex.noteHe,500))) throw Error('Invalid exercise');
+  }
+  if(shared.guidance && (!Array.isArray(shared.guidance) || shared.guidance.length!==6 || !shared.guidance.every(s=>text(s,2000)))) throw Error('Invalid guidance');
+  if ((p.memberNotes !== undefined && !text(p.memberNotes)) || (p.memberNotesHe !== undefined && !text(p.memberNotesHe))) throw Error('Invalid member note');
+}
+function validateProfiles(data) {
+  if(!Array.isArray(data) || data.length>2000) throw Error('Backup must contain up to 2,000 member profiles.');
+  const ids=new Set();
+  for(const p of data) {
+    if(!p || typeof p.id!=='string' || p.id.length>150 || ids.has(p.id) || typeof p.name!=='string' || p.name.length>120 || !Object.hasOwn(GOAL_LABEL,p.goal) || !['new','some','experienced'].includes(p.experience) || ![2,3,4,5].includes(Number(p.days)) || ![30,45,60,75].includes(Number(p.duration)) || !Array.isArray(p.issues) || !p.issues.every(i=>Object.hasOwn(ISSUE_LABEL,i))) throw Error('Backup contains an invalid member profile.');
+    ids.add(p.id);
+    if(p.routineOverride) validateSharedPlan({profile:{...p,...p.planProfile},workouts:p.routineOverride});
+  }
+  return data;
+}
+window.addEventListener('hashchange', () => window.location.reload());
+function routineText(value) { return esc(value).replace(/\d+(?:[–-]\d+)?/g, '<bdi dir="ltr">$&</bdi>'); }

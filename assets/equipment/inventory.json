@@ -1,0 +1,296 @@
+{
+  "source": {
+    "document": "מועצה איזורית מטה בנימין.pdf",
+    "quote": "PQ26001443",
+    "date": "2026-09-03",
+    "scope": "Listed equipment; delivery and installation not verified. Commercial terms omitted."
+  },
+  "items": [
+    {
+      "id": "treadmill",
+      "model": "VISION T600E Treadmill",
+      "sku": "VISION-T600E-TOUCH",
+      "quantity": 6,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 1,
+      "src": "./assets/equipment/treadmill.jpg"
+    },
+    {
+      "id": "elliptical",
+      "model": "VISION S600E Suspension Elliptical",
+      "sku": "VISION-S600E-TOUCH",
+      "quantity": 4,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 2,
+      "src": "./assets/equipment/elliptical.jpg"
+    },
+    {
+      "id": "chest-press",
+      "model": "VISION Keystone Converging Chest Press",
+      "sku": "VISION-KEY-SL-13",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 3,
+      "src": "./assets/equipment/chest-press.jpg"
+    },
+    {
+      "id": "pec-fly",
+      "model": "VISION Keystone Pec Fly / Rear Delt",
+      "sku": "VISION-KEY-SL-221",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 4,
+      "src": "./assets/equipment/pec-fly.jpg"
+    },
+    {
+      "id": "shoulder-press",
+      "model": "VISION Keystone Converging Shoulder Press",
+      "sku": "VISION-KEY-SL-23",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 5,
+      "src": "./assets/equipment/shoulder-press.jpg"
+    },
+    {
+      "id": "lat-pulldown",
+      "model": "VISION Keystone Diverging Lat Pulldown",
+      "sku": "VISION-KEY-SL-33",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 6,
+      "src": "./assets/equipment/lat-pulldown.jpg"
+    },
+    {
+      "id": "seated-row",
+      "model": "VISION Keystone Diverging Seated Row",
+      "sku": "VISION-KEY-SL-34",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 7,
+      "src": "./assets/equipment/seated-row.jpg"
+    },
+    {
+      "id": "biceps-curl",
+      "model": "VISION Keystone Biceps Curl",
+      "sku": "VISION-KEY-SL-40",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 8,
+      "src": "./assets/equipment/biceps-curl.jpg"
+    },
+    {
+      "id": "triceps-press",
+      "model": "VISION Keystone Triceps Press",
+      "sku": "VISION-KEY-SL-42",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 9,
+      "src": "./assets/equipment/triceps-press.jpg"
+    },
+    {
+      "id": "abdominal",
+      "model": "VISION Keystone Abdominal",
+      "sku": "VISION-KEY-SL-53",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 1,
+      "sourceItem": 10,
+      "src": "./assets/equipment/abdominal.jpg"
+    },
+    {
+      "id": "chin-dip-assist",
+      "model": "VISION Keystone Chin / Dip Assist",
+      "sku": "VISION-KEY-SL-601",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 2,
+      "sourceItem": 11,
+      "src": "./assets/equipment/chin-dip-assist.jpg"
+    },
+    {
+      "id": "leg-press",
+      "model": "VISION Keystone Leg Press / Calf Press",
+      "sku": "VISION-KEY-SL-701",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 2,
+      "sourceItem": 12,
+      "src": "./assets/equipment/leg-press.jpg"
+    },
+    {
+      "id": "functional-trainer",
+      "model": "VISION FT Functional Trainer",
+      "sku": "VISION-VST700-FT",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 2,
+      "sourceItem": 13,
+      "src": "./assets/equipment/functional-trainer.jpg"
+    },
+    {
+      "id": "handle-package",
+      "model": "VISION VF Handle Package FTHP",
+      "sku": "VISION-VST700-FTHP",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 2,
+      "sourceItem": 14,
+      "src": "./assets/equipment/handle-package.jpg"
+    },
+    {
+      "id": "rack",
+      "model": "SPARTA Rack 75 × 120 × 230 cm",
+      "sku": "SPARTA-RACK-AC4.CAGE",
+      "quantity": 3,
+      "unit": "set",
+      "status": "listed",
+      "sourcePage": 2,
+      "sourceItem": 15,
+      "src": "./assets/equipment/rack.jpg"
+    },
+    {
+      "id": "olympic-bench",
+      "model": "VISION Strength Olympic Flat Bench",
+      "sku": "VISION-VST700-FW78",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 2,
+      "sourceItem": 16,
+      "src": "./assets/equipment/olympic-bench.jpg"
+    },
+    {
+      "id": "adjustable-bench",
+      "model": "VISION VF Adjustable Bench FW82",
+      "sku": "VISION-VST700-FW82",
+      "quantity": 3,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 2,
+      "sourceItem": 17,
+      "src": "./assets/equipment/adjustable-bench.jpg"
+    },
+    {
+      "id": "smith-machine",
+      "model": "VISION Strength Smith Machine",
+      "sku": "VISION-VST700-PL62",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "optional",
+      "sourcePage": 2,
+      "sourceItem": 18,
+      "src": "./assets/equipment/smith-machine.jpg"
+    },
+    {
+      "id": "dumbbell-rack",
+      "model": "Matrix MG 2-tier Flat Dumbbell Rack",
+      "sku": "MATRIX-MG-A528BLACK MA",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 2,
+      "sourceItem": 19,
+      "src": "./assets/equipment/dumbbell-rack.jpg"
+    },
+    {
+      "id": "dumbbells",
+      "model": "ZIVA Performance Hexagon Dumbbell Set 2.5–25 kg",
+      "sku": "ZIVA-ZFT-DBUX2.5-25YEL",
+      "quantity": 1,
+      "unit": "set",
+      "status": "listed",
+      "sourcePage": 3,
+      "sourceItem": 20,
+      "src": "./assets/equipment/dumbbells.jpg"
+    },
+    {
+      "id": "barbell",
+      "model": "SPARTA 20 kg Training Bar, 600 lb",
+      "sku": "EURO2278",
+      "quantity": 1,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 3,
+      "sourceItem": 21,
+      "src": "./assets/equipment/barbell.jpg"
+    },
+    {
+      "id": "collars",
+      "model": "SPARTA Quick-release ABS Collars, Black",
+      "sku": "EURO2331-Black",
+      "quantity": 1,
+      "unit": "pair",
+      "status": "listed",
+      "sourcePage": 3,
+      "sourceItem": 22,
+      "src": "./assets/equipment/collars.jpg"
+    },
+    {
+      "id": "plates-5",
+      "model": "SPARTA Rubber-coated Plate 5 kg",
+      "sku": "EURO2259--5KG",
+      "quantity": 6,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 3,
+      "sourceItem": 23,
+      "src": "./assets/equipment/sparta-plate.jpg"
+    },
+    {
+      "id": "plates-10",
+      "model": "SPARTA Rubber-coated Plate 10 kg",
+      "sku": "EURO2259-10KG",
+      "quantity": 6,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 3,
+      "sourceItem": 24,
+      "src": "./assets/equipment/sparta-plate.jpg"
+    },
+    {
+      "id": "plates-15",
+      "model": "SPARTA Rubber-coated Plate 15 kg",
+      "sku": "EURO2259-15KG",
+      "quantity": 6,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 3,
+      "sourceItem": 25,
+      "src": "./assets/equipment/sparta-plate.jpg"
+    },
+    {
+      "id": "plates-20",
+      "model": "SPARTA Rubber-coated Plate 20 kg",
+      "sku": "EURO2259-20KG",
+      "quantity": 6,
+      "unit": "unit",
+      "status": "listed",
+      "sourcePage": 3,
+      "sourceItem": 26,
+      "src": "./assets/equipment/sparta-plate.jpg"
+    }
+  ]
+}

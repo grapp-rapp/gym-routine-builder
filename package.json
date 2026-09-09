@@ -1,0 +1,9 @@
+{
+  "name": "binyamin-gym",
+  "private": true,
+  "version": "7.0.0",
+  "scripts": {
+    "start": "node scripts/serve.cjs",
+    "test": "node tests/regression.cjs"
+  }
+}

@@ -1,76 +1,56 @@
-# Binyamin Gym — Member Program Builder
+# Binyamin Gym / כושר בנימין
 
-A static, privacy-friendly gym onboarding and starter-program tool built for Binyamin Gym.
+Static staff intake and member routine application. No framework, runtime dependencies, cloud account or database is required.
 
-## What it does
+## Run and test
 
-- Member intake: name, gender, age, height, weight, experience, goals and activity level
-- Movement-consideration toggles for low back, shoulder, knee, hip, neck and elbow/wrist
-- Generates 2–5 day starter routines
-- Goal-aware sets, reps, rest and cardio guidance
-- Conservative exercise substitutions when movement considerations are selected
-- Day-by-day routine view instead of one long tiny page
-- English / Hebrew toggle for the member-facing routine
-- Binyamin Gym branding and logo
-- Clean equipment reference photos and equipment labels beside each exercise, with click-to-enlarge viewing and SVG fallback
-- A4 printing with one workout day per page
-- Self-contained member share links for phone viewing
-- Trainer exercise editor: click any exercise, review intake-filtered alternatives, replace it, or reset to the generated choice
-- Manual exercise swaps carry through to printing and member share links
-- Saved member profiles can retain trainer-edited routines in this browser
-- Local browser profile storage and JSON backup/import
+With Node.js installed, run `npm start` and open http://127.0.0.1:4173. Run `npm test` for engine, persistence, validation, privacy and script-integrity checks. The local server binds only to this computer.
 
-## Privacy
+## Staff workflow
 
-Saved profiles stay in the browser's local storage.
+1. Complete intake and generate a routine.
+2. Navigate workouts. Click an exercise or its Replace button to search recommended alternatives, adjust sets/reps/rest, and write coaching notes in English and Hebrew. Save change updates the current routine. Reset restores the original prescription, including after saving and reopening.
+3. Save member retains intake, routine edits, language and active workout in this browser. If intake settings change, generate again to apply them to the routine; saving preserves the currently reviewed routine.
+4. Copy member link shares the specific routine. Choose the language before copying. The member can change languages without seeing staff intake or editing controls.
+5. Print routine opens the A4 preview, then Print / Save PDF invokes the browser print dialog. Each workout begins on its own page; general guidance follows separately. Use A4 and default scale. Very long custom notes may need an additional page rather than smaller text.
+6. Members → Export backup prepares a JSON download and leaves a retry link. Import validates the entire backup before adding profiles. Existing profiles are retained; colliding IDs receive new IDs.
 
-The **Copy member link** feature does not send the raw intake profile to a server. The routine is encoded into the member-only `?routine=` URL parameter; no routine database is required. The shared payload intentionally excludes height, weight, gender, movement-consideration toggles and issue notes. Anyone who receives the link can still view the routine, so treat the link as private.
+## Private and member-visible notes
 
-A future server-backed version could use short links, member accounts, editable plans and centralized syncing.
+Internal trainer notes and movement notes stay in staff storage and are excluded from member links and printouts. Use the separate Member coaching notes fields for public notes. Exercise coaching notes are also member-visible, with separate English/Hebrew fields. Existing internal notes are preserved without automatically publishing them.
 
-## Equipment images
+New v4 links encode a routine snapshot in `#routine=`, avoiding sending the payload in HTTP requests. They contain name, goal, experience, schedule, prescriptions and member-facing guidance, without height, weight, sex, movement toggles or internal notes. Links are readable by anyone who has them and are snapshots: editing a routine requires sending a new link. Legacy v3 query links and v2/v3 fragment links remain supported. Old links cannot be retroactively stripped of information already encoded into them.
 
-This version uses real equipment reference photos for the main machine/equipment categories, with SVG fallback if a photo cannot load. When the gym's final equipment list is known, these can be replaced with photos of the exact machines used at Binyamin Gym.
+## Equipment catalog
 
-## Deploy to Vercel
+All references are local, original equipment-only SVG drawings. They are diagrams of equipment categories, not photographs or exact machine/model identification. Every exercise reference opens a large modal. Replace defaults in `js/equipment-catalog.js` with entries keyed by exercise, for example:
 
-The project is fully static. Point Vercel at the repository root; no build command is required.
+```js
+legPress: { src: './assets/equipment/leg-press.jpg', kind: 'photo' }
+```
 
-## Deploy to GitHub Pages
+Put your gym's real photos in `assets/equipment/`. Keep image attribution in CREDITS.md when adding third-party media. The real local Binyamin Gym logo is retained.
 
-1. Create a GitHub repository.
-2. Upload the project files to the repository root.
-3. Open **Settings → Pages**.
-4. Choose **Deploy from a branch**.
-5. Select the `main` branch and `/ (root)`.
+## Source layout
 
-## Files
+- `index.html`: app shell and accessible forms
+- `app.js`: rendering, exercise editor, member storage and UI events
+- `js/exercise-catalog.js`: bilingual exercises and replacement families
+- `js/equipment-catalog.js`: replaceable local equipment assets
+- `js/routine-engine.js`: effort prescriptions, limitation substitutions and session sizing
+- `js/translations.js`: bilingual labels and routine copy
+- `js/sharing.js`: versioned routine snapshots and serialization
+- `styles.css` / `print.css`: responsive screen layout and shared A4 preview/print rules
+- `tests/regression.cjs`: repeatable regression checks
 
-- `index.html` — application shell and intake form
-- `styles.css` — app UI, responsive design, Hebrew/RTL and print styling
-- `app.js` — programming engine, translations, sharing and local member storage
-- `binyamin-gym-logo.png` — Binyamin Gym logo at repository root
+## Deployment
 
-## Important
+Continue deploying the repository root as a static site on Vercel (Other framework, no build command, root output directory) or GitHub Pages. No backend was added. Local testing tools and the pre-audit backup are excluded from Vercel uploads by .vercelignore. This work does not publish a deployment.
 
-This tool is for gym onboarding and starter fitness programming. Binyamin Gym can apply its own membership, medical-clearance and supervision policies outside the app.
+## Backup and verification
 
+The original source is preserved in `backups/before-audit/`; no Git repository existed in the supplied folder. See QA.md for executed checks and remaining verification limits.
 
-## v5 updates
+## Equipment photos
 
-- Member sharing now uses a dedicated `?routine=` payload URL, with backwards compatibility for older `#share=` links. Opening the link automatically switches to member-only routine mode.
-- Binyamin Gym logo is expected at repository root as `binyamin-gym-logo.png`.
-- Routine rows now use real equipment reference photos, with SVG fallback if an external image cannot load. See `CREDITS.md` for image licensing/attribution.
-- Equipment image mappings are centralized near the top of `app.js`, making it easy to replace generic references with photos of Binyamin Gym's exact machines later.
-
-
-## v6 updates
-
-- Larger desktop typography and controls throughout the intake and routine workspace.
-- Rebuilt shared-member mobile layout with larger exercise text, larger equipment photos and card-style exercise rows.
-- Click/tap any routine equipment photo to open a full-size reference image.
-- Added a required Male / Female intake toggle; gender stays in the local staff profile and is not embedded in member share links.
-- Removed the in-app safety-screen section.
-- Hebrew routine copy was normalized, including time units and an all-Hebrew effort description instead of RPE.
-- English now consistently uses “Workout 1 / Workout 2”; Hebrew uses “אימון 1 / אימון 2”.
-- Reference photography was replaced with equipment-only imagery wherever possible; exact Binyamin Gym machine photos can be dropped in later.
+Product photos from the supplied equipment list are stored locally under assets/equipment. EQUIPMENT.md records mappings, inventory and pending questions; assets/equipment/inventory.json records the 26 equipment line items, quantities and source pages. Exact photos and fallback drawings are distinguished in the image viewer. The source is a quotation, so listed status does not assert delivery.

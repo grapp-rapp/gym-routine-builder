@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0b1220" />
+  <meta name="referrer" content="no-referrer" />
   <meta name="color-scheme" content="light" />
   <title>Binyamin Gym — Member Program Builder</title>
   <script>
@@ -13,8 +14,10 @@
     }
   </script>
   <link rel="stylesheet" href="styles.css" />
+  <link id="printStyles" rel="stylesheet" href="print.css" media="print" />
 </head>
 <body>
+  <div class="print-preview-toolbar no-print" hidden><button class="btn" id="closePrintPreview" type="button">Back to routine</button><button class="btn" id="confirmPrint" type="button">Print / Save PDF</button></div>
   <div class="app-shell">
     <aside class="app-sidebar no-print" aria-label="App navigation">
       <div class="brand-mark brand-logo" aria-label="Binyamin Gym">
@@ -46,7 +49,7 @@
             <h1>Build a member program</h1>
             <span class="app-badge">Staff tool</span>
           </div>
-          <p class="sub">A polished onboarding tool for starter programming, member handouts and mobile routines.</p>
+          <p class="sub">Create a clear training plan. Review it together, then send it home.</p>
         </div>
         <div class="header-actions">
           <button class="btn secondary" id="saveProfileBtnTop" type="button">
@@ -84,7 +87,7 @@
               <div class="profile-stack">
                 <div class="profile-top-grid">
                   <label class="field"><span>Member name</span>
-                    <input id="name" autocomplete="name" placeholder="e.g. David Cohen" />
+                    <input id="name" maxlength="120" autocomplete="name" placeholder="e.g. David Cohen" />
                   </label>
                   <div class="field gender-field">
                     <span>Gender</span>
@@ -194,12 +197,12 @@
             <div class="form-section notes-section">
               <div class="mini-heading">
                 <span class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/></svg></span>
-                <div><h3>Trainer notes</h3><p>Optional context to carry onto the handout.</p></div>
+                <div><h3>Trainer notes</h3><p>Internal staff notes. Excluded from member links and printed handouts.</p></div>
               </div>
-              <label class="field"><textarea id="trainerNotes" rows="3" placeholder="Preferences, cues, scheduling notes or anything to remember"></textarea></label>
+              <label class="field"><textarea aria-label="Internal trainer notes" maxlength="2000" id="trainerNotes" rows="3" placeholder="Preferences, cues, scheduling notes or anything to remember"></textarea></label>
             </div>
 
-            <div class="form-actions sticky-actions">
+            <div class="form-section"><div class="mini-heading"><div><h3>Member coaching notes</h3><p>Included in the shared routine and handout. Write each language separately.</p></div></div><label class="field"><span>Member note — English</span><textarea id="memberNotes" maxlength="1000" rows="2"></textarea></label><label class="field"><span>הערה למתאמן — עברית</span><textarea id="memberNotesHe" dir="rtl" lang="he" maxlength="1000" rows="2"></textarea></label></div><div class="form-actions sticky-actions">
               <div class="action-note"><span class="status-dot"></span><span>Ready when intake is complete</span></div>
               <div class="action-buttons">
                 <button class="btn secondary" id="saveProfileBtn" type="button">Save profile</button>
@@ -265,6 +268,8 @@
       </div>
       <button class="icon-btn" id="closeDialogBtn" aria-label="Close">×</button>
     </div>
+    <a id="backupDownload" class="btn secondary" hidden>Download prepared backup</a>
+    <p id="backupStatus" role="status" class="dialog-sub"></p>
     <div id="savedList" class="saved-list"></div>
     <div class="dialog-actions">
       <button class="btn secondary" id="exportBtn" type="button">Export backup</button>
@@ -285,7 +290,7 @@
 
     <div id="swapCurrentExercise" class="swap-current"></div>
 
-    <div class="swap-guidance-note">
+    <form id="prescriptionForm" class="prescription-editor" onsubmit="return false"><div class="grid three"><label class="field"><span id="editSetsLabel">Sets</span><input id="editSets" type="number" min="1" max="10" required></label><label class="field"><span id="editRepsLabel">Reps / time</span><input id="editReps" maxlength="40" required></label><label class="field"><span id="editRestLabel">Rest</span><input id="editRest" maxlength="40" required></label></div><label class="field"><span>Coaching note — English</span><textarea id="editNote" maxlength="500" rows="2" lang="en" dir="ltr"></textarea></label><label class="field"><span>הנחיה למתאמן — עברית</span><textarea id="editNoteHe" maxlength="500" rows="2" lang="he" dir="rtl"></textarea></label><p id="prescriptionHint" class="dialog-sub"></p></form><div class="swap-guidance-note">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg>
       <span id="swapGuidanceNoteText">Suggestions are filtered using the member's movement considerations. Trainer judgement still comes first.</span>
     </div>
@@ -325,6 +330,11 @@
   <div id="appToast" class="app-toast" role="status" aria-live="polite" hidden></div>
 
   <template id="routineTemplate"></template>
+  <script src="js/exercise-catalog.js"></script>
+  <script src="js/equipment-catalog.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/routine-engine.js"></script>
+  <script src="js/sharing.js"></script>
   <script src="app.js"></script>
   <script>
     // Mirror the top save action to the existing save-profile logic without changing the app engine.

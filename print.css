@@ -1,0 +1,213 @@
+@page {
+  size:A4;
+  margin:12mm
+}
+html,body {
+  background:white!important;
+  font-size:11pt;
+  color:#172e2a;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact
+}
+.no-print,.app-sidebar,.app-header,.intake,.output-toolbar,dialog,.app-toast,.routine-brand-row,.routine-hero,.notice,.routine-nav,.day-tabs,.equipment-zoom-badge,.exercise-edit-btn {
+  display:none!important
+}
+.app-main,.member-share-mode .app-main {
+  margin:0;
+  padding:0
+}
+.layout,.member-share-mode .layout {
+  display:block;
+  max-width:none;
+  padding:0;
+  margin:0
+}
+.panel,.output {
+  border:0;
+  box-shadow:none;
+  overflow:visible;
+  position:static
+}
+.routine,.member-share-mode .routine {
+  padding:0
+}
+.day-page {
+  display:block!important;
+  break-before:page;
+  border:0;
+  border-radius:0;
+  overflow:visible
+}
+.day-page:first-child {
+  break-before:auto
+}
+.print-day-brand {
+  display:flex;
+  gap:4mm;
+  align-items:center;
+  padding-bottom:4mm;
+  border-bottom:1px solid #bccfc2
+}
+.print-day-brand img {
+  width:16mm;
+  height:16mm;
+  object-fit:contain
+}
+.print-day-brand>div {
+  display:grid;
+  gap:1mm
+}
+.print-day-brand b {
+  font-size:14pt
+}
+.print-day-brand span {
+  font-size:12pt;
+  overflow-wrap:anywhere
+}
+.day-head {
+  padding:4mm 0;
+  background:white
+}
+.day-head h3 {
+  font-size:18pt
+}
+.day-head>div>span {
+  font-size:10pt
+}
+.day-duration b {
+  font-size:11pt
+}
+.day-duration span {
+  font-size:9pt
+}
+.exercise-item,.member-share-mode .exercise-item {
+  display:grid;
+  grid-template-columns:14mm minmax(0,1fr) 15mm 22mm 23mm;
+  gap:3mm;
+  padding:3mm 0;
+  break-inside:avoid;
+  align-items:center;
+  margin:0;
+  border-radius:0;
+  box-shadow:none
+}
+.equipment-thumb,.member-share-mode .equipment-thumb {
+  grid-column:1;
+  grid-row:1;
+  width:13mm;
+  height:13mm;
+  border:0
+}
+.exercise-main,.member-share-mode .exercise-main {
+  grid-column:2;
+  grid-row:1
+}
+.exercise-name-line strong {
+  font-size:11pt
+}
+.exercise-main p {
+  font-size:10pt;
+  line-height:1.3;
+  margin:1mm 0
+}
+.equipment-pill {
+  font-size:8.5pt;
+  padding:0;
+  background:none
+}
+.exercise-stat {
+  grid-row:1;
+  padding:0;
+  border:0
+}
+.sets-stat {
+  grid-column:3
+}
+.reps-stat {
+  grid-column:4
+}
+.rest-stat {
+  grid-column:5
+}
+.exercise-stat b {
+  font-size:11pt
+}
+.exercise-stat span {
+  font-size:8.5pt
+}
+.day-guidance {
+  grid-template-columns:1fr 1fr;
+  gap:3mm;
+  padding:3mm 0;
+  background:white;
+  break-inside:avoid
+}
+.day-guidance span {
+  font-size:9pt
+}
+.day-guidance p {
+  font-size:10pt;
+  line-height:1.35
+}
+.print-progression {
+  display:block;
+  grid-column:1/-1;
+  order:3
+}
+.routine-bottom {
+  break-before:page;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:4mm;
+  margin:0
+}
+.bottom-card {
+  padding:4mm;
+  break-inside:avoid
+}
+.bottom-card h3 {
+  font-size:13pt
+}
+.bottom-card p,.bottom-card li {
+  font-size:11pt;
+  line-height:1.5
+}
+.print-footer {
+  display:block;
+  font-size:9pt;
+  line-height:1.4;
+  margin-top:4mm
+}
+@media screen {
+  body.print-preview {
+    background:#dce3de!important
+  }
+  .print-preview .print-preview-toolbar {
+    display:flex!important;
+    position:sticky;
+    top:0;
+    z-index:100;
+    justify-content:center;
+    gap:12px;
+    padding:14px;
+    background:#123a29;
+    color:white
+  }
+  .print-preview .layout,.print-preview.member-share-mode .layout {
+    width:210mm;
+    padding:12mm!important;
+    margin:20px auto!important;
+    background:white;
+    box-shadow:0 6px 30px #0002
+  }
+  .print-preview .day-page {
+    min-height:273mm;
+    margin-bottom:24mm
+  }
+  .print-preview .routine-bottom {
+    min-height:200mm
+  }
+  .print-preview .print-preview-toolbar .btn {
+    min-height:44px
+  }
+}

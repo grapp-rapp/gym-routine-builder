@@ -1,0 +1,53 @@
+const EX = {
+  legPress: { name: 'Leg Press', he: 'לחיצת רגליים', pattern: 'squat', cue: 'Controlled depth; keep back supported.', cueHe: 'טווח נוח ומבוקר, עם גב נתמך.', equipment: 'Leg press machine', equipmentHe: 'מכונת לחיצת רגליים', equipmentType: 'machine' },
+  gobletSquat: { name: 'Goblet Squat to Box', he: 'סקוואט גביע לספסל', pattern: 'squat', cue: 'Sit to a comfortable box height; smooth tempo.', cueHe: 'שב לגובה נוח ושמור על קצב מבוקר.', equipment: 'Dumbbell + box', equipmentHe: 'משקולת יד + ספסל', equipmentType: 'dumbbell' },
+  hackSquat: { name: 'Hack Squat / Supported Squat', he: 'האק סקוואט / סקוואט נתמך', pattern: 'squat', cue: 'Use a pain-free range and stable foot position.', cueHe: 'עבוד בטווח ללא כאב ובמנח רגליים יציב.', equipment: 'Hack squat machine', equipmentHe: 'מכונת האק סקוואט', equipmentType: 'machine' },
+  splitSquat: { name: 'Supported Split Squat', he: 'מכרע מפוצל עם תמיכה', pattern: 'singleLeg', cue: 'Hold support if needed; keep range comfortable.', cueHe: 'היעזר בתמיכה לפי הצורך ושמור על טווח נוח.', equipment: 'Bench / support', equipmentHe: 'ספסל / תמיכה', equipmentType: 'bench' },
+  stepUp: { name: 'Low Step-Up', he: 'עלייה למדרגה נמוכה', pattern: 'singleLeg', cue: 'Drive through whole foot; choose a low box.', cueHe: 'דחוף דרך כל כף הרגל ובחר מדרגה נמוכה.', equipment: 'Low step / box', equipmentHe: 'מדרגה / קופסה נמוכה', equipmentType: 'box' },
+  legCurl: { name: 'Seated / Lying Leg Curl', he: 'כפיפת ברך במכונה', pattern: 'hinge', cue: 'Slow lowering; avoid arching the back.', cueHe: 'הורדה איטית ומבוקרת, בלי לקשת את הגב.', equipment: 'Leg curl machine', equipmentHe: 'מכונת כפיפת ברך', equipmentType: 'machine' },
+  hipThrust: { name: 'Hip Thrust / Glute Bridge', he: 'היפ תראסט / גשר ישבן', pattern: 'hinge', cue: 'Finish with glutes, not low-back extension.', cueHe: 'סיים בכיווץ ישבן, בלי להאריך את הגב התחתון.', equipment: 'Bench + pad', equipmentHe: 'ספסל + כרית', equipmentType: 'bench' },
+  cablePullThrough: { name: 'Cable Pull-Through', he: 'פול-ת׳רו בכבל', pattern: 'hinge', cue: 'Hip hinge with neutral spine.', cueHe: 'תנועת ציר מהירך עם עמוד שדרה ניטרלי.', equipment: 'Cable station', equipmentHe: 'תחנת כבלים', equipmentType: 'cable' },
+  rdl: { name: 'Dumbbell Romanian Deadlift', he: 'דדליפט רומני עם משקולות יד', pattern: 'hinge', cue: 'Hinge at hips; stop before spinal position changes.', cueHe: 'ציר מהירך; עצור לפני שמנח הגב משתנה.', equipment: 'Dumbbells', equipmentHe: 'משקולות יד', equipmentType: 'dumbbell' },
+  chestPress: { name: 'Machine Chest Press', he: 'לחיצת חזה במכונה', pattern: 'push', cue: 'Shoulder blades supported; neutral, comfortable grip.', cueHe: 'שכמות נתמכות ואחיזה נוחה וניטרלית.', equipment: 'Chest press machine', equipmentHe: 'מכונת לחיצת חזה', equipmentType: 'machine' },
+  dbBench: { name: 'Dumbbell Bench Press', he: 'לחיצת חזה עם משקולות יד', pattern: 'push', cue: 'Keep elbows in a comfortable path.', cueHe: 'שמור את המרפקים במסלול נוח.', equipment: 'Bench + dumbbells', equipmentHe: 'ספסל + משקולות יד', equipmentType: 'dumbbell' },
+  inclinePushup: { name: 'Incline Push-Up', he: 'שכיבות סמיכה בשיפוע', pattern: 'push', cue: 'Choose bench height that feels smooth and stable.', cueHe: 'בחר גובה ספסל שמרגיש יציב ונוח.', equipment: 'Bench', equipmentHe: 'ספסל', equipmentType: 'bench' },
+  cablePress: { name: 'Standing Cable Press', he: 'לחיצת חזה בעמידה בכבל', pattern: 'push', cue: 'Light load; ribs stacked; smooth press.', cueHe: 'משקל קל, גוף יציב ולחיצה חלקה.', equipment: 'Cable station', equipmentHe: 'תחנת כבלים', equipmentType: 'cable' },
+  neutralPress: { name: 'Neutral-Grip Machine Press', he: 'לחיצה במכונה באחיזה ניטרלית', pattern: 'push', cue: 'Use neutral grip and pain-free range.', cueHe: 'אחיזה ניטרלית וטווח ללא כאב.', equipment: 'Press machine', equipmentHe: 'מכונת לחיצה', equipmentType: 'machine' },
+  row: { name: 'Chest-Supported Row', he: 'חתירה עם תמיכת חזה', pattern: 'pull', cue: 'Keep chest supported; pull elbows toward ribs.', cueHe: 'השאר את החזה נתמך ומשוך מרפקים לכיוון הצלעות.', equipment: 'Supported row machine', equipmentHe: 'מכונת חתירה עם תמיכת חזה', equipmentType: 'machine' },
+  cableRow: { name: 'Seated Cable Row', he: 'חתירה בישיבה בכבל', pattern: 'pull', cue: 'Stay tall; do not rock through the low back.', cueHe: 'שב זקוף ואל תתנדנד דרך הגב התחתון.', equipment: 'Cable row', equipmentHe: 'חתירה בכבל', equipmentType: 'cable' },
+  pulldown: { name: 'Neutral-Grip Lat Pulldown', he: 'משיכת פולי עליון באחיזה ניטרלית', pattern: 'verticalPull', cue: 'Pull to upper chest without leaning back.', cueHe: 'משוך לכיוון החזה העליון בלי להישען לאחור.', equipment: 'Lat pulldown', equipmentHe: 'מכונת פולי עליון', equipmentType: 'cable' },
+  pulldownWide: { name: 'Lat Pulldown', he: 'משיכת פולי עליון', pattern: 'verticalPull', cue: 'Comfortable grip; avoid forcing shoulder range.', cueHe: 'אחיזה נוחה; אל תכריח טווח כתף.', equipment: 'Lat pulldown', equipmentHe: 'מכונת פולי עליון', equipmentType: 'cable' },
+  facePull: { name: 'Cable Face Pull', he: 'פייס פול בכבל', pattern: 'rearDelt', cue: 'Light load; move through a comfortable shoulder range.', cueHe: 'משקל קל ותנועה בטווח כתף נוח.', equipment: 'Cable station + rope', equipmentHe: 'כבל + חבל', equipmentType: 'cable' },
+  reverseFly: { name: 'Reverse Pec Deck', he: 'פרפר הפוך במכונה', pattern: 'rearDelt', cue: 'Keep shoulders down; control both directions.', cueHe: 'שמור כתפיים נמוכות ושלוט בשני הכיוונים.', equipment: 'Reverse pec deck', equipmentHe: 'מכונת פרפר הפוך', equipmentType: 'machine' },
+  lateralRaise: { name: 'Cable / Machine Lateral Raise', he: 'הרחקת כתפיים בכבל / מכונה', pattern: 'shoulder', cue: 'Light load; stop before discomfort.', cueHe: 'משקל קל; עצור לפני אי-נוחות.', equipment: 'Cable / shoulder machine', equipmentHe: 'כבל / מכונת כתפיים', equipmentType: 'cable' },
+  shoulderPress: { name: 'Machine Shoulder Press', he: 'לחיצת כתפיים במכונה', pattern: 'shoulder', cue: 'Do not force overhead range; stop if pinching.', cueHe: 'אל תכריח טווח מעל הראש; עצור אם יש צביטה.', equipment: 'Shoulder press machine', equipmentHe: 'מכונת לחיצת כתפיים', equipmentType: 'machine' },
+  cableCurl: { name: 'Cable Curl', he: 'כפיפת מרפק בכבל', pattern: 'arms', cue: 'Keep wrist neutral and elbows quiet.', cueHe: 'שורש כף יד ניטרלי ומרפקים יציבים.', equipment: 'Cable station', equipmentHe: 'תחנת כבלים', equipmentType: 'cable' },
+  hammerCurl: { name: 'Hammer Curl', he: 'כפיפת פטיש', pattern: 'arms', cue: 'Neutral wrist; controlled reps.', cueHe: 'שורש כף יד ניטרלי וחזרות מבוקרות.', equipment: 'Dumbbells', equipmentHe: 'משקולות יד', equipmentType: 'dumbbell' },
+  pressdown: { name: 'Rope Triceps Pressdown', he: 'פשיטת מרפק בכבל עם חבל', pattern: 'arms', cue: 'Keep elbows at sides and wrists comfortable.', cueHe: 'מרפקים צמודים לגוף ושורשי כף יד נוחים.', equipment: 'Cable station + rope', equipmentHe: 'כבל + חבל', equipmentType: 'cable' },
+  calf: { name: 'Standing / Seated Calf Raise', he: 'הרמות תאומים בעמידה / ישיבה', pattern: 'calves', cue: 'Pause at top and bottom; controlled range.', cueHe: 'עצירה קצרה למעלה ולמטה, בטווח מבוקר.', equipment: 'Calf machine', equipmentHe: 'מכונת תאומים', equipmentType: 'machine' },
+  pallof: { name: 'Pallof Press', he: 'פאלוף פרס', pattern: 'core', cue: 'Brace; resist rotation. No breath holding.', cueHe: 'ייצב את הגו והתנגד לסיבוב. אל תעצור נשימה.', equipment: 'Cable station', equipmentHe: 'תחנת כבלים', equipmentType: 'cable' },
+  deadBug: { name: 'Dead Bug', he: 'דד באג', pattern: 'core', cue: 'Keep ribs down; only extend as far as you can control.', cueHe: 'שמור צלעות למטה והארך רק עד הטווח שבשליטה.', equipment: 'Mat', equipmentHe: 'מזרן', equipmentType: 'bodyweight' },
+  birdDog: { name: 'Bird Dog', he: 'בירד דוג', pattern: 'core', cue: 'Reach long; avoid twisting or arching.', cueHe: 'הארך את הגפיים בלי להסתובב או לקשת את הגב.', equipment: 'Mat', equipmentHe: 'מזרן', equipmentType: 'bodyweight' },
+  plank: { name: 'Incline Plank', he: 'פלאנק בשיפוע', pattern: 'core', cue: 'Brace gently; stop before back or shoulder discomfort.', cueHe: 'ייצב בעדינות; עצור לפני אי-נוחות בגב או בכתף.', equipment: 'Bench', equipmentHe: 'ספסל', equipmentType: 'bench' },
+  suitcase: { name: 'Suitcase Carry', he: 'נשיאת מזוודה', pattern: 'carry', cue: 'Walk tall; do not lean toward or away from the weight.', cueHe: 'לך זקוף בלי לנטות אל המשקל או ממנו.', equipment: 'Dumbbell / kettlebell', equipmentHe: 'משקולת יד / קטלבל', equipmentType: 'dumbbell' },
+  bike: { name: 'Stationary Bike', he: 'אופני כושר', pattern: 'cardio', cue: 'Conversational pace unless otherwise noted.', cueHe: 'קצב שבו עדיין אפשר לדבר, אלא אם צוין אחרת.', equipment: 'Exercise bike', equipmentHe: 'אופני כושר', equipmentType: 'bike' },
+  treadmill: { name: 'Treadmill Walk', he: 'הליכה על הליכון', pattern: 'cardio', cue: 'Comfortable pace; incline optional.', cueHe: 'קצב נוח; שיפוע לפי הצורך.', equipment: 'Treadmill', equipmentHe: 'הליכון', equipmentType: 'treadmill' },
+  elliptical: { name: 'Elliptical', he: 'אליפטיקל', pattern: 'cardio', cue: 'Smooth, moderate effort.', cueHe: 'מאמץ מתון ותנועה חלקה.', equipment: 'Elliptical', equipmentHe: 'אליפטיקל', equipmentType: 'elliptical' },
+  rower: { name: 'Rower', he: 'מכשיר חתירה', pattern: 'cardio', cue: 'Easy technique-focused pace.', cueHe: 'קצב קל עם דגש על טכניקה.', equipment: 'Rowing machine', equipmentHe: 'מכשיר חתירה', equipmentType: 'rower' },
+  balanceStand: { name: 'Balance: supported single-leg stand', he: 'שיווי משקל: עמידה על רגל אחת עם תמיכה', pattern: 'balance', cue: 'Use a stable support. Stop if dizzy or unsteady.', cueHe: 'היעזר בתמיכה יציבה. עצור במקרה של סחרחורת או חוסר יציבות.', equipment: 'Stable support', equipmentHe: 'משטח / תמיכה יציבה', equipmentType: 'bodyweight' }
+};
+Object.entries(EX).forEach(([key, value]) => { value.key = key; });
+
+const SWAP_FAMILIES = [
+  ['legPress', 'gobletSquat', 'hackSquat', 'splitSquat', 'stepUp'],
+  ['legCurl', 'hipThrust', 'cablePullThrough', 'rdl'],
+  ['chestPress', 'dbBench', 'inclinePushup', 'cablePress', 'neutralPress'],
+  ['row', 'cableRow', 'pulldown', 'pulldownWide', 'facePull', 'reverseFly'],
+  ['facePull', 'reverseFly', 'lateralRaise', 'shoulderPress'],
+  ['cableCurl', 'hammerCurl', 'pressdown'],
+  ['pallof', 'deadBug', 'birdDog', 'plank', 'suitcase'],
+  ['bike', 'treadmill', 'elliptical', 'rower'],
+  ['calf'],
+  ['balanceStand']
+];
+

@@ -1,19 +1,11 @@
-# Equipment photo credits
+# Assets and credits
 
-Binyamin Gym currently uses temporary equipment reference photography so members can identify machine types. The current set avoids photos featuring women; most references show equipment only. Where a clean exact-machine image was not available, the app uses a generic equipment-only strength-machine reference rather than a mismatched people photo. These should be replaced with photos of the exact installed Binyamin Gym equipment once the final equipment list is available.
+The application uses the supplied local Binyamin Gym logo, unchanged.
 
-- Leg press — Aliva Sahoo, Wikimedia Commons, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Gym_Leg_Press_Machine.jpg
-- Hack squat diagram — Everkinetic, Wikimedia Commons, CC BY-SA 3.0: https://commons.wikimedia.org/wiki/File:Hack_squat_machine_1.svg
-- Leg curl diagram — Everkinetic, Wikimedia Commons, CC BY-SA 3.0: https://commons.wikimedia.org/wiki/File:Lying_leg_curl_machine_2.svg
-- Incline/chest press reference — Aliva Sahoo, Wikimedia Commons, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Chest_Incline.jpg
-- Shoulder press — Aliva Sahoo, Wikimedia Commons, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Shoulder_Press.jpg
-- Lat pulldown — Santeri Viinamäki, Wikimedia Commons, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Lat_pulldown_machine_20180112.jpg
-- Cable / row / generic strength-machine reference — San Francisco Foghorn, Wikimedia Commons, CC BY 2.0: https://commons.wikimedia.org/wiki/File:Multifunctional_cable_and_row_machines_in_a_gym.jpg
-- Seated calf machine — Teemeah, Wikimedia Commons, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Seated_calf_machine.jpg
-- Treadmill — GhoziSeptiandri, Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Treadmill-gym.jpg
-- Stationary bike — Kirk, Wikimedia Commons, public domain: https://commons.wikimedia.org/wiki/File:Stationary_bicycle.jpg
-- Elliptical — Cpetro45, Wikimedia Commons, CC BY-SA 3.0 / GFDL: https://commons.wikimedia.org/wiki/File:Elliptical_machine.jpg
-- Indoor rower — rrafson / Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Rowing_Machine.jpg
-- Dumbbell reference — Alvin Ategyeka, Wikimedia Commons, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Dumbbells_in_a_local_health_club.jpg
+The SVG files under assets/equipment are original equipment-only reference drawings created for this project. They use the project's MIT license and make no requests to third-party image hosts. These are category diagrams rather than exact model illustrations.
 
-These images are references only and are not intended as brand/model endorsements.
+The former Wikimedia image list is preserved in backups/before-audit/CREDITS.md for historical reference. Those remote images are no longer loaded by the application. Add author, source URL and license here when introducing future third-party assets.
+
+## Supplied product photos
+
+The JPG equipment assets were extracted from the user-provided EuroTec quotation PQ26001443, dated 3 September 2026, titled מועצה איזורית מטה בנימין.pdf. Product photography and brands belong to their respective rights holders; these assets are not covered by the project’s MIT license. The original embedded images are used, with the tiled dumbbell image reassembled. No commercial terms, prices, customer details, or vendor header images are published. Per-item source pages and SKUs are recorded in assets/equipment/inventory.json.

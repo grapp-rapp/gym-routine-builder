@@ -137,6 +137,7 @@ function renderExercise(ex, lang, dayIndex, exerciseIndex) {
     <div class="exercise-stat reps-stat"><b>${routineText(displayReps)}</b><span>${c.reps}</span></div>
     <div class="exercise-stat rest-stat"><b>${routineText(l.rest)}</b><span>${c.rest}</span></div>
     ${editMarkup}
+    ${trackingExerciseMarkup(ex, dayIndex, exerciseIndex)}
   </div>`;
 }
 
@@ -167,6 +168,7 @@ function renderPlan(plan) {
     </div>
     <div class="notice no-print staff-notice ${p.issues?.length?'warn':'success'}">${routineText(issueText)}${p.issueNotes ? `<br><b>${c.memberNote}:</b> ${routineText(p.issueNotes)}` : ''}</div>
     ${p.age < 18 ? `<div class="notice warn"><b>${c.minor}:</b> ${c.minorText}</div>` : ''}
+    ${trackingToolbarMarkup(plan)}
     <div class="day-tabs no-print">${tabs}</div>
     <div class="day-pages">${pages}</div>
     <div class="routine-bottom"><div class="print-day-brand"><img src="${LOGO_SRC}" alt="Binyamin Gym"><div><b>Binyamin Gym</b><span>${routineText(p.name)}</span></div></div>
@@ -179,6 +181,7 @@ function renderPlan(plan) {
     <p class="print-footer">${rtl?'תוכנית התחלה המבוססת על שאלון הקבלה. מומלץ לבצע הערכה מחדש לאחר כ־4–6 שבועות או כאשר המטרות, ההעדפות או היכולת משתנות.':'Starter routine based on member intake. Reassess after ~4–6 weeks or when goals, preferences or ability change.'}</p>
   </article>`;
   bindRoutineNavigation();
+  paintRestTimer();
 }
 
 function bindRoutineNavigation() {
@@ -647,6 +650,7 @@ function validateSharedPlan(shared) {
   const text = (x,max=1000) => typeof x === 'string' && x.length <= max;
   if (!shared || !shared.profile || !Array.isArray(shared.workouts) || shared.workouts.length < 1 || shared.workouts.length > 5) throw Error('Invalid routine');
   const p=shared.profile;
+  if (p.logId !== undefined && (typeof p.logId !== 'string' || p.logId.length > 150)) throw Error('Invalid log identity');
   if (!text(p.name,120) || !Object.hasOwn(GOAL_LABEL,p.goal) || !['new','some','experienced'].includes(p.experience) || ![30,45,60,75].includes(Number(p.duration)) || Number(p.days)!==shared.workouts.length) throw Error('Invalid routine profile');
   for(const w of shared.workouts) {
     if (!text(w.name,100) || !text(w.nameHe,100) || !Array.isArray(w.exercises) || w.exercises.length < 1 || w.exercises.length > 12) throw Error('Invalid workout');

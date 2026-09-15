@@ -168,6 +168,7 @@
                     <option value="walk">Treadmill / walking</option>
                     <option value="bike">Bike</option>
                     <option value="elliptical">Elliptical</option>
+                    <option value="jumpRope">Jump rope</option>
                     <option value="row">Rower</option>
                     <option value="any" selected>No preference</option>
                   </select>
@@ -329,12 +330,14 @@
 
   <div id="appToast" class="app-toast" role="status" aria-live="polite" hidden></div>
 
+  <dialog id="workoutLogDialog" class="tracking-dialog" aria-labelledby="logTitle"><div id="workoutLogContent"></div></dialog>
   <template id="routineTemplate"></template>
   <script src="js/exercise-catalog.js"></script>
   <script src="js/equipment-catalog.js"></script>
   <script src="js/translations.js"></script>
   <script src="js/routine-engine.js"></script>
   <script src="js/sharing.js"></script>
+  <script src="js/tracking.js"></script>
   <script src="app.js"></script>
   <script>
     // Mirror the top save action to the existing save-profile logic without changing the app engine.

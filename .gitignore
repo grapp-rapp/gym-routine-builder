@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+
+# Local backups and document extraction scratch files
+backups/
+tmp/
+node_modules/
+.env
+.env.*
+!.env.example
+

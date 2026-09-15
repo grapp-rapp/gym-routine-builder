@@ -6,21 +6,30 @@ function effortPrescription(p) {
 }
 function volumeFor(p, role='main') { let sets = effortPrescription(p).sets; if (p.duration === 30 && role !== 'main') sets = Math.max(1, sets - 1); if (p.goal === 'strength' && role === 'main' && p.experience !== 'new') sets += 1; return sets; }
 function repRange(p, role='main') { if (p.goal === 'strength') return role === 'main' ? '5–8' : '8–12'; if (p.goal === 'muscle') return role === 'main' ? '6–10' : '10–15'; return role === 'main' ? '8–12' : '10–15'; }
-function restRange(p, role='main') { return p.goal === 'strength' && role === 'main' ? '2–3 min' : role === 'main' ? '90–120 sec' : '60–90 sec'; }
+function restRange(p, role='main', reps=repRange(p, role)) {
+  // Mixed ranges use their lower bound; timed exercises use the 60-second default.
+  if (/sec|min/i.test(reps)) return '60 sec';
+  const lower = Number(String(reps).match(/^\s*(\d+)/)?.[1]);
+  return lower > 0 && lower <= 6 ? '90–120 sec' : '60 sec';
+}
 function formatHebrewMeasure(value) { return String(value ?? '').replace(/\bmin\b/g, 'דק׳').replace(/\bsec\b/g, 'שנ׳').replace(/\/side\b/g, ' לכל צד'); }
 function restHe(rest) { return formatHebrewMeasure(rest); }
 
 function chooseCardio(p) {
-  const map = { walk: EX.treadmill, bike: EX.bike, elliptical: EX.elliptical, row: EX.rower };
+  const map = { walk: EX.treadmill, bike: EX.bike, elliptical: EX.elliptical, row: EX.rower, jumpRope: EX.jumpRope };
   let c = map[p.cardioPreference] || EX.treadmill;
   if (p.issues.includes('knee') && c === EX.treadmill) c = EX.bike;
   if ((p.issues.includes('lowBack') || p.issues.includes('hip')) && c === EX.rower) c = EX.bike;
+  if (c === EX.jumpRope) c = safeExercise('jumpRope', p);
   return c;
 }
 
 function safeExercise(key, p) {
   const issues = new Set(p.issues); const original = EX[key]; let replacement = original; let reason = ''; let reasonHe = '';
   const swap = (newKey, why, whyHe) => { replacement = EX[newKey]; reason = why; reasonHe = whyHe; };
+  if (key === 'jumpRope' && ['knee','hip','lowBack'].some(issue => issues.has(issue))) {
+    swap('bike', 'jumping replaced with a lower-impact option', 'קפיצות הוחלפו באפשרות עם פחות זעזועים');
+  }
   if (issues.has('lowBack')) {
     if (key === 'rdl' || key === 'cablePullThrough') swap('legCurl', 'swapped to reduce loaded spinal/hip-hinge demand', 'הוחלף כדי להפחית עומס בציר הירך והגב');
     if (key === 'gobletSquat') swap('legPress', 'swapped for more trunk support', 'הוחלף לתרגיל עם יותר תמיכה לגו');
@@ -57,12 +66,13 @@ function safeExercise(key, p) {
 
 function exerciseRow(key, p, role='main', override={}) {
   const ex = safeExercise(key, p);
+  const reps = override.reps || (ex.pattern === 'carry' ? '20–30 sec/side' : ex.key === 'plank' ? '20–30 sec' : repRange(p, role));
   return {
     ...ex,
     key: ex.key,
     sets: override.sets ?? volumeFor(p, role),
-    reps: override.reps || (ex.pattern === 'carry' ? '20–30 sec/side' : ex.key === 'plank' ? '20–30 sec' : repRange(p, role)),
-    rest: override.rest || restRange(p, role),
+    reps,
+    rest: override.rest || restRange(p, role, reps),
     role,
     note: override.note || ex.cue,
     noteHe: override.noteHe || ex.cueHe,
@@ -95,13 +105,17 @@ function makeWorkouts(p) {
     if (p.goal === 'muscle' && p.duration >= 60 && exercises.length < 7) exercises.push(exerciseRow(i % 2 ? 'cableCurl' : 'pressdown', p, 'accessory'));
     if (p.goal === 'fatloss' && p.duration >= 45) {
       const c = chooseCardio(p);
-      exercises.push({ ...c, key: c.key, sets: '1', reps: p.duration >= 60 ? '10–15 min' : '6–10 min', rest: '—', role: 'cardio', note: 'Steady moderate pace; you should still be able to speak in short sentences.', noteHe: 'קצב מתון ויציב; עדיין אמור להיות אפשרי לדבר במשפטים קצרים.', substituted: false, generatedKey: c.key, manualSwap: false });
+      exercises.push({ ...c, key: c.key, sets: '1', reps: p.duration >= 60 ? '10–15 min' : '6–10 min', rest: '—', role: 'cardio', note: c.key === 'jumpRope' ? c.cue : 'Steady moderate pace; you should still be able to speak in short sentences.', noteHe: c.key === 'jumpRope' ? c.cueHe : 'קצב מתון ויציב; עדיין אמור להיות אפשרי לדבר במשפטים קצרים.', substituted: false, generatedKey: c.key, manualSwap: false });
     }
     if (p.age >= 65 && p.duration >= 45) exercises.push({ ...EX.balanceStand, key: EX.balanceStand.key, sets: '2', reps: '20–30 sec/side', rest: '30 sec', role: 'balance', note: EX.balanceStand.cue, noteHe: EX.balanceStand.cueHe, substituted: false, generatedKey: EX.balanceStand.key, manualSwap: false });
     exercises = exercises.filter((ex,index,all)=>all.findIndex(other=>other.key===ex.key)===index);
     // Reserve time for warm-up, practice sets and changing stations.
     const budget = p.duration - (p.experience === 'new' ? 12 : 10);
-    const estimate = ex => Number(ex.sets) * (0.75 + (ex.rest.includes('min') ? 2.5 : ex.role === 'main' ? 1.75 : 1.25)) + 1;
+    const estimate = ex => {
+      const values = String(ex.rest).match(/\d+/g) || [];
+      const restMinutes = values.length ? Math.max(...values.map(Number)) * (ex.rest.includes('min') ? 1 : 1 / 60) : 0;
+      return Number(ex.sets) * 0.75 + Math.max(0, Number(ex.sets) - 1) * restMinutes + 1;
+    };
     const minutes = () => exercises.reduce((sum, ex) => sum + (ex.role === 'cardio' ? (p.duration >= 60 ? 15 : 10) : estimate(ex)), 0);
     while (minutes() > budget && exercises.some(ex => Number(ex.sets) > 2)) {
       const ex = [...exercises].reverse().find(ex => Number(ex.sets) > 2); ex.sets -= 1;

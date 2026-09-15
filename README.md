@@ -54,3 +54,17 @@ The original source is preserved in `backups/before-audit/`; no Git repository e
 ## Equipment photos
 
 Product photos from the supplied equipment list are stored locally under assets/equipment. EQUIPMENT.md records mappings, inventory and pending questions; assets/equipment/inventory.json records the 26 equipment line items, quantities and source pages. Exact photos and fallback drawings are distinguished in the image viewer. The source is a quotation, so listed status does not assert delivery.
+
+## Rest defaults and jump rope
+
+New routines use 60 seconds of rest for rep ranges starting at 7 or above, and 90–120 seconds when the lower bound is 6 or below (including 5–8 and 6–10). Timed strength exercises default to 60 seconds; cardio and balance retain their own prescriptions. Explicit overrides and saved routines retain their rest values. Session estimates use the prescribed rest between sets. Jump rope is available in cardio preferences and swaps, with bilingual interval guidance and a local drawing. Knee, hip or low-back considerations substitute cycling during generation. Equipment availability remains pending confirmation.
+
+## Rest timer and workout history
+
+Each exercise now has Rest timer and Log sets controls in both staff and member views, in English and Hebrew. The timer uses the upper end of a prescribed rest range (90–120 sec starts at 120). It supports pause/resume, reset, +30 seconds and dismiss. Elapsed time uses a deadline so returning from an inactive tab corrects the display. Completion is visual; closing or reloading the page resets the timer. No background notification or sound is promised.
+
+Log completed sets with session date, optional weight in kg, and actual reps or time (include units for timed sets). Blank sets are omitted. The latest saved result for the exercise appears across workout days. History & backup shows entries and supports deleting mistakes, exporting a JSON backup, and importing a backup for the same member. Imports merge new entries, skip exact duplicates and reject conflicting or invalid entries without changing stored history. Export includes a manual download link and can preserve damaged stored data for recovery.
+
+History uses a separate localStorage key per member. New links carry the member's stable identifier, but never their workout results. This is device-local separation, not account authentication: anyone using the same browser and member link can see that member’s locally stored history. Logs do not sync to a trainer or another device, are not included in staff profile backups, and are excluded from printouts. Keep the same hosted site and browser and export backups before clearing data. Older links without an identifier group logs by member name and exercise layout; a newly generated link starts a separate history from those legacy links.
+
+Implementation: js/tracking.js; regression coverage includes member isolation, shared identity, storage validation, import conflicts/deduplication, timer range parsing and deadline calculations.

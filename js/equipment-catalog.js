@@ -55,3 +55,5 @@ EQUIPMENT_ASSETS["shoulderPress"] = {"src":"./assets/equipment/shoulder-press.jp
 EQUIPMENT_ASSETS["cable"] = {"src":"./assets/equipment/functional-trainer.jpg","kind":"photo","model":"VISION FT Functional Trainer","inventoryId":"functional-trainer","sourcePage":2};
 EQUIPMENT_ASSETS["dumbbell"] = {"src":"./assets/equipment/dumbbells.jpg","kind":"photo","model":"ZIVA Performance Hexagon Dumbbell Set 2.5–25 kg","inventoryId":"dumbbells","sourcePage":3};
 EQUIPMENT_ASSETS["bench"] = {"src":"./assets/equipment/adjustable-bench.jpg","kind":"photo","model":"VISION VF Adjustable Bench FW82","inventoryId":"adjustable-bench","sourcePage":2};
+
+EQUIPMENT_ASSETS.jumpRope = { src: './assets/equipment/jump-rope.svg', kind: 'drawing' };

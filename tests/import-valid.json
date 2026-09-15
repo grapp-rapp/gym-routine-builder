@@ -1,0 +1,19 @@
+[
+  {
+    "id": "qa-import-member",
+    "name": "QA Imported Member",
+    "age": 35,
+    "height": 175,
+    "weight": 80,
+    "gender": "female",
+    "goal": "general",
+    "experience": "new",
+    "days": 2,
+    "duration": 30,
+    "activity": "low",
+    "cardioPreference": "any",
+    "issues": [],
+    "issueNotes": "",
+    "trainerNotes": ""
+  }
+]

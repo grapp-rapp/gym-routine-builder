@@ -44,3 +44,13 @@ Run npm test. Run npm start for the local app. No packages need installation.
 - Existing Hebrew QA Final C member link renders the new photos. At 390 px, the row-machine photo dialog loads correctly without horizontal overflow.
 - Hebrew A4 screen preview: 14 product-photo instances across the routine, no broken visible images. No browser errors. Native PDF output was not checked in this pass.
 - Items absent from the PDF remain available pending confirmation, as explicitly requested by the user.
+
+## Timer and local workout logs — 15 September 2026
+
+- Added regression checks for member history isolation, stable identity through sharing, stored results, import validation/duplicates/conflicts and timer deadline calculations. Full suite passes (including 12,288 routine combinations).
+- Browser: generated QA Timer Logs; logged two completed sets, 25 kg × 10 and 25 kg × 9. Last-session result displayed.
+- Started 60-second timer, observed countdown, paused, added time and reset. Timer buttons remain stable between ticks.
+- Saved member and opened newly copied member link; results were visible on the same origin/browser. Reload preserved them.
+- Hebrew log dialog checked at 390 × 844: no horizontal overflow; date and both set fields visible.
+- Valid log import added a chest-press entry and retained original leg-press results; another member’s backup was rejected with both entries intact. Export prepared a named JSON download link; native download completion was not exercised.
+- Print preview hides tracking controls/history. No browser errors observed. Timer uses an on-page completion message; background/closed-browser notifications and timer persistence are not implemented.

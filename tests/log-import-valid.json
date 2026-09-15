@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "identity": "6f53e672-5ee9-4f17-bc2e-7b65277d2ae4",
+  "entries": [
+    {
+      "id": "qa-imported-set",
+      "date": "2026-09-14",
+      "created": 1000,
+      "exercise": "chestPress",
+      "day": 0,
+      "sets": [
+        {
+          "kg": 20,
+          "result": "12"
+        }
+      ]
+    }
+  ]
+}

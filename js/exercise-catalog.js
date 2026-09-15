@@ -34,6 +34,7 @@ const EX = {
   treadmill: { name: 'Treadmill Walk', he: 'הליכה על הליכון', pattern: 'cardio', cue: 'Comfortable pace; incline optional.', cueHe: 'קצב נוח; שיפוע לפי הצורך.', equipment: 'Treadmill', equipmentHe: 'הליכון', equipmentType: 'treadmill' },
   elliptical: { name: 'Elliptical', he: 'אליפטיקל', pattern: 'cardio', cue: 'Smooth, moderate effort.', cueHe: 'מאמץ מתון ותנועה חלקה.', equipment: 'Elliptical', equipmentHe: 'אליפטיקל', equipmentType: 'elliptical' },
   rower: { name: 'Rower', he: 'מכשיר חתירה', pattern: 'cardio', cue: 'Easy technique-focused pace.', cueHe: 'קצב קל עם דגש על טכניקה.', equipment: 'Rowing machine', equipmentHe: 'מכשיר חתירה', equipmentType: 'rower' },
+  jumpRope: { name: 'Jump Rope', he: 'קפיצה בחבל', pattern: 'cardio', cue: 'Use short jumping intervals with walking breaks within the allotted time. Keep jumps low and land softly.', cueHe: 'שלבו מקטעי קפיצה קצרים והפסקות הליכה בתוך הזמן שהוקצב. קפצו נמוך ונחתו ברכות.', equipment: 'Jump rope', equipmentHe: 'חבל קפיצה', equipmentType: 'jumpRope' },
   balanceStand: { name: 'Balance: supported single-leg stand', he: 'שיווי משקל: עמידה על רגל אחת עם תמיכה', pattern: 'balance', cue: 'Use a stable support. Stop if dizzy or unsteady.', cueHe: 'היעזר בתמיכה יציבה. עצור במקרה של סחרחורת או חוסר יציבות.', equipment: 'Stable support', equipmentHe: 'משטח / תמיכה יציבה', equipmentType: 'bodyweight' }
 };
 Object.entries(EX).forEach(([key, value]) => { value.key = key; });
@@ -46,7 +47,7 @@ const SWAP_FAMILIES = [
   ['facePull', 'reverseFly', 'lateralRaise', 'shoulderPress'],
   ['cableCurl', 'hammerCurl', 'pressdown'],
   ['pallof', 'deadBug', 'birdDog', 'plank', 'suitcase'],
-  ['bike', 'treadmill', 'elliptical', 'rower'],
+  ['bike', 'treadmill', 'elliptical', 'rower', 'jumpRope'],
   ['calf'],
   ['balanceStand']
 ];

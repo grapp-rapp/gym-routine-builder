@@ -54,3 +54,10 @@ Run npm test. Run npm start for the local app. No packages need installation.
 - Hebrew log dialog checked at 390 × 844: no horizontal overflow; date and both set fields visible.
 - Valid log import added a chest-press entry and retained original leg-press results; another member’s backup was rejected with both entries intact. Export prepared a named JSON download link; native download completion was not exercised.
 - Print preview hides tracking controls/history. No browser errors observed. Timer uses an on-page completion message; background/closed-browser notifications and timer persistence are not implemented.
+
+## Cardio, warm-up and day labels — 16 September 2026
+
+- Full regression suite passed, including 12,288 existing generation combinations and 18,432 additional cardio preference/goal/experience/duration/limitation combinations.
+- Each generated day retains one cardio block using the selected preference or its existing limitation substitution, at least three strength exercises, and an estimated duration including warm-up and transitions no greater than the chosen session length.
+- Warm-up English/Hebrew content includes the selected cardio; shared-link round trip preserves the instructions. Day labels checked in both languages.
+- Visual browser check was blocked by automatic approval review due to an account usage limit; updated screen/print layout has not been visually verified in this pass.

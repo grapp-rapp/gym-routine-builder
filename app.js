@@ -149,9 +149,9 @@ function renderPlan(plan) {
   const pages = plan.workouts.map((w,i) => `<section class="day-page ${i===activeDayIndex?'active':''}" data-day="${i}">
       <div class="print-day-brand"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>${routineText(p.name || (rtl ? 'מתאמן' : 'Member'))}</span></div></div>
       <div class="day-head"><div><span>${c.day} ${i+1}</span><h3>${routineText(rtl?w.nameHe:w.name)}</h3></div><div class="day-duration"><b>${p.duration} ${rtl?'דק׳':'min'}</b><span>${c.target}</span></div></div>
+      <section class="day-warmup"><h4>${c.warmup}</h4>${(rtl?plan.warmupHe:plan.warmup).split('\n').map(line=>`<p>${routineText(line)}</p>`).join('')}</section>
       <div class="exercise-list">${w.exercises.map((ex, exerciseIndex) => renderExercise(ex, lang, i, exerciseIndex)).join('')}</div>
       <div class="day-guidance">
-        <div><span>${c.warmup}</span><p>${routineText(rtl?plan.warmupHe:plan.warmup)}</p></div>
         <div class="print-progression"><span>${c.progress}</span><p>${routineText(rtl ? plan.progressionHe : plan.progression)}</p></div><div><span>${c.startAt}</span><p><b>${routineText(rtl ? plan.effort.rpeHe : plan.effort.rpe)}</b> · ${routineText(rtl?plan.effort.rirHe:plan.effort.rir)}</p></div>
       </div>
     </section>`).join('');
@@ -470,7 +470,7 @@ function setOutputState(hasPlan=false) {
   $('#outputPanel').classList.toggle('has-routine', hasPlan);
   const he = currentLanguage === 'he';
   $('#outputStepLabel').textContent = hasPlan && he ? 'תוכנית מתאמן' : 'MEMBER ROUTINE';
-  $('#outputSubtext').textContent = hasPlan ? (he ? 'תוכנית אישית לפי אימונים' : 'Workout-by-workout member program') : 'Generate a program to preview it here';
+  $('#outputSubtext').textContent = hasPlan ? (he ? 'תוכנית אישית לפי אימונים' : 'Day-by-day member program') : 'Generate a program to preview it here';
   $('#previewStatusText').textContent = hasPlan ? (he ? 'נוצרה' : 'Generated') : 'Ready';
   $('#printBtn').disabled = !hasPlan; $('#shareBtn').disabled = !hasPlan;
 }

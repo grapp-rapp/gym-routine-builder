@@ -68,3 +68,9 @@ Log completed sets with session date, optional weight in kg, and actual reps or 
 History uses a separate localStorage key per member. New links carry the member's stable identifier, but never their workout results. This is device-local separation, not account authentication: anyone using the same browser and member link can see that member’s locally stored history. Logs do not sync to a trainer or another device, are not included in staff profile backups, and are excluded from printouts. Keep the same hosted site and browser and export backups before clearing data. Older links without an identifier group logs by member name and exercise layout; a newly generated link starts a separate history from those legacy links.
 
 Implementation: js/tracking.js; regression coverage includes member isolation, shared identity, storage validation, import conflicts/deduplication, timer range parsing and deadline calculations.
+
+## Cardio preferences and timed warm-ups
+
+Every newly generated day includes the selected cardio preference, across all goals and session lengths. Existing movement-consideration substitutions still apply and are explained in the warm-up. A visible warm-up appears before the exercise list: easy preferred cardio, gentle movement preparation, and light practice sets. It takes 5 minutes for a 30-minute session and 8 minutes for longer sessions. The generator budgets warm-up, prescribed rest, exercise time, cardio and station transitions within the selected session length; timings remain estimates and manual edits can change the total. Navigation uses Day 1, Day 2, etc. (יום in Hebrew).
+
+Existing saved routines and shared links are snapshots. Generate a new routine and send a new link to apply the new cardio programming.

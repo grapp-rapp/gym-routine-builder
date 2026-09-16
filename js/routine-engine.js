@@ -103,26 +103,24 @@ function makeWorkouts(p) {
     let exercises = rows.map(([k, role]) => exerciseRow(k, p, role));
     exercises = exercises.filter((ex, index, all) => all.findIndex(other => other.key === ex.key) === index).slice(0, maxExercises);
     if (p.goal === 'muscle' && p.duration >= 60 && exercises.length < 7) exercises.push(exerciseRow(i % 2 ? 'cableCurl' : 'pressdown', p, 'accessory'));
-    if (p.goal === 'fatloss' && p.duration >= 45) {
-      const c = chooseCardio(p);
-      exercises.push({ ...c, key: c.key, sets: '1', reps: p.duration >= 60 ? '10–15 min' : '6–10 min', rest: '—', role: 'cardio', note: c.key === 'jumpRope' ? c.cue : 'Steady moderate pace; you should still be able to speak in short sentences.', noteHe: c.key === 'jumpRope' ? c.cueHe : 'קצב מתון ויציב; עדיין אמור להיות אפשרי לדבר במשפטים קצרים.', substituted: false, generatedKey: c.key, manualSwap: false });
-    }
+    const c = chooseCardio(p);
+    const cardioMinutes = (p.goal === 'fatloss' ? {30:6,45:8,60:12,75:15} : {30:4,45:6,60:8,75:10})[p.duration];
+    exercises.push({ ...c, key:c.key, sets:1, reps:cardioMinutes+' min', rest:'—', role:'cardio', note:c.key==='jumpRope' ? c.cue : 'Comfortable, moderate pace; keep enough breath to speak.', noteHe:c.key==='jumpRope' ? c.cueHe : 'קצב מתון ונוח, שמאפשר לדבר.', generatedKey:c.key, manualSwap:false });
     if (p.age >= 65 && p.duration >= 45) exercises.push({ ...EX.balanceStand, key: EX.balanceStand.key, sets: '2', reps: '20–30 sec/side', rest: '30 sec', role: 'balance', note: EX.balanceStand.cue, noteHe: EX.balanceStand.cueHe, substituted: false, generatedKey: EX.balanceStand.key, manualSwap: false });
     exercises = exercises.filter((ex,index,all)=>all.findIndex(other=>other.key===ex.key)===index);
-    // Reserve time for warm-up, practice sets and changing stations.
-    const budget = p.duration - (p.experience === 'new' ? 12 : 10);
-    const estimate = ex => {
-      const values = String(ex.rest).match(/\d+/g) || [];
-      const restMinutes = values.length ? Math.max(...values.map(Number)) * (ex.rest.includes('min') ? 1 : 1 / 60) : 0;
-      return Number(ex.sets) * 0.75 + Math.max(0, Number(ex.sets) - 1) * restMinutes + 1;
-    };
-    const minutes = () => exercises.reduce((sum, ex) => sum + (ex.role === 'cardio' ? (p.duration >= 60 ? 15 : 10) : estimate(ex)), 0);
-    while (minutes() > budget && exercises.some(ex => Number(ex.sets) > 2)) {
-      const ex = [...exercises].reverse().find(ex => Number(ex.sets) > 2); ex.sets -= 1;
+    // The warm-up and transitions are included, not added on top of session time.
+    const budget = p.duration - warmupMinutes(p);
+    const minutes = () => exercises.reduce((sum,ex)=>sum+estimateExerciseMinutes(ex),0);
+    while (minutes() > budget && exercises.some(ex=>Number(ex.sets)>2)) {
+      [...exercises].reverse().find(ex=>Number(ex.sets)>2).sets -= 1;
     }
-    while (minutes() > budget && exercises.length > 3) {
-      const index = exercises.findLastIndex(ex => ex.role === 'accessory');
-      exercises.splice(index >= 0 ? index : exercises.length - 1, 1);
+    while (minutes() > budget && exercises.filter(ex=>ex.role!=='cardio' && ex.role!=='balance').length>3) {
+      let index=exercises.findLastIndex(ex=>ex.role==='accessory');
+      if(index<0) index=exercises.findLastIndex(ex=>ex.role==='main');
+      exercises.splice(index,1);
+    }
+    while (minutes() > budget && exercises.some(ex=>ex.role!=='cardio' && Number(ex.sets)>1)) {
+      [...exercises].reverse().find(ex=>ex.role!=='cardio' && Number(ex.sets)>1).sets -= 1;
     }
     return { name, nameHe, exercises };
   });
@@ -130,9 +128,14 @@ function makeWorkouts(p) {
 
 function buildPlan(p) {
   const effort = effortPrescription(p); const workouts = makeWorkouts(p);
-  let warmup = '5–8 min easy cardio, then 1 light practice set before the first 2 strength exercises.';
-  let warmupHe = '5–8 דקות אירובי קל, ואז סט חימום קל לפני שני תרגילי הכוח הראשונים.';
-  if (p.activity === 'low' || p.experience === 'new') { warmup = '6–10 min easy cardio, then 1–2 light practice sets before the first 2 strength exercises.'; warmupHe = '6–10 דקות אירובי קל, ואז 1–2 סטים קלים לפני שני תרגילי הכוח הראשונים.'; }
+  const total = warmupMinutes(p); const cardio = chooseCardio(p);
+  const easyMinutes = total===5 ? 2 : 4; const practiceMinutes = total-easyMinutes-1;
+  const requested = {walk:'treadmill',bike:'bike',elliptical:'elliptical',row:'rower',jumpRope:'jumpRope'}[p.cardioPreference];
+  const changed = requested && requested!==cardio.key;
+  const adjustment = changed ? ' Cardio preference adjusted for the selected movement considerations.' : '';
+  const adjustmentHe = changed ? ' העדפת האירובי הותאמה למגבלות התנועה שסומנו.' : '';
+  const warmup = total+' min total — included in your '+p.duration+'-minute session.\n1. '+easyMinutes+' min easy '+cardio.name+(cardio.key==='jumpRope' ? ': short easy intervals with walking breaks.' : ': begin slowly and build gently.')+adjustment+'\n2. 1 min gentle movement preparation: shoulder circles, marching and comfortable unloaded practice of today’s movements.\n3. '+practiceMinutes+' min light practice sets for the first two strength exercises, before their working sets. These do not count toward the listed sets.';
+  const warmupHe = total+' דקות בסך הכול — כלולות באימון של '+p.duration+' דקות.\n1. '+easyMinutes+' דקות של '+cardio.he+' בקצב קל'+(cardio.key==='jumpRope' ? ': מקטעים קצרים עם הפסקות הליכה.' : ': התחילו לאט והגבירו בהדרגה.')+adjustmentHe+'\n2. דקה של הכנת תנועה עדינה: סיבובי כתפיים, צעידה ותרגול נוח ללא משקל של תנועות היום.\n3. '+practiceMinutes+' דקות של סטים קלים לתרגול שני תרגילי הכוח הראשונים, לפני הסטים העיקריים. הם אינם נספרים כחלק מהסטים הרשומים.';
   let weeklyCardio = 'Optional: 2 × 15–25 min easy-to-moderate cardio on non-lifting days.';
   let weeklyCardioHe = 'אופציונלי: פעמיים בשבוע 15–25 דקות אירובי קל־מתון בימים ללא כוח.';
   if (p.goal === 'fatloss') { weeklyCardio = 'Aim for 2–3 × 20–30 min easy-to-moderate cardio weekly, building gradually from current activity.'; weeklyCardioHe = 'שאפו ל־2–3 אימוני אירובי של 20–30 דקות בשבוע, ולהעלות בהדרגה לפי רמת הפעילות הנוכחית.'; }
@@ -147,3 +150,12 @@ function buildPlan(p) {
 }
 
 
+
+function warmupMinutes(p) { return p.duration===30 ? 5 : 8; }
+function estimateExerciseMinutes(ex) {
+  const numbers=value=>(String(value).match(/\d+(?:\.\d+)?/g)||[]).map(Number);
+  const upper=value=>Math.max(0,...numbers(value));
+  const rest=upper(ex.rest)*(/min/i.test(ex.rest)?1:1/60);
+  const work=/sec|min/i.test(ex.reps) ? upper(ex.reps)*(/min/i.test(ex.reps)?1:1/60)*(/side/i.test(ex.reps)?2:1) : Math.max(0.75,upper(ex.reps)*3/60);
+  return Number(ex.sets)*work + Math.max(0,Number(ex.sets)-1)*rest + 1;
+}

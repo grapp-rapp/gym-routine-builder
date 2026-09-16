@@ -222,4 +222,6 @@ html,body {
 
 .print-day-brand img { width:12mm; height:12mm; }
 .print-day-brand { padding-bottom:2mm; }
-.exercise-item,.member-share-mode .exercise-item { padding:1mm 0; }
+.exercise-item,.member-share-mode .exercise-item { padding:0.5mm 0; }
+
+.cardio-summary{padding:1mm 0;gap:1mm 3mm;font-size:9pt;background:white}.cardio-summary small{display:none}

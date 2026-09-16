@@ -13,8 +13,8 @@
       document.documentElement.classList.add('shared-routine-loading');
     }
   </script>
-  <link rel="stylesheet" href="styles.css" />
-  <link id="printStyles" rel="stylesheet" href="print.css" media="print" />
+  <link rel="stylesheet" href="styles.css?v=20260916-activity" />
+  <link id="printStyles" rel="stylesheet" href="print.css?v=20260916-activity" media="print" />
 </head>
 <body>
   <div class="print-preview-toolbar no-print" hidden><button class="btn" id="closePrintPreview" type="button">Back to routine</button><button class="btn" id="confirmPrint" type="button">Print / Save PDF</button></div>
@@ -156,15 +156,16 @@
                 </label>
               </div>
               <div class="grid two compact-grid second-row">
-                <label class="field"><span>Current weekly activity</span>
-                  <select id="activity">
-                    <option value="low">Little / none</option>
-                    <option value="moderate" selected>1–3 active days</option>
-                    <option value="high">4+ active days</option>
+                <label class="field"><span>How active are you currently?</span>
+                  <select id="activity" aria-label="How active are you currently?">
+                    <option value="inactive">Mostly inactive</option>
+                    <option value="one_two" selected>Exercise 1–2×/week</option>
+                    <option value="three_four">Exercise 3–4×/week</option>
+                    <option value="five_plus">Exercise 5+×/week</option>
                   </select>
                 </label>
                 <label class="field"><span>Cardio preference</span>
-                  <select id="cardioPreference">
+                  <select id="cardioPreference" aria-label="Cardio preference">
                     <option value="walk">Treadmill / walking</option>
                     <option value="bike">Bike</option>
                     <option value="elliptical">Elliptical</option>
@@ -254,7 +255,8 @@
               </div>
             </div>
           </div>
-          <div id="routineView" hidden></div>
+          <div id="routineSettingsNotice" class="notice warn no-print" role="status" hidden></div>
+            <div id="routineView" hidden></div>
         </section>
       </main>
     </div>
@@ -332,13 +334,13 @@
 
   <dialog id="workoutLogDialog" class="tracking-dialog" aria-labelledby="logTitle"><div id="workoutLogContent"></div></dialog>
   <template id="routineTemplate"></template>
-  <script src="js/exercise-catalog.js"></script>
-  <script src="js/equipment-catalog.js"></script>
-  <script src="js/translations.js"></script>
-  <script src="js/routine-engine.js"></script>
-  <script src="js/sharing.js"></script>
-  <script src="js/tracking.js"></script>
-  <script src="app.js"></script>
+  <script src="js/exercise-catalog.js?v=20260916-activity"></script>
+  <script src="js/equipment-catalog.js?v=20260916-activity"></script>
+  <script src="js/translations.js?v=20260916-activity"></script>
+  <script src="js/routine-engine.js?v=20260916-activity"></script>
+  <script src="js/sharing.js?v=20260916-activity"></script>
+  <script src="js/tracking.js?v=20260916-activity"></script>
+  <script src="app.js?v=20260916-activity"></script>
   <script>
     // Mirror the top save action to the existing save-profile logic without changing the app engine.
     document.getElementById('saveProfileBtnTop')?.addEventListener('click', () => document.getElementById('saveProfileBtn')?.click());

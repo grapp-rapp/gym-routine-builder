@@ -1,7 +1,7 @@
 function publicSharePlan(plan) {
   const p = plan.profile;
   return {v:4, l:currentLanguage,
-    p:{i:p.logId || p.id || '',n:p.name || '',g:p.goal,e:p.experience,d:plan.workouts.length,t:p.duration,m:p.age < 18 ? 1 : 0,
+    p:{a:normalizeActivity(p.activity),i:p.logId || p.id || '',n:p.name || '',g:p.goal,e:p.experience,d:plan.workouts.length,t:p.duration,m:p.age < 18 ? 1 : 0,
        q:p.memberNotes || '',h:p.memberNotesHe || ''},
     guidance:[plan.warmup,plan.warmupHe,plan.weeklyCardio,plan.weeklyCardioHe,plan.progression,plan.progressionHe],
     w:plan.workouts.map(w=>({n:w.name,h:w.nameHe,x:w.exercises.map(ex=>[ex.key,ex.sets,ex.reps,ex.rest,ex.role || '',0,0,ex.note || '',ex.noteHe || ''])}))};
@@ -14,7 +14,7 @@ function normalizeSharedPlan(raw) {
       lang: raw.l === 'he' ? 'he' : 'en', guidance: raw.v === 4 ? raw.guidance : null,
       profile: {
         logId: raw.p.i || '', name: raw.p.n || '', goal: raw.p.g || 'general', experience: raw.p.e || 'new',
-        days: Number(raw.p.d || 3), duration: Number(raw.p.t || 60), activity: raw.p.a || 'moderate',
+        days: Number(raw.p.d || 3), duration: Number(raw.p.t || 60), activity: normalizeActivity(raw.p.a),
         memberNotes: raw.v === 4 ? raw.p.q || '' : '', memberNotesHe: raw.v === 4 ? raw.p.h || '' : '', isMinor: !!raw.p.m
       },
       workouts: raw.w.map(w => ({
@@ -33,7 +33,7 @@ function inflateSharedPlan(raw) {
   const sp = shared.profile || {};
   const profile = {
     logId: sp.logId || '', name: sp.name || '', goal: sp.goal || 'general', experience: sp.experience || 'new', days: Number(sp.days || 3), duration: Number(sp.duration || 60),
-    activity: sp.activity || 'moderate', cardioPreference: 'any', trainerNotes: '', memberNotes: sp.memberNotes || '', memberNotesHe: sp.memberNotesHe || '',
+    activity: normalizeActivity(sp.activity), cardioPreference: 'any', trainerNotes: '', memberNotes: sp.memberNotes || '', memberNotesHe: sp.memberNotesHe || '',
     age: sp.isMinor ? 17 : 18, height: 175, weight: 75, gender: '', issues: [], issueNotes: ''
   };
   const plan = buildPlan(profile);

@@ -69,7 +69,7 @@ function setFormData(p) {
   $$('input[name="gender"]').forEach(x => x.checked = !!p.gender && x.value === p.gender);
   const goal = $(`input[name="goal"][value="${p.goal || 'general'}"]`); if (goal) goal.checked = true;
   $('#experience').value = p.experience || 'new'; $('#days').value = String(p.days || 3); $('#duration').value = String(p.duration || 60);
-  $('#activity').value = p.activity || 'moderate'; $('#cardioPreference').value = p.cardioPreference || 'any';
+  $('#activity').value = normalizeActivity(p.activity); $('#cardioPreference').value = p.cardioPreference || 'any';
   $$('#issueToggles input').forEach(x => x.checked = (p.issues || []).includes(x.value)); $('#issueNotes').value = p.issueNotes || '';
   $('#trainerNotes').value = p.trainerNotes || '';
   $('#memberNotes').value = p.memberNotes || ''; $('#memberNotesHe').value = p.memberNotesHe || '';
@@ -149,6 +149,7 @@ function renderPlan(plan) {
   const pages = plan.workouts.map((w,i) => `<section class="day-page ${i===activeDayIndex?'active':''}" data-day="${i}">
       <div class="print-day-brand"><img src="${LOGO_SRC}" alt="Binyamin Gym" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_SRC}'"><div><b>Binyamin Gym</b><span>${routineText(p.name || (rtl ? 'מתאמן' : 'Member'))}</span></div></div>
       <div class="day-head"><div><span>${c.day} ${i+1}</span><h3>${routineText(rtl?w.nameHe:w.name)}</h3></div><div class="day-duration"><b>${p.duration} ${rtl?'דק׳':'min'}</b><span>${c.target}</span></div></div>
+      ${cardioSummaryMarkup(w,rtl)}
       <section class="day-warmup"><h4>${c.warmup}</h4>${(rtl?plan.warmupHe:plan.warmup).split('\n').map(line=>`<p>${routineText(line)}</p>`).join('')}</section>
       <div class="exercise-list">${w.exercises.map((ex, exerciseIndex) => renderExercise(ex, lang, i, exerciseIndex)).join('')}</div>
       <div class="day-guidance">
@@ -182,6 +183,7 @@ function renderPlan(plan) {
   </article>`;
   bindRoutineNavigation();
   paintRestTimer();
+  updateRoutineSettingsNotice();
 }
 
 function bindRoutineNavigation() {
@@ -449,7 +451,7 @@ function saveCurrentProfile() {
 
 function renderSaved() {
   const profiles = getProfiles();
-  $('#savedList').innerHTML = profiles.length ? profiles.map(p => `<div class="saved-row"><div><strong>${esc(p.name || 'Unnamed')}</strong><small>${esc(p.age)} yrs • ${p.gender === 'female' ? 'Female' : p.gender === 'male' ? 'Male' : 'Gender not set'} • ${esc(GOAL_LABEL[p.goal] || p.goal)} • ${esc(p.days)} days/week</small></div><div class="row-actions"><button class="btn ghost" data-load="${esc(p.id)}">Load</button><button class="btn danger" data-delete="${esc(p.id)}">Delete</button></div></div>`).join('') : '<p class="muted">No profiles saved yet.</p>';
+  $('#savedList').innerHTML = profiles.length ? profiles.map(p => `<div class="saved-row"><div><strong>${esc(p.name || 'Unnamed')}</strong><small>${esc(p.age)} yrs • ${p.gender === 'female' ? 'Female' : p.gender === 'male' ? 'Male' : 'Gender not set'} • ${esc(GOAL_LABEL[p.goal] || p.goal)} • ${esc(p.days)} days/week • ${esc(activityLabel(p.activity))}</small></div><div class="row-actions"><button class="btn ghost" data-load="${esc(p.id)}">Load</button><button class="btn danger" data-delete="${esc(p.id)}">Delete</button></div></div>`).join('') : '<p class="muted">No profiles saved yet.</p>';
   $$('[data-load]').forEach(b => b.addEventListener('click', () => {
     const p = profiles.find(x => x.id === b.dataset.load);
     if (p) {
@@ -473,11 +475,12 @@ function setOutputState(hasPlan=false) {
   $('#outputSubtext').textContent = hasPlan ? (he ? 'תוכנית אישית לפי אימונים' : 'Day-by-day member program') : 'Generate a program to preview it here';
   $('#previewStatusText').textContent = hasPlan ? (he ? 'נוצרה' : 'Generated') : 'Ready';
   $('#printBtn').disabled = !hasPlan; $('#shareBtn').disabled = !hasPlan;
+  updateRoutineSettingsNotice();
 }
 
 function resetForm() {
-  editingProfileId = null; $('#intakeForm').reset(); $('#age').value=35; $('#height').value=175; $('#weight').value=80; $('#days').value='3'; $('#duration').value='60'; $('#activity').value='moderate';
-  currentPlan=null; activeDayIndex=0; setOutputState(false); $('#routineView').innerHTML='';
+  editingProfileId = null; $('#intakeForm').reset(); $('#age').value=35; $('#height').value=175; $('#weight').value=80; $('#days').value='3'; $('#duration').value='60'; $('#activity').value='one_two';
+  currentPlan=null; activeDayIndex=0; setOutputState(false); updateRoutineSettingsNotice(); $('#routineView').innerHTML='';
 }
 
 async function copyMemberLink() {
@@ -671,3 +674,18 @@ function validateProfiles(data) {
 }
 window.addEventListener('hashchange', () => window.location.reload());
 function routineText(value) { return esc(value).replace(/\d+(?:[–-]\d+)?/g, '<bdi dir="ltr">$&</bdi>'); }
+
+function cardioSummaryMarkup(workout,rtl) {
+  const cardio=workout.exercises.filter(ex=>ex.pattern==='cardio');
+  if(!cardio.length) return '';
+  return '<div class="cardio-summary"><strong>'+(rtl?'אירובי ביום הזה':'Cardio in this day')+'</strong><span>'+cardio.map(ex=>esc((rtl?ex.he:ex.name)+' · '+(rtl?formatHebrewMeasure(ex.reps):ex.reps))).join(' / ')+'</span><small>'+(rtl?'מופיע גם בסוף רשימת התרגילים':'Also listed at the end of the exercises')+'</small></div>';
+}
+function routineSettingsDiffer(form,profile) {
+  return ['experience','goal','duration','days','cardioPreference','age'].some(k=>String(form[k])!==String(profile[k])) || normalizeActivity(form.activity)!==normalizeActivity(profile.activity) || JSON.stringify([...form.issues].sort())!==JSON.stringify([...(profile.issues||[])].sort());
+}
+function updateRoutineSettingsNotice() {
+  const notice=$('#routineSettingsNotice');if(!notice)return;
+  notice.hidden=memberShareMode||!currentPlan||!routineSettingsDiffer(getFormData(),currentPlan.profile);
+  if(!notice.hidden) notice.textContent='Intake settings changed. Click Generate routine to apply the new cardio preference or starting workload. This will rebuild the plan, including trainer exercise edits. Save member alone keeps the current routine.';
+}
+$('#intakeForm').addEventListener('change',updateRoutineSettingsNotice);

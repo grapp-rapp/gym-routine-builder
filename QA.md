@@ -70,3 +70,17 @@ Run npm test. Run npm start for the local app. No packages need installation.
 - English/Hebrew A4 screen previews revealed excess spacing after adding the warm-up. Reduced print-only spacing while keeping exercise text at 10–11 pt. All five tested day contents now fit inside the 273 mm content area: approximately 1006 px English and 990 px Hebrew, within 1032 px.
 - Inspected printed-page endings, cardio and progression. Tracking controls remained hidden. Browser console contained no errors.
 - This completes browser visual and in-app print-preview checks. Native Save as PDF output and physical printing were not tested.
+
+## Activity-based starting workload — 16 September 2026
+
+- Renamed intake field and saved summaries. Canonical values: inactive, one_two, three_four, five_plus; legacy low/moderate/high map to inactive/one_two/three_four. Missing values default to one_two. Existing routine snapshots and manual edits remain intact until explicitly regenerated.
+- Inactive: at most four strength exercises, main lifts capped at two sets/accessories at one, RPE 6–7, warm-up extended by two minutes (7 at 30-minute duration, otherwise 10). Main cardio capped at 3/4/5/6 minutes for 30/45/60/75-minute sessions; easy intervals and introductory 2–3-week progression.
+- One_two: main sets capped at three; accessory sets reduced by one (minimum one); no muscle-gain bonus accessory; cardio 80% of standard rounded down, minimum three minutes. Standard warm-up.
+- Three_four and five_plus retain normal goal/experience/day/duration workload; five_plus adds no volume. New/returning members selecting 4–5 days also receive introductory set caps, at most five strength exercises and recovery guidance.
+- Existing age, movement substitutions, duration budgeting and strength minimums remain. Warm-up is included in duration; shorter starter sessions intentionally do not fill all available time.
+- Fresh Jump Rope selection reproduced successfully on the supplied live Vercel URL before these changes. Added prominent per-day cardio summary, explicit substitution wording, and a pending-intake-changes notice. Existing knee/hip/low-back substitutions remain. No claim that a fresh-selection disappearance was reproduced.
+- Browser cases A–D generated successfully with Jump Rope: A inactive/new/5/fatloss/45: 4 strength exercises with 1–2 sets, 10-minute warm-up, 4-minute main cardio; B one_two/new/3/general/60: 6 strength exercises with 1–2 sets, 8-minute warm-up, 6-minute cardio; C three_four/some/4/muscle/60: 6–7 strength exercises with 3 sets, 8-minute warm-up/cardio; D five_plus/some/2/strength/60: 6 strength exercises with 4/4/4/3/2/2 sets, 8-minute warm-up/cardio.
+- Browser saved/reloaded D with custom leg-press sets and five_plus retained. Saved summaries show new labels for old profiles. Pending-settings warning appeared before regeneration and cleared afterward.
+- Shared inactive routine retained Hebrew guidance and Jump Rope at 390 px; no horizontal page overflow. No browser console errors observed.
+- Longer C A4 preview initially overflowed; tightened print-only row spacing. Maximum content measured 1018 px English and 1002 px Hebrew, within the 1032 px available. Screenshots inspected. Native Save as PDF/physical printing not exercised.
+- Automated suite includes 12,288 additional activity/experience/goal/day/duration/age/limitation combinations, legacy mappings, workload comparisons and saved/share round trips, in addition to all earlier regression checks.

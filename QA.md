@@ -91,3 +91,8 @@ Run npm test. Run npm start for the local app. No packages need installation.
 - Cardio intake options, generator lookup, warm-up preference lookup and replacement family now derive from CARDIO_OPTIONS. Stable profile values retained.
 - New checks cover every exercise: bilingual equipment labels, explicit image mapping, existing asset files and membership in replacement families. Cardio catalog coverage and supplemental rope mapping are asserted. Full regression suite passed.
 - Browser generated routines for walking, bike, elliptical, rower and jump rope; each matched the selection. Jump-rope enlarged illustration loaded successfully.
+
+## Low-back cardio preference rule — 16 September 2026
+
+- Per user request, Low back alone no longer substitutes rowing or Jump Rope with Bike, including replacement filtering and warm-up selection. This is an app selection policy, not an individual suitability assessment. Other movement and strength rules remain.
+- Full regression suite passed, including explicit checks that every cardio choice survives Low back in selection, generated days, warm-up and safeExercise replacement filtering.

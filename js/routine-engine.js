@@ -41,7 +41,7 @@ function restHe(rest) { return formatHebrewMeasure(rest); }
 function chooseCardio(p) {
   let c = EX[cardioExerciseKey(p.cardioPreference)] || EX.treadmill;
   if (p.issues.includes('knee') && c === EX.treadmill) c = EX.bike;
-  if ((p.issues.includes('lowBack') || p.issues.includes('hip')) && c === EX.rower) c = EX.bike;
+  if (p.issues.includes('hip') && c === EX.rower) c = EX.bike;
   if (c === EX.jumpRope) c = safeExercise('jumpRope', p);
   return c;
 }
@@ -49,7 +49,7 @@ function chooseCardio(p) {
 function safeExercise(key, p) {
   const issues = new Set(p.issues); const original = EX[key]; let replacement = original; let reason = ''; let reasonHe = '';
   const swap = (newKey, why, whyHe) => { replacement = EX[newKey]; reason = why; reasonHe = whyHe; };
-  if (key === 'jumpRope' && ['knee','hip','lowBack'].some(issue => issues.has(issue))) {
+  if (key === 'jumpRope' && ['knee','hip'].some(issue => issues.has(issue))) {
     swap('bike', 'jumping replaced with a lower-impact option', 'קפיצות הוחלפו באפשרות עם פחות זעזועים');
   }
   if (issues.has('lowBack')) {
@@ -57,7 +57,6 @@ function safeExercise(key, p) {
     if (key === 'gobletSquat') swap('legPress', 'swapped for more trunk support', 'הוחלף לתרגיל עם יותר תמיכה לגו');
     if (key === 'cableRow') swap('row', 'swapped for chest support', 'הוחלף לחתירה עם תמיכת חזה');
     if (key === 'plank') swap('birdDog', 'swapped for lower-load trunk control', 'הוחלף לתרגיל ליבה בעומס נמוך יותר');
-    if (key === 'rower') swap('bike', 'swapped to reduce repetitive trunk flexion', 'הוחלף כדי להפחית כיפוף חוזר של הגו');
   }
   if (issues.has('shoulder')) {
     if (key === 'shoulderPress') swap('lateralRaise', 'overhead press replaced with a pain-free shoulder option', 'לחיצה מעל הראש הוחלפה באפשרות נוחה יותר לכתף');

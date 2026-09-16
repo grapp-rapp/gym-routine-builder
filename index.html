@@ -13,8 +13,8 @@
       document.documentElement.classList.add('shared-routine-loading');
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260916-equipment" />
-  <link id="printStyles" rel="stylesheet" href="print.css?v=20260916-equipment" media="print" />
+  <link rel="stylesheet" href="styles.css?v=20260916-cardio-back" />
+  <link id="printStyles" rel="stylesheet" href="print.css?v=20260916-cardio-back" media="print" />
 </head>
 <body>
   <div class="print-preview-toolbar no-print" hidden><button class="btn" id="closePrintPreview" type="button">Back to routine</button><button class="btn" id="confirmPrint" type="button">Print / Save PDF</button></div>
@@ -329,13 +329,13 @@
 
   <dialog id="workoutLogDialog" class="tracking-dialog" aria-labelledby="logTitle"><div id="workoutLogContent"></div></dialog>
   <template id="routineTemplate"></template>
-  <script src="js/exercise-catalog.js?v=20260916-equipment"></script>
-  <script src="js/equipment-catalog.js?v=20260916-equipment"></script>
-  <script src="js/translations.js?v=20260916-equipment"></script>
-  <script src="js/routine-engine.js?v=20260916-equipment"></script>
-  <script src="js/sharing.js?v=20260916-equipment"></script>
-  <script src="js/tracking.js?v=20260916-equipment"></script>
-  <script src="app.js?v=20260916-equipment"></script>
+  <script src="js/exercise-catalog.js?v=20260916-cardio-back"></script>
+  <script src="js/equipment-catalog.js?v=20260916-cardio-back"></script>
+  <script src="js/translations.js?v=20260916-cardio-back"></script>
+  <script src="js/routine-engine.js?v=20260916-cardio-back"></script>
+  <script src="js/sharing.js?v=20260916-cardio-back"></script>
+  <script src="js/tracking.js?v=20260916-cardio-back"></script>
+  <script src="app.js?v=20260916-cardio-back"></script>
   <script>
     // Mirror the top save action to the existing save-profile logic without changing the app engine.
     document.getElementById('saveProfileBtnTop')?.addEventListener('click', () => document.getElementById('saveProfileBtn')?.click());

@@ -61,3 +61,12 @@ Run npm test. Run npm start for the local app. No packages need installation.
 - Each generated day retains one cardio block using the selected preference or its existing limitation substitution, at least three strength exercises, and an estimated duration including warm-up and transitions no greater than the chosen session length.
 - Warm-up English/Hebrew content includes the selected cardio; shared-link round trip preserves the instructions. Day labels checked in both languages.
 - Visual browser check was blocked by automatic approval review due to an account usage limit; updated screen/print layout has not been visually verified in this pass.
+
+## Completed visual follow-up — 16 September 2026
+
+- Desktop at 1440 px: generated a 30-minute general-fitness program with jump rope. Day tabs and the step-by-step 5-minute warm-up displayed correctly; jump rope remained in the routine.
+- Shared member view at 390 px Hebrew and 360 px English: inspected screenshots, confirmed warm-up and Day navigation, no horizontal page overflow or broken visible images.
+- Generated a 75-minute, five-day muscle-building program with elliptical. All five days included elliptical and an 8-minute warm-up.
+- English/Hebrew A4 screen previews revealed excess spacing after adding the warm-up. Reduced print-only spacing while keeping exercise text at 10–11 pt. All five tested day contents now fit inside the 273 mm content area: approximately 1006 px English and 990 px Hebrew, within 1032 px.
+- Inspected printed-page endings, cardio and progression. Tracking controls remained hidden. Browser console contained no errors.
+- This completes browser visual and in-app print-preview checks. Native Save as PDF output and physical printing were not tested.

@@ -211,3 +211,15 @@ html,body {
     min-height:44px
   }
 }
+/* Keep the added warm-up readable without carrying screen spacing onto A4. */
+.day-warmup { padding:2mm; margin:0 0 2mm; border-radius:2mm; }
+.day-warmup h4 { font-size:11pt; margin:0 0 1mm; }
+.day-warmup p { font-size:10pt; line-height:1.25; margin:1mm 0; }
+.day-head { padding:2mm 0; }
+.exercise-item,.member-share-mode .exercise-item { padding:1.5mm 0; }
+.day-guidance { gap:1mm; padding:2mm 0; }
+.day-guidance p { margin:1mm 0; }
+
+.print-day-brand img { width:12mm; height:12mm; }
+.print-day-brand { padding-bottom:2mm; }
+.exercise-item,.member-share-mode .exercise-item { padding:1mm 0; }

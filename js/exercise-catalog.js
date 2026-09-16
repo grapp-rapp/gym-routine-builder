@@ -39,6 +39,21 @@ const EX = {
 };
 Object.entries(EX).forEach(([key, value]) => { value.key = key; });
 
+// Stable preference values preserve saved profiles and links.
+const CARDIO_OPTIONS = [
+  {value:'walk', key:'treadmill', label:'Treadmill / walking'},
+  {value:'bike', key:'bike', label:'Bike'},
+  {value:'elliptical', key:'elliptical', label:'Elliptical'},
+  {value:'jumpRope', key:'jumpRope', label:'Jump rope'},
+  {value:'row', key:'rower', label:'Rower'}
+];
+function cardioExerciseKey(preference) {
+  return CARDIO_OPTIONS.find(option=>option.value===preference)?.key;
+}
+function cardioOptionsMarkup() {
+  return CARDIO_OPTIONS.map(option=>'<option value="'+option.value+'">'+option.label+'</option>').join('')+'<option value="any" selected>No preference</option>';
+}
+
 const SWAP_FAMILIES = [
   ['legPress', 'gobletSquat', 'hackSquat', 'splitSquat', 'stepUp'],
   ['legCurl', 'hipThrust', 'cablePullThrough', 'rdl'],
@@ -47,7 +62,7 @@ const SWAP_FAMILIES = [
   ['facePull', 'reverseFly', 'lateralRaise', 'shoulderPress'],
   ['cableCurl', 'hammerCurl', 'pressdown'],
   ['pallof', 'deadBug', 'birdDog', 'plank', 'suitcase'],
-  ['bike', 'treadmill', 'elliptical', 'rower', 'jumpRope'],
+  CARDIO_OPTIONS.map(option=>option.key),
   ['calf'],
   ['balanceStand']
 ];

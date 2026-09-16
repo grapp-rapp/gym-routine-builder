@@ -1,6 +1,8 @@
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
 
+$('#cardioPreference').innerHTML = cardioOptionsMarkup();
+
 const STORAGE_KEY = 'binyamin-gym-member-profiles-v2';
 let currentPlan = null;
 let editingProfileId = null;

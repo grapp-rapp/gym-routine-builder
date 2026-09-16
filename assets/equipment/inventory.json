@@ -292,5 +292,18 @@
       "sourceItem": 26,
       "src": "./assets/equipment/sparta-plate.jpg"
     }
+  ],
+  "supplementalItems": [
+    {
+      "id": "jump-rope",
+      "model": "Jump rope",
+      "status": "user-requested",
+      "source": "User requested Jump Rope as an equipment/cardio option; not listed in the supplied quotation.",
+      "quantity": null,
+      "src": "./assets/equipment/jump-rope.svg",
+      "exerciseKeys": [
+        "jumpRope"
+      ]
+    }
   ]
 }

@@ -47,3 +47,10 @@ The quote uses VST700 SKUs but includes VST600 links for the functional trainer 
 - The biceps, triceps, abdominal and assisted chin/dip machines are included in the inventory with their images, but do not replace distinct cable or bodyweight exercises automatically.
 - The same plate photo is repeated for four weights in the source; retain that shared image rather than claim it depicts each exact weight.
 - Saved plans, shared links, exercise prescriptions and generation rules remain intact.
+
+## Additional equipment and selection synchronization
+
+- Jump rope is an available cardio option requested by the user, recorded under supplementalItems in inventory.json with its own local illustration. It is not a quoted PDF item; quantity and installed model are unspecified.
+- CARDIO_OPTIONS in the exercise catalog is the shared source for the intake dropdown, engine preference lookup, warm-up preference lookup and cardio replacement family. Saved preference values remain unchanged.
+- Every exercise must have an explicit equipment type, English/Hebrew equipment labels and a valid local image mapping. Regression checks reject missing mappings instead of accepting the generic fallback.
+- Quoted inventory includes racks, plates and machines that are not separate exercise choices. Inventory presence alone does not invent exercise prescriptions. Pending equipment remains available as previously authorized.

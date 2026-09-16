@@ -84,3 +84,10 @@ Run npm test. Run npm start for the local app. No packages need installation.
 - Shared inactive routine retained Hebrew guidance and Jump Rope at 390 px; no horizontal page overflow. No browser console errors observed.
 - Longer C A4 preview initially overflowed; tightened print-only row spacing. Maximum content measured 1018 px English and 1002 px Hebrew, within the 1032 px available. Screenshots inspected. Native Save as PDF/physical printing not exercised.
 - Automated suite includes 12,288 additional activity/experience/goal/day/duration/age/limitation combinations, legacy mappings, workload comparisons and saved/share round trips, in addition to all earlier regression checks.
+
+## Equipment synchronization — 16 September 2026
+
+- Jump rope added to supplemental inventory with honest user-requested provenance, separate from the 26 PDF items. Its engine entry and drawing already existed.
+- Cardio intake options, generator lookup, warm-up preference lookup and replacement family now derive from CARDIO_OPTIONS. Stable profile values retained.
+- New checks cover every exercise: bilingual equipment labels, explicit image mapping, existing asset files and membership in replacement families. Cardio catalog coverage and supplemental rope mapping are asserted. Full regression suite passed.
+- Browser generated routines for walking, bike, elliptical, rower and jump rope; each matched the selection. Jump-rope enlarged illustration loaded successfully.

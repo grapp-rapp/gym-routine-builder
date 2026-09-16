@@ -13,8 +13,8 @@
       document.documentElement.classList.add('shared-routine-loading');
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260916-activity" />
-  <link id="printStyles" rel="stylesheet" href="print.css?v=20260916-activity" media="print" />
+  <link rel="stylesheet" href="styles.css?v=20260916-equipment" />
+  <link id="printStyles" rel="stylesheet" href="print.css?v=20260916-equipment" media="print" />
 </head>
 <body>
   <div class="print-preview-toolbar no-print" hidden><button class="btn" id="closePrintPreview" type="button">Back to routine</button><button class="btn" id="confirmPrint" type="button">Print / Save PDF</button></div>
@@ -166,12 +166,7 @@
                 </label>
                 <label class="field"><span>Cardio preference</span>
                   <select id="cardioPreference" aria-label="Cardio preference">
-                    <option value="walk">Treadmill / walking</option>
-                    <option value="bike">Bike</option>
-                    <option value="elliptical">Elliptical</option>
-                    <option value="jumpRope">Jump rope</option>
-                    <option value="row">Rower</option>
-                    <option value="any" selected>No preference</option>
+                    <!-- Options come from the shared exercise catalog. -->
                   </select>
                 </label>
               </div>
@@ -334,13 +329,13 @@
 
   <dialog id="workoutLogDialog" class="tracking-dialog" aria-labelledby="logTitle"><div id="workoutLogContent"></div></dialog>
   <template id="routineTemplate"></template>
-  <script src="js/exercise-catalog.js?v=20260916-activity"></script>
-  <script src="js/equipment-catalog.js?v=20260916-activity"></script>
-  <script src="js/translations.js?v=20260916-activity"></script>
-  <script src="js/routine-engine.js?v=20260916-activity"></script>
-  <script src="js/sharing.js?v=20260916-activity"></script>
-  <script src="js/tracking.js?v=20260916-activity"></script>
-  <script src="app.js?v=20260916-activity"></script>
+  <script src="js/exercise-catalog.js?v=20260916-equipment"></script>
+  <script src="js/equipment-catalog.js?v=20260916-equipment"></script>
+  <script src="js/translations.js?v=20260916-equipment"></script>
+  <script src="js/routine-engine.js?v=20260916-equipment"></script>
+  <script src="js/sharing.js?v=20260916-equipment"></script>
+  <script src="js/tracking.js?v=20260916-equipment"></script>
+  <script src="app.js?v=20260916-equipment"></script>
   <script>
     // Mirror the top save action to the existing save-profile logic without changing the app engine.
     document.getElementById('saveProfileBtnTop')?.addEventListener('click', () => document.getElementById('saveProfileBtn')?.click());

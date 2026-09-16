@@ -39,8 +39,7 @@ function formatHebrewMeasure(value) { return String(value ?? '').replace(/\bmin\
 function restHe(rest) { return formatHebrewMeasure(rest); }
 
 function chooseCardio(p) {
-  const map = { walk: EX.treadmill, bike: EX.bike, elliptical: EX.elliptical, row: EX.rower, jumpRope: EX.jumpRope };
-  let c = map[p.cardioPreference] || EX.treadmill;
+  let c = EX[cardioExerciseKey(p.cardioPreference)] || EX.treadmill;
   if (p.issues.includes('knee') && c === EX.treadmill) c = EX.bike;
   if ((p.issues.includes('lowBack') || p.issues.includes('hip')) && c === EX.rower) c = EX.bike;
   if (c === EX.jumpRope) c = safeExercise('jumpRope', p);
@@ -162,7 +161,7 @@ function buildPlan(p) {
   const effort = effortPrescription(p); const workouts = makeWorkouts(p);
   const total = warmupMinutes(p); const cardio = chooseCardio(p);
   const easyMinutes = (p.duration===30 ? 2 : 4)+(p.activity==='inactive'?2:0); const practiceMinutes = total-easyMinutes-1;
-  const requested = {walk:'treadmill',bike:'bike',elliptical:'elliptical',row:'rower',jumpRope:'jumpRope'}[p.cardioPreference];
+  const requested = cardioExerciseKey(p.cardioPreference);
   const changed = requested && requested!==cardio.key;
   const adjustment = changed ? ' Requested '+EX[requested].name+'; using '+cardio.name+' because of the selected movement considerations.' : '';
   const adjustmentHe = changed ? ' ההעדפה: '+EX[requested].he+'; בתוכנית: '+cardio.he+' בהתאם למגבלות התנועה שסומנו.' : '';

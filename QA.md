@@ -103,3 +103,10 @@ Run npm test. Run npm start for the local app. No packages need installation.
 - New public snapshots omit deprecated general notes. Legacy note fields are still accepted when reading old links/backups, and preserved in existing local member backups when saving.
 - Full regression checks passed, including old links, save/load, manual exercise prescriptions and sharing privacy.
 - Storage estimate across 192 goal/experience/day/duration combinations using full generated plan JSON (including bilingual catalog metadata): 8.9–29.0 KiB each, average 17.2 KiB; 600 maximum-size examples total 17.0 MiB before Postgres overhead. Equipment images are referenced, not duplicated into routine data. No Neon project was provisioned.
+
+
+## WhatsApp and Neon shared storage — 2026-10-06
+
+Provisioned binyamin-gym on the Neon free plan through the existing Vercel integration, Frankfurt region. Production and Development connected; Preview deliberately has no production database. Staff code hash and session secret are server-only. Tests verified actual Neon create/read/update/delete, revision conflicts, login, public snapshots and redacted fields; temporary rows removed. Existing routine, edits, language, timer/logs and engine regression suite passed. WhatsApp phone normalization and message URL encoding covered. Browser production verification recorded separately below.
+
+Staged browser checks: staff sign-in succeeded; shared library listed and loaded a saved profile; per-exercise sets/cue edit saved; Hebrew WhatsApp preview contained a short ?r= link and correct +972 destination; the short link opened the Hebrew member view with the edited set count and selected Jump Rope, without intake or staff controls. No WhatsApp message was sent.

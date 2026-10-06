@@ -1539,3 +1539,5 @@ dialog::backdrop {
 .day-warmup{padding:16px;margin:0 0 18px;background:#edf5f2;border:1px solid #cbded4;border-radius:14px;break-inside:avoid}.day-warmup h4{margin:0 0 8px;font-size:1.05rem}.day-warmup p{margin:6px 0;line-height:1.5}
 
 .cardio-summary{display:flex;flex-wrap:wrap;gap:6px 12px;padding:12px 16px;background:#d9ede3;color:#153d2e;border-bottom:1px solid #b6d2c1}.cardio-summary span{font-weight:700}.cardio-summary small{width:100%}#routineSettingsNotice{margin:12px 0}
+
+.share-dialog{width:min(560px,calc(100vw - 32px));padding:26px}.share-dialog .field{margin:16px 0}.share-dialog textarea{resize:vertical;overflow-wrap:anywhere}.share-dialog .btn{white-space:normal}.side-status+button{font-size:12px}.dialog-actions{flex-wrap:wrap}

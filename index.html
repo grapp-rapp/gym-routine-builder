@@ -9,12 +9,12 @@
   <title>Binyamin Gym — Member Program Builder</title>
   <script>
     // Prevent the staff intake from flashing before a shared routine is parsed.
-    if (new URLSearchParams(location.search).has('routine') || /^#(?:share|routine)=/.test(location.hash)) {
+    if (new URLSearchParams(location.search).has('r') || new URLSearchParams(location.search).has('routine') || /^#(?:share|routine)=/.test(location.hash)) {
       document.documentElement.classList.add('shared-routine-loading');
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=20261006-simple" />
-  <link id="printStyles" rel="stylesheet" href="print.css?v=20261006-simple" media="print" />
+  <link rel="stylesheet" href="styles.css?v=20261006-cloud" />
+  <link id="printStyles" rel="stylesheet" href="print.css?v=20261006-cloud" media="print" />
 </head>
 <body>
   <div class="print-preview-toolbar no-print" hidden><button class="btn" id="closePrintPreview" type="button">Back to routine</button><button class="btn" id="confirmPrint" type="button">Print / Save PDF</button></div>
@@ -34,6 +34,7 @@
           <span>Members</span>
         </button>
       </nav>
+      <button type="button" id="storageAction" class="nav-btn" hidden>Staff sign in</button>
 
       <div class="side-status" title="Member data stays in this browser">
         <span class="status-dot"></span>
@@ -58,7 +59,7 @@
           </button>
           <button class="btn secondary" id="shareBtn" type="button" disabled>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.83-4A3 3 0 0 0 18 8ZM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM8.59 13.51l6.83 3.98M15.41 6.51 8.59 10.49"/></svg>
-            Copy member link
+            Share via WhatsApp
           </button>
           <button class="btn primary" id="printBtn" type="button" disabled>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
@@ -73,7 +74,7 @@
             <div>
               <div class="step-row"><span class="step-number">01</span><p class="step">MEMBER INTAKE</p></div>
               <h2 id="intakeTitle">Tell us who we're programming for</h2>
-              <p class="section-copy">The basics first. Nothing here is sent to a server.</p>
+              <p class="section-copy">Generate and print right away. Sign in to save members in the shared gym library.</p>
             </div>
             <span class="privacy-pill"><span></span> Local-only</span>
           </div>
@@ -89,6 +90,7 @@
                   <label class="field"><span>Member name</span>
                     <input id="name" maxlength="120" autocomplete="name" placeholder="e.g. David Cohen" />
                   </label>
+              <label class="field full-width"><span>Phone number <small>(optional, for WhatsApp)</small></span><input id="phone" type="tel" maxlength="30" autocomplete="tel" placeholder="050-123-4567 or +country code"></label>
                   <div class="field gender-field">
                     <span>Gender</span>
                     <div class="gender-toggle" role="radiogroup" aria-label="Gender">
@@ -254,20 +256,25 @@
       <div>
         <div class="step-row"><span class="step-number">⌁</span><p class="step">MEMBER LIBRARY</p></div>
         <h2>Saved profiles</h2>
-        <p class="dialog-sub">Profiles are stored only in this browser.</p>
+        <p id="libraryStorageHint" class="dialog-sub">Profiles are stored only in this browser.</p>
       </div>
       <button class="icon-btn" id="closeDialogBtn" aria-label="Close">×</button>
     </div>
     <a id="backupDownload" class="btn secondary" hidden>Download prepared backup</a>
     <p id="backupStatus" role="status" class="dialog-sub"></p>
+    <label class="field"><span>Find a member</span><input id="memberSearch" type="search" placeholder="Search by name or phone"></label>
     <div id="savedList" class="saved-list"></div>
     <div class="dialog-actions">
+      <button class="btn secondary" id="uploadLocalBtn" type="button" hidden>Add browser profiles to shared library</button>
       <button class="btn secondary" id="exportBtn" type="button">Export backup</button>
       <label class="btn secondary file-label">Import backup<input id="importInput" type="file" accept="application/json"></label>
-      <button class="btn danger" id="clearSavedBtn" type="button">Clear all</button>
+      <button class="btn danger" id="clearSavedBtn" type="button">Clear browser copies</button>
     </div>
   </dialog>
 
+
+  <dialog id="staffAccessDialog" class="share-dialog" aria-labelledby="staffAccessTitle"><form id="staffAccessForm"><div class="dialog-head"><div><p class="step">SAVED MEMBERS</p><h2 id="staffAccessTitle">Staff access</h2><p class="dialog-sub">Use the shared gym code to save and load members across computers.</p></div></div><label class="field"><span>Gym access code</span><input id="staffCode" type="password" autocomplete="current-password" required maxlength="200"></label><p id="staffAccessError" class="dialog-sub" role="alert"></p><div class="dialog-actions"><button class="btn secondary" type="button" id="cancelStaffAccess">Cancel</button><button class="btn primary" type="submit" id="staffSignInBtn">Sign in</button></div></form></dialog>
+  <dialog id="whatsAppDialog" class="share-dialog" aria-labelledby="whatsAppTitle"><div class="dialog-head"><div><p class="step">SHARE ROUTINE</p><h2 id="whatsAppTitle">Send via WhatsApp</h2><p class="dialog-sub">Enter a number or leave it blank to choose a contact.</p></div><button class="icon-btn" id="closeWhatsAppBtn" type="button" aria-label="Close WhatsApp sharing">×</button></div><label class="field"><span>Phone number (optional)</span><input id="whatsAppPhone" type="tel" maxlength="30" autocomplete="tel" placeholder="050-123-4567 or +country code"></label><label class="field"><span>Message preview</span><textarea id="whatsAppMessage" readonly rows="5"></textarea></label><p id="whatsAppStatus" class="dialog-sub" role="status"></p><div class="dialog-actions"><button class="btn secondary" id="prepareWhatsAppBtn" type="button">Update message</button><a class="btn primary" id="openWhatsAppBtn" target="_blank" rel="noopener noreferrer" hidden>Open WhatsApp</a></div></dialog>
   <dialog id="exerciseSwapDialog" class="swap-dialog">
     <div class="dialog-head">
       <div>
@@ -321,13 +328,15 @@
 
   <dialog id="workoutLogDialog" class="tracking-dialog" aria-labelledby="logTitle"><div id="workoutLogContent"></div></dialog>
   <template id="routineTemplate"></template>
-  <script src="js/exercise-catalog.js?v=20261006-simple"></script>
-  <script src="js/equipment-catalog.js?v=20261006-simple"></script>
-  <script src="js/translations.js?v=20261006-simple"></script>
-  <script src="js/routine-engine.js?v=20261006-simple"></script>
-  <script src="js/sharing.js?v=20261006-simple"></script>
-  <script src="js/tracking.js?v=20261006-simple"></script>
-  <script src="app.js?v=20261006-simple"></script>
+  <script src="js/exercise-catalog.js?v=20261006-cloud"></script>
+  <script src="js/equipment-catalog.js?v=20261006-cloud"></script>
+  <script src="js/translations.js?v=20261006-cloud"></script>
+  <script src="js/routine-engine.js?v=20261006-cloud"></script>
+  <script src="js/sharing.js?v=20261006-cloud"></script>
+  <script src="js/tracking.js?v=20261006-cloud"></script>
+  <script src="js/validation.js?v=20261006-cloud"></script>
+  <script src="js/cloud.js?v=20261006-cloud"></script>
+  <script src="app.js?v=20261006-cloud"></script>
   <script>
     // Mirror the top save action to the existing save-profile logic without changing the app engine.
     document.getElementById('saveProfileBtnTop')?.addEventListener('click', () => document.getElementById('saveProfileBtn')?.click());

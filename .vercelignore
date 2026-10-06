@@ -4,3 +4,7 @@ scripts
 QA.md
 tmp
 EQUIPMENT.md
+
+.env*
+!.env.example
+.vercel

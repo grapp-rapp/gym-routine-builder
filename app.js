@@ -56,7 +56,7 @@ function getFormData() {
   const genderInput = $('input[name="gender"]:checked');
   return {
     id: editingProfileId || makeId(),
-    name: $('#name').value.trim(), age: Number($('#age').value), height: Number($('#height').value), weight: Number($('#weight').value),
+    name: $('#name').value.trim(), phone: $('#phone').value.trim(), age: Number($('#age').value), height: Number($('#height').value), weight: Number($('#weight').value),
     gender: genderInput?.value || '',
     goal: $('input[name="goal"]:checked').value, experience: $('#experience').value, days: Number($('#days').value), duration: Number($('#duration').value),
     activity: $('#activity').value, cardioPreference: $('#cardioPreference').value, issues, issueNotes: $('#issueNotes').value.trim(),
@@ -66,7 +66,7 @@ function getFormData() {
 
 function setFormData(p) {
   editingProfileId = p.id || null;
-  $('#name').value = p.name || ''; $('#age').value = p.age ?? 35; $('#height').value = p.height ?? 175; $('#weight').value = p.weight ?? 80;
+  $('#name').value = p.name || ''; $('#phone').value = p.phone || ''; $('#age').value = p.age ?? 35; $('#height').value = p.height ?? 175; $('#weight').value = p.weight ?? 80;
   $$('input[name="gender"]').forEach(x => x.checked = !!p.gender && x.value === p.gender);
   const goal = $(`input[name="goal"][value="${p.goal || 'general'}"]`); if (goal) goal.checked = true;
   $('#experience').value = p.experience || 'new'; $('#days').value = String(p.days || 3); $('#duration').value = String(p.duration || 60);
@@ -434,8 +434,9 @@ function setProfiles(arr) {
   catch { alert('Could not save. Browser storage may be full or unavailable. Export a backup before closing.'); return false; }
 }
 
-function saveCurrentProfile() {
+async function saveCurrentProfile() {
   if (!$('#intakeForm').reportValidity()) return;
+  if(!await requireStaffSession())return;
   const p = getFormData(); p.language = currentLanguage; p.activeDayIndex = activeDayIndex; if (!p.name) { alert('Add a member name before saving the profile.'); return; } if (!p.gender) { alert('Select Male or Female before saving the profile.'); return; }
   if (currentPlan && currentPlan.profile?.id === p.id) {
     p.routineOverride = serializeRoutineState(currentPlan);
@@ -447,27 +448,20 @@ function saveCurrentProfile() {
     for (const key of ['trainerNotes','memberNotes','memberNotesHe']) if (profiles[idx][key] !== undefined) p[key] = profiles[idx][key];
     profiles[idx] = p;
   } else profiles.unshift(p);
-  if (!setProfiles(profiles)) return; editingProfileId = p.id;
+  const localSaved=setProfiles(profiles);if(!localSaved && !sharedStorage.authenticated)return; editingProfileId = p.id;
   if(currentPlan) {Object.assign(currentPlan.profile,{name:p.name});renderPlan(currentPlan);}
-  flashToast('Member saved in this browser');
+  if(sharedStorage.authenticated) {
+    try { const saved=(await cloudRequest('members',{method:'POST',body:JSON.stringify({...p,cloudRevision:editingCloudRevision})})).member;editingCloudRevision=saved.cloudRevision;await refreshCloudMembers();flashToast('Member saved to the shared gym library'); }
+    catch(err) {flashToast('Saved in this browser only. '+err.message);}
+  } else flashToast('Member saved in this browser');
 }
 
 function renderSaved() {
-  const profiles = getProfiles();
+  const search=$('#memberSearch').value.trim().toLowerCase();
+  const profiles = libraryProfiles().filter(p=>!search || String(p.name+' '+(p.phone||'')).toLowerCase().includes(search));
   $('#savedList').innerHTML = profiles.length ? profiles.map(p => `<div class="saved-row"><div><strong>${esc(p.name || 'Unnamed')}</strong><small>${esc(p.age)} yrs • ${p.gender === 'female' ? 'Female' : p.gender === 'male' ? 'Male' : 'Gender not set'} • ${esc(GOAL_LABEL[p.goal] || p.goal)} • ${esc(p.days)} days/week • ${esc(activityLabel(p.activity))}</small></div><div class="row-actions"><button class="btn ghost" data-load="${esc(p.id)}">Load</button><button class="btn danger" data-delete="${esc(p.id)}">Delete</button></div></div>`).join('') : '<p class="muted">No profiles saved yet.</p>';
-  $$('[data-load]').forEach(b => b.addEventListener('click', () => {
-    const p = profiles.find(x => x.id === b.dataset.load);
-    if (p) {
-      setFormData(p);
-      currentPlan = p.routineOverride ? restoreRoutineState(p) : null;
-      activeDayIndex = Math.min(p.activeDayIndex || 0, (currentPlan?.workouts.length || 1) - 1);
-      setLanguage(p.language || 'en');
-      if (currentPlan) { renderPlan(currentPlan); setOutputState(true); } else { $('#routineView').innerHTML = ''; setOutputState(false); }
-      $('#savedDialog').close();
-      window.scrollTo({top:0, behavior:'smooth'});
-    }
-  }));
-  $$('[data-delete]').forEach(b => b.addEventListener('click', () => { setProfiles(profiles.filter(x => x.id !== b.dataset.delete)); renderSaved(); }));
+  $$('[data-load]').forEach(b=>b.addEventListener('click',async()=>{try{await loadLibraryProfile(profiles.find(p=>p.id===b.dataset.load));}catch(err){$('#backupStatus').textContent=err.message;}}));
+  $$('[data-delete]').forEach(b=>b.addEventListener('click',async()=>{try{await deleteLibraryProfile(profiles.find(p=>p.id===b.dataset.delete));}catch(err){$('#backupStatus').textContent=err.message;}}));
 }
 
 function setOutputState(hasPlan=false) {
@@ -482,19 +476,8 @@ function setOutputState(hasPlan=false) {
 }
 
 function resetForm() {
-  editingProfileId = null; $('#intakeForm').reset(); $('#age').value=35; $('#height').value=175; $('#weight').value=80; $('#days').value='3'; $('#duration').value='60'; $('#activity').value='one_two';
+  editingProfileId = null; editingCloudRevision=0; $('#intakeForm').reset(); $('#age').value=35; $('#height').value=175; $('#weight').value=80; $('#days').value='3'; $('#duration').value='60'; $('#activity').value='one_two';
   currentPlan=null; activeDayIndex=0; setOutputState(false); updateRoutineSettingsNotice(); $('#routineView').innerHTML='';
-}
-
-async function copyMemberLink() {
-  const url = buildMemberUrl();
-  if (!url) return;
-  try { await navigator.clipboard.writeText(url); }
-  catch {
-    const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); const copied = document.execCommand('copy'); t.remove(); if (!copied) { window.prompt(currentLanguage === 'he' ? 'העתיקו את הקישור:' : 'Copy this member link:', url); return; }
-  }
-  flashToast(currentLanguage === 'he' ? 'קישור אישי לתוכנית הועתק ✓' : 'Member routine link copied ✓');
-  const btn=$('#shareBtn'); const old=btn.innerHTML; btn.textContent=currentLanguage === 'he' ? 'הקישור הועתק ✓' : 'Link copied ✓'; setTimeout(()=>btn.innerHTML=old,1400);
 }
 
 function readSharedPayloadFromUrl() {
@@ -587,15 +570,19 @@ $('#printBtn').addEventListener('click', () => {
 });
 $('#closePrintPreview').addEventListener('click',()=>{document.body.classList.remove('print-preview');$('#printStyles').media='print';$('.print-preview-toolbar').hidden=true;$('#outputPanel').scrollIntoView();});
 $('#confirmPrint').addEventListener('click',()=>window.print());
-$('#shareBtn').addEventListener('click', copyMemberLink);
+$('#shareBtn').addEventListener('click', openWhatsAppShare);
 $('#newMemberBtn').addEventListener('click', resetForm);
-$('#saveProfileBtn').addEventListener('click', () => {try {saveCurrentProfile();} catch(err){alert(err.message);}});
-$('#savedBtn').addEventListener('click', () => { try {renderSaved(); $('#backupStatus').textContent='';} catch(err){$('#savedList').textContent=''; $('#backupStatus').textContent=err.message;} $('#savedDialog').showModal(); });
+$('#saveProfileBtn').addEventListener('click', async () => {try {await saveCurrentProfile();} catch(err){alert(err.message);}});
+$('#savedBtn').addEventListener('click', openMemberLibrary);
+$('#memberSearch').addEventListener('input',renderSaved);
 $('#closeDialogBtn').addEventListener('click', () => $('#savedDialog').close());
 $('#clearSavedBtn').addEventListener('click', () => { if (confirm('Delete all locally saved member profiles?')) { setProfiles([]); renderSaved(); } });
-$('#exportBtn').addEventListener('click', () => {
+$('#exportBtn').addEventListener('click', async () => {
   try {
-    const raw=localStorage.getItem(STORAGE_KEY) || '[]';
+    $('#backupStatus').textContent='Preparing backup…';
+    const profiles=libraryProfiles();const complete=[];
+    for(let i=0;i<profiles.length;i+=8) complete.push(...await Promise.all(profiles.slice(i,i+8).map(async p=>p.cloudRevision ? (await cloudRequest('members?id='+encodeURIComponent(p.id))).member : p)));
+    const raw=JSON.stringify(complete);
     const link=$('#backupDownload'); if(link.href.startsWith('blob:')) URL.revokeObjectURL(link.href);
     link.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     link.download='binyamin-gym-members-'+new Date().toISOString().slice(0,10)+'.json'; link.hidden=false;
@@ -628,7 +615,16 @@ $('#resetExerciseBtn')?.addEventListener('click', () => {
 });
 
 setOutputState(false);
-if (!initSharedRoutine()) document.documentElement.classList.remove('shared-routine-loading');
+if(new URLSearchParams(location.search).has('r')) initDatabaseRoutine();
+else if (!initSharedRoutine()) {document.documentElement.classList.remove('shared-routine-loading');checkSharedStorage();}
+
+$('#storageAction').addEventListener('click',async()=>{if(sharedStorage.authenticated){try{await cloudRequest('session',{method:'DELETE'});cloudMembers=[];editingCloudRevision=0;sharedStorage.authenticated=false;paintStorageStatus();renderSaved();}catch(err){flashToast(err.message);}}else{await requireStaffSession();}});
+$('#staffAccessForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('#staffSignInBtn');btn.disabled=true;try{await cloudRequest('session',{method:'POST',body:JSON.stringify({code:$('#staffCode').value})});sharedStorage.authenticated=true;paintStorageStatus();$('#staffAccessDialog').close();}catch(err){$('#staffAccessError').textContent=err.message;}finally{btn.disabled=false;}});
+$('#cancelStaffAccess').addEventListener('click',()=>$('#staffAccessDialog').close());
+$('#uploadLocalBtn').addEventListener('click',syncLocalMembers);
+$('#closeWhatsAppBtn').addEventListener('click',()=>$('#whatsAppDialog').close());
+$('#prepareWhatsAppBtn').addEventListener('click',prepareWhatsAppLink);
+$('#whatsAppPhone').addEventListener('input',()=>{if(!$('#prepareWhatsAppBtn').disabled)prepareWhatsAppLink();});
 
 function fillPrescriptionEditor(ex) {
   const he = currentLanguage === 'he';
@@ -652,29 +648,6 @@ function savePrescription(dayIndex, exerciseIndex) {
   renderPlan(currentPlan); flashToast(currentLanguage === 'he' ? 'השינוי נשמר בתוכנית' : 'Routine updated — save member to keep it');
 }
 
-function validateSharedPlan(shared) {
-  const text = (x,max=1000) => typeof x === 'string' && x.length <= max;
-  if (!shared || !shared.profile || !Array.isArray(shared.workouts) || shared.workouts.length < 1 || shared.workouts.length > 5) throw Error('Invalid routine');
-  const p=shared.profile;
-  if (p.logId !== undefined && (typeof p.logId !== 'string' || p.logId.length > 150)) throw Error('Invalid log identity');
-  if (!text(p.name,120) || !Object.hasOwn(GOAL_LABEL,p.goal) || !['new','some','experienced'].includes(p.experience) || ![30,45,60,75].includes(Number(p.duration)) || Number(p.days)!==shared.workouts.length) throw Error('Invalid routine profile');
-  for(const w of shared.workouts) {
-    if (!text(w.name,100) || !text(w.nameHe,100) || !Array.isArray(w.exercises) || w.exercises.length < 1 || w.exercises.length > 12) throw Error('Invalid workout');
-    for(const ex of w.exercises) if (!Object.hasOwn(EX,ex.key) || !Number.isInteger(Number(ex.sets)) || Number(ex.sets)<1 || Number(ex.sets)>10 || !text(ex.reps,40) || !text(ex.rest,40) || (ex.note !== undefined && !text(ex.note,500)) || (ex.noteHe !== undefined && !text(ex.noteHe,500))) throw Error('Invalid exercise');
-  }
-  if(shared.guidance && (!Array.isArray(shared.guidance) || shared.guidance.length!==6 || !shared.guidance.every(s=>text(s,2000)))) throw Error('Invalid guidance');
-  if ((p.memberNotes !== undefined && !text(p.memberNotes)) || (p.memberNotesHe !== undefined && !text(p.memberNotesHe))) throw Error('Invalid member note');
-}
-function validateProfiles(data) {
-  if(!Array.isArray(data) || data.length>2000) throw Error('Backup must contain up to 2,000 member profiles.');
-  const ids=new Set();
-  for(const p of data) {
-    if(!p || typeof p.id!=='string' || p.id.length>150 || ids.has(p.id) || typeof p.name!=='string' || p.name.length>120 || !Object.hasOwn(GOAL_LABEL,p.goal) || !['new','some','experienced'].includes(p.experience) || ![2,3,4,5].includes(Number(p.days)) || ![30,45,60,75].includes(Number(p.duration)) || !Array.isArray(p.issues) || !p.issues.every(i=>Object.hasOwn(ISSUE_LABEL,i))) throw Error('Backup contains an invalid member profile.');
-    ids.add(p.id);
-    if(p.routineOverride) validateSharedPlan({profile:{...p,...p.planProfile},workouts:p.routineOverride});
-  }
-  return data;
-}
 window.addEventListener('hashchange', () => window.location.reload());
 function routineText(value) { return esc(value).replace(/\d+(?:[–-]\d+)?/g, '<bdi dir="ltr">$&</bdi>'); }
 

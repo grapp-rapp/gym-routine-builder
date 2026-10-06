@@ -4,6 +4,10 @@
   "version": "7.0.0",
   "scripts": {
     "start": "node scripts/serve.cjs",
-    "test": "node tests/regression.cjs"
+    "test": "node tests/regression.cjs",
+    "test:cloud": "node tests/cloud.cjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0"
   }
 }

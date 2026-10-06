@@ -1,6 +1,6 @@
 # Binyamin Gym / כושר בנימין
 
-Simple member intake and routine application for general gym staff. No framework, runtime dependencies, cloud account or database is required.
+Simple member intake and routine application for general gym staff. The browser generates routines; Vercel API functions use Neon Postgres for the shared member library and short routine links.
 
 ## Run and test
 
@@ -10,8 +10,8 @@ With Node.js installed, run `npm start` and open http://127.0.0.1:4173. Run `npm
 
 1. Complete intake and generate a routine.
 2. Navigate workouts. Click an exercise or its Replace button to search recommended alternatives, adjust sets/reps/rest, and write coaching notes in English and Hebrew. Save change updates the current routine. Reset restores the original prescription, including after saving and reopening.
-3. Save member retains intake, routine edits, language and active workout in this browser. If intake settings change, generate again to apply them to the routine; saving preserves the currently reviewed routine.
-4. Copy member link shares the specific routine. Choose the language before copying. The member can change languages without seeing staff intake or editing controls.
+3. Save member retains intake, routine edits, language and active workout in the shared gym library after staff sign-in. A browser copy is also kept when storage is available. If intake settings change, generate again to apply them to the routine; saving preserves the currently reviewed routine.
+4. Share via WhatsApp stores a public routine snapshot and prepares a message. Enter an optional phone number or leave it blank to select a WhatsApp contact. Israeli 0-prefixed mobile numbers convert to +972. Choose the language before sharing. Staff review and send the message in WhatsApp. The member can change languages without seeing staff intake or editing controls.
 5. Print routine opens the A4 preview, then Print / Save PDF invokes the browser print dialog. Each workout begins on its own page; general guidance follows separately. Use A4 and default scale. Very long custom notes may need an additional page rather than smaller text.
 6. Members → Export backup prepares a JSON download and leaves a retry link. Import validates the entire backup before adding profiles. Existing profiles are retained; colliding IDs receive new IDs.
 
@@ -19,7 +19,7 @@ With Node.js installed, run `npm start` and open http://127.0.0.1:4173. Run `npm
 
 The intake has no internal staff notes or general coaching-note fields. Staff enter the member details and choose Generate routine, then print or share. Movement information still informs selection. Optional per-exercise edits remain available. Older saved profiles retain deprecated notes in local backups; those fields are not displayed or included in newly created member links. Previously issued links remain readable.
 
-New v4 links encode a routine snapshot in `#routine=`, avoiding sending the payload in HTTP requests. They contain name, goal, experience, schedule, prescriptions and member-facing guidance, without height, weight, sex, movement toggles or internal notes. Links are readable by anyone who has them and are snapshots: editing a routine requires sending a new link. Legacy v3 query links and v2/v3 fragment links remain supported. Old links cannot be retroactively stripped of information already encoded into them.
+New database links use `?r=` with a random 192-bit token; only its SHA-256 hash is stored. The public snapshot table contains no phone or private intake details. Existing v4 links encode a snapshot in `#routine=`; that format remains available when running without shared storage. They contain name, goal, experience, schedule, prescriptions and member-facing guidance, without height, weight, sex, movement toggles or internal notes. Links are readable by anyone who has them and are snapshots: editing a routine requires sending a new link. Legacy v3 query links and v2/v3 fragment links remain supported. Old links cannot be retroactively stripped of information already encoded into them.
 
 ## Equipment catalog
 
@@ -45,7 +45,13 @@ Put your gym's real photos in `assets/equipment/`. Keep image attribution in CRE
 
 ## Deployment
 
-Continue deploying the repository root as a static site on Vercel (Other framework, no build command, root output directory) or GitHub Pages. No backend was added. Local testing tools and the pre-audit backup are excluded from Vercel uploads by .vercelignore. This work does not publish a deployment.
+Deploy the repository root on Vercel (Other framework, no build command, root output directory). Vercel serves the static app and api/*.js functions. Install packages with npm ci. Database credentials, STAFF_CODE_HASH (SHA-256 of a randomly generated high-entropy staff code), and AUTH_SECRET stay in server environment variables. Use a separate development/preview database for testing.
+
+Link the existing Vercel project and connect Neon first, pull Development variables into .env.local, configure local access settings, then run node scripts/setup-db.cjs. The additive schema creates gym_members, gym_routines and gym_login_attempts. Run npm run test:cloud for validation and node tests/cloud.cjs --live for temporary records against the configured database. The live test cleans up its records.
+
+Staff sessions last eight hours in signed HttpOnly, Secure, SameSite=Strict cookies. Writes require same-origin requests; sign-in attempts are limited in Postgres. Member revisions reject concurrent overwrites and deletions. Public routine links are snapshots and continue working after deleting a saved member. Members do not need a login.
+
+Members → Add browser profiles to shared library migrates existing local profiles without overwriting shared members with matching IDs. Export backup includes complete shared routines and browser-only profiles. Import remains a browser operation; use the migration action afterward to save imported profiles in the shared library. Clear browser copies leaves shared members intact. Never commit .env files, access codes or .vercel credentials.
 
 ## Backup and verification
 

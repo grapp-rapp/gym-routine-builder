@@ -96,3 +96,10 @@ Run npm test. Run npm start for the local app. No packages need installation.
 
 - Per user request, Low back alone no longer substitutes rowing or Jump Rope with Bike, including replacement filtering and warm-up selection. This is an app selection policy, not an individual suitability assessment. Other movement and strength rules remain.
 - Full regression suite passed, including explicit checks that every cardio choice survives Low back in selection, generated days, warm-up and safeExercise replacement filtering.
+
+## Simplified staff flow — 6 October 2026
+
+- Removed internal staff notes and general English/Hebrew member coaching-note intake sections and routine notes card. Kept member intake, movement settings, generated guidance, optional exercise edits, printing, sharing and local logs. Replaced trainer-specific editing copy in both languages.
+- New public snapshots omit deprecated general notes. Legacy note fields are still accepted when reading old links/backups, and preserved in existing local member backups when saving.
+- Full regression checks passed, including old links, save/load, manual exercise prescriptions and sharing privacy.
+- Storage estimate across 192 goal/experience/day/duration combinations using full generated plan JSON (including bilingual catalog metadata): 8.9–29.0 KiB each, average 17.2 KiB; 600 maximum-size examples total 17.0 MiB before Postgres overhead. Equipment images are referenced, not duplicated into routine data. No Neon project was provisioned.

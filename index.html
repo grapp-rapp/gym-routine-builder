@@ -13,8 +13,8 @@
       document.documentElement.classList.add('shared-routine-loading');
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260916-cardio-back" />
-  <link id="printStyles" rel="stylesheet" href="print.css?v=20260916-cardio-back" media="print" />
+  <link rel="stylesheet" href="styles.css?v=20261006-simple" />
+  <link id="printStyles" rel="stylesheet" href="print.css?v=20261006-simple" media="print" />
 </head>
 <body>
   <div class="print-preview-toolbar no-print" hidden><button class="btn" id="closePrintPreview" type="button">Back to routine</button><button class="btn" id="confirmPrint" type="button">Print / Save PDF</button></div>
@@ -47,9 +47,9 @@
           <p class="eyebrow">BINYAMIN GYM · MEMBER ONBOARDING</p>
           <div class="title-row">
             <h1>Build a member program</h1>
-            <span class="app-badge">Staff tool</span>
+            <span class="app-badge">Member routines</span>
           </div>
-          <p class="sub">Create a clear training plan. Review it together, then send it home.</p>
+          <p class="sub">Enter the member’s details, generate a routine, then print or share it.</p>
         </div>
         <div class="header-actions">
           <button class="btn secondary" id="saveProfileBtnTop" type="button">
@@ -191,15 +191,7 @@
               </label>
             </fieldset>
 
-            <div class="form-section notes-section">
-              <div class="mini-heading">
-                <span class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/></svg></span>
-                <div><h3>Trainer notes</h3><p>Internal staff notes. Excluded from member links and printed handouts.</p></div>
-              </div>
-              <label class="field"><textarea aria-label="Internal trainer notes" maxlength="2000" id="trainerNotes" rows="3" placeholder="Preferences, cues, scheduling notes or anything to remember"></textarea></label>
-            </div>
-
-            <div class="form-section"><div class="mini-heading"><div><h3>Member coaching notes</h3><p>Included in the shared routine and handout. Write each language separately.</p></div></div><label class="field"><span>Member note — English</span><textarea id="memberNotes" maxlength="1000" rows="2"></textarea></label><label class="field"><span>הערה למתאמן — עברית</span><textarea id="memberNotesHe" dir="rtl" lang="he" maxlength="1000" rows="2"></textarea></label></div><div class="form-actions sticky-actions">
+            <div class="form-actions sticky-actions">
               <div class="action-note"><span class="status-dot"></span><span>Ready when intake is complete</span></div>
               <div class="action-buttons">
                 <button class="btn secondary" id="saveProfileBtn" type="button">Save profile</button>
@@ -279,7 +271,7 @@
   <dialog id="exerciseSwapDialog" class="swap-dialog">
     <div class="dialog-head">
       <div>
-        <div class="step-row"><span class="step-number">↔</span><p class="step">TRAINER EDIT</p></div>
+        <div class="step-row"><span class="step-number">↔</span><p class="step">EDIT EXERCISE</p></div>
         <h2 id="swapDialogTitle">Replace exercise</h2>
         <p class="dialog-sub" id="swapDialogSub">Choose a replacement and save the change.</p>
       </div>
@@ -290,7 +282,7 @@
 
     <form id="prescriptionForm" class="prescription-editor" onsubmit="return false"><div class="grid three"><label class="field"><span id="editSetsLabel">Sets</span><input id="editSets" type="number" min="1" max="10" required></label><label class="field"><span id="editRepsLabel">Reps / time</span><input id="editReps" maxlength="40" required></label><label class="field"><span id="editRestLabel">Rest</span><input id="editRest" maxlength="40" required></label></div><label class="field"><span>Coaching note — English</span><textarea id="editNote" maxlength="500" rows="2" lang="en" dir="ltr"></textarea></label><label class="field"><span>הנחיה למתאמן — עברית</span><textarea id="editNoteHe" maxlength="500" rows="2" lang="he" dir="rtl"></textarea></label><p id="prescriptionHint" class="dialog-sub"></p></form><div class="swap-guidance-note">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg>
-      <span id="swapGuidanceNoteText">Suggestions are filtered using the member's movement considerations. Trainer judgement still comes first.</span>
+      <span id="swapGuidanceNoteText">Alternatives match the member's movement considerations. Choose an exercise they can perform comfortably.</span>
     </div>
 
     <div class="swap-tools">
@@ -329,13 +321,13 @@
 
   <dialog id="workoutLogDialog" class="tracking-dialog" aria-labelledby="logTitle"><div id="workoutLogContent"></div></dialog>
   <template id="routineTemplate"></template>
-  <script src="js/exercise-catalog.js?v=20260916-cardio-back"></script>
-  <script src="js/equipment-catalog.js?v=20260916-cardio-back"></script>
-  <script src="js/translations.js?v=20260916-cardio-back"></script>
-  <script src="js/routine-engine.js?v=20260916-cardio-back"></script>
-  <script src="js/sharing.js?v=20260916-cardio-back"></script>
-  <script src="js/tracking.js?v=20260916-cardio-back"></script>
-  <script src="app.js?v=20260916-cardio-back"></script>
+  <script src="js/exercise-catalog.js?v=20261006-simple"></script>
+  <script src="js/equipment-catalog.js?v=20261006-simple"></script>
+  <script src="js/translations.js?v=20261006-simple"></script>
+  <script src="js/routine-engine.js?v=20261006-simple"></script>
+  <script src="js/sharing.js?v=20261006-simple"></script>
+  <script src="js/tracking.js?v=20261006-simple"></script>
+  <script src="app.js?v=20261006-simple"></script>
   <script>
     // Mirror the top save action to the existing save-profile logic without changing the app engine.
     document.getElementById('saveProfileBtnTop')?.addEventListener('click', () => document.getElementById('saveProfileBtn')?.click());

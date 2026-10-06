@@ -1,6 +1,6 @@
 # Binyamin Gym / כושר בנימין
 
-Static staff intake and member routine application. No framework, runtime dependencies, cloud account or database is required.
+Simple member intake and routine application for general gym staff. No framework, runtime dependencies, cloud account or database is required.
 
 ## Run and test
 
@@ -15,9 +15,9 @@ With Node.js installed, run `npm start` and open http://127.0.0.1:4173. Run `npm
 5. Print routine opens the A4 preview, then Print / Save PDF invokes the browser print dialog. Each workout begins on its own page; general guidance follows separately. Use A4 and default scale. Very long custom notes may need an additional page rather than smaller text.
 6. Members → Export backup prepares a JSON download and leaves a retry link. Import validates the entire backup before adding profiles. Existing profiles are retained; colliding IDs receive new IDs.
 
-## Private and member-visible notes
+## Member intake and compatibility
 
-Internal trainer notes and movement notes stay in staff storage and are excluded from member links and printouts. Use the separate Member coaching notes fields for public notes. Exercise coaching notes are also member-visible, with separate English/Hebrew fields. Existing internal notes are preserved without automatically publishing them.
+The intake has no internal staff notes or general coaching-note fields. Staff enter the member details and choose Generate routine, then print or share. Movement information still informs selection. Optional per-exercise edits remain available. Older saved profiles retain deprecated notes in local backups; those fields are not displayed or included in newly created member links. Previously issued links remain readable.
 
 New v4 links encode a routine snapshot in `#routine=`, avoiding sending the payload in HTTP requests. They contain name, goal, experience, schedule, prescriptions and member-facing guidance, without height, weight, sex, movement toggles or internal notes. Links are readable by anyone who has them and are snapshots: editing a routine requires sending a new link. Legacy v3 query links and v2/v3 fragment links remain supported. Old links cannot be retroactively stripped of information already encoded into them.
 
@@ -57,7 +57,7 @@ Product photos from the supplied equipment list are stored locally under assets/
 
 ## Rest defaults and jump rope
 
-New routines use 60 seconds of rest for rep ranges starting at 7 or above, and 90–120 seconds when the lower bound is 6 or below (including 5–8 and 6–10). Timed strength exercises default to 60 seconds; cardio and balance retain their own prescriptions. Explicit overrides and saved routines retain their rest values. Session estimates use the prescribed rest between sets. Jump rope is available in cardio preferences and swaps, with bilingual interval guidance and a local drawing. Knee, hip or low-back considerations substitute cycling during generation. Equipment availability remains pending confirmation.
+New routines use 60 seconds of rest for rep ranges starting at 7 or above, and 90–120 seconds when the lower bound is 6 or below (including 5–8 and 6–10). Timed strength exercises default to 60 seconds; cardio and balance retain their own prescriptions. Explicit overrides and saved routines retain their rest values. Session estimates use the prescribed rest between sets. Jump rope is available in cardio preferences and swaps, with bilingual interval guidance and a local drawing. Knee or hip considerations substitute cycling during generation; Low back alone preserves every cardio choice. Equipment availability remains pending confirmation.
 
 ## Rest timer and workout history
 

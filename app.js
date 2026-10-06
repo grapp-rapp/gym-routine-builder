@@ -60,8 +60,7 @@ function getFormData() {
     gender: genderInput?.value || '',
     goal: $('input[name="goal"]:checked').value, experience: $('#experience').value, days: Number($('#days').value), duration: Number($('#duration').value),
     activity: $('#activity').value, cardioPreference: $('#cardioPreference').value, issues, issueNotes: $('#issueNotes').value.trim(),
-    memberNotes: $('#memberNotes').value.trim(), memberNotesHe: $('#memberNotesHe').value.trim(),
-    trainerNotes: $('#trainerNotes').value.trim(), updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString()
   };
 }
 
@@ -73,8 +72,6 @@ function setFormData(p) {
   $('#experience').value = p.experience || 'new'; $('#days').value = String(p.days || 3); $('#duration').value = String(p.duration || 60);
   $('#activity').value = normalizeActivity(p.activity); $('#cardioPreference').value = p.cardioPreference || 'any';
   $$('#issueToggles input').forEach(x => x.checked = (p.issues || []).includes(x.value)); $('#issueNotes').value = p.issueNotes || '';
-  $('#trainerNotes').value = p.trainerNotes || '';
-  $('#memberNotes').value = p.memberNotes || ''; $('#memberNotesHe').value = p.memberNotesHe || '';
 }
 
 function equipmentIcon(type='machine') {
@@ -178,7 +175,6 @@ function renderPlan(plan) {
       <div class="bottom-card"><h3>${c.cardio}</h3><p>${routineText(rtl?plan.weeklyCardioHe:plan.weeklyCardio)}</p></div>
       <div class="bottom-card"><h3>${c.progress}</h3><p>${routineText(rtl?plan.progressionHe:plan.progression)}</p></div>
       <div class="bottom-card rules-card"><h3>${c.rules}</h3><ul><li>${c.rule1}</li><li>${c.rule2}</li><li>${c.rule3}</li><li>${c.rule4}</li></ul></div>
-      ${(rtl ? p.memberNotesHe : p.memberNotes) ? `<div class="bottom-card"><h3>${c.trainerNote}</h3><p>${routineText(rtl ? p.memberNotesHe : p.memberNotes)}</p></div>` : ''}
     </div>
     <div class="routine-nav no-print"><button type="button" class="btn secondary" id="prevDayBtn" ${activeDayIndex===0?'disabled':''}>${c.prev}</button><span>${activeDayIndex+1} / ${plan.workouts.length}</span><button type="button" class="btn secondary" id="nextDayBtn" ${activeDayIndex===plan.workouts.length-1?'disabled':''}>${c.next}</button></div>
     <p class="print-footer">${rtl?'תוכנית התחלה המבוססת על שאלון הקבלה. מומלץ לבצע הערכה מחדש לאחר כ־4–6 שבועות או כאשר המטרות, ההעדפות או היכולת משתנות.':'Starter routine based on member intake. Reassess after ~4–6 weeks or when goals, preferences or ability change.'}</p>
@@ -315,8 +311,8 @@ function openExerciseSwap(dayIndex, exerciseIndex) {
   $('#swapRecommendedBtn').textContent = currentLanguage === 'he' ? COPY.he.recommended : COPY.en.recommended;
   $('#swapAllBtn').textContent = currentLanguage === 'he' ? COPY.he.allSafe : COPY.en.allSafe;
   $('#swapGuidanceNoteText').textContent = currentLanguage === 'he'
-    ? 'החלופות מסוננות לפי מגבלות התנועה שסומנו. שיקול הדעת של המאמן קודם לכל.'
-    : "Suggestions are filtered using the member's movement considerations. Trainer judgement still comes first.";
+    ? 'החלופות מותאמות למגבלות התנועה של המתאמן. בחרו תרגיל שניתן לבצע בנוחות.'
+    : "Alternatives match the member's movement considerations. Choose an exercise they can perform comfortably.";
   dialog.dir = currentLanguage === 'he' ? 'rtl' : 'ltr';
   fillPrescriptionEditor(currentPlan.workouts[dayIndex].exercises[exerciseIndex]);
   renderSwapDialog();
@@ -445,9 +441,14 @@ function saveCurrentProfile() {
     p.routineOverride = serializeRoutineState(currentPlan);
     p.planProfile = { ...currentPlan.profile }; delete p.planProfile.routineOverride; delete p.planProfile.planProfile;
   }
-  const profiles = getProfiles(); const idx = profiles.findIndex(x => x.id === p.id); if (idx >= 0) profiles[idx] = p; else profiles.unshift(p);
+  const profiles = getProfiles(); const idx = profiles.findIndex(x => x.id === p.id);
+  // Preserve legacy notes in local backups without showing or sharing them.
+  if (idx >= 0) {
+    for (const key of ['trainerNotes','memberNotes','memberNotesHe']) if (profiles[idx][key] !== undefined) p[key] = profiles[idx][key];
+    profiles[idx] = p;
+  } else profiles.unshift(p);
   if (!setProfiles(profiles)) return; editingProfileId = p.id;
-  if(currentPlan) {Object.assign(currentPlan.profile,{name:p.name,memberNotes:p.memberNotes,memberNotesHe:p.memberNotesHe});renderPlan(currentPlan);}
+  if(currentPlan) {Object.assign(currentPlan.profile,{name:p.name});renderPlan(currentPlan);}
   flashToast('Member saved in this browser');
 }
 
@@ -688,6 +689,6 @@ function routineSettingsDiffer(form,profile) {
 function updateRoutineSettingsNotice() {
   const notice=$('#routineSettingsNotice');if(!notice)return;
   notice.hidden=memberShareMode||!currentPlan||!routineSettingsDiffer(getFormData(),currentPlan.profile);
-  if(!notice.hidden) notice.textContent='Intake settings changed. Click Generate routine to apply the new cardio preference or starting workload. This will rebuild the plan, including trainer exercise edits. Save member alone keeps the current routine.';
+  if(!notice.hidden) notice.textContent='Intake settings changed. Click Generate routine to apply the new cardio preference or starting workload. This will rebuild the plan, including exercise edits. Save member alone keeps the current routine.';
 }
 $('#intakeForm').addEventListener('change',updateRoutineSettingsNotice);

@@ -1,8 +1,7 @@
 function publicSharePlan(plan) {
   const p = plan.profile;
   return {v:4, l:currentLanguage,
-    p:{a:normalizeActivity(p.activity),i:p.logId || p.id || '',n:p.name || '',g:p.goal,e:p.experience,d:plan.workouts.length,t:p.duration,m:p.age < 18 ? 1 : 0,
-       q:p.memberNotes || '',h:p.memberNotesHe || ''},
+    p:{a:normalizeActivity(p.activity),i:p.logId || p.id || '',n:p.name || '',g:p.goal,e:p.experience,d:plan.workouts.length,t:p.duration,m:p.age < 18 ? 1 : 0},
     guidance:[plan.warmup,plan.warmupHe,plan.weeklyCardio,plan.weeklyCardioHe,plan.progression,plan.progressionHe],
     w:plan.workouts.map(w=>({n:w.name,h:w.nameHe,x:w.exercises.map(ex=>[ex.key,ex.sets,ex.reps,ex.rest,ex.role || '',0,0,ex.note || '',ex.noteHe || ''])}))};
 }
